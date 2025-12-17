@@ -204,21 +204,22 @@ if (Menu == 1) {
             xilent.println("<td><form method='get' action='pinayar'>");
             xilent.println("<textarea name='is' id='id' cols='40' rows='10' >");
             xilent.println(pinayar);
-            xilent.println("</textarea>");
-            xilent.println("<br>ESP ye bağlı Cihazları kapatın.<br>");
+            xilent.println("</textarea><br>");
+            //xilent.println("<br>ESP ye bağlı Cihazları kapatın.<br>");
             xilent.println("<input type='submit' value='Pinayar Kaydet'>");
             xilent.println("</form></td>");
             
 
             xilent.println("<td style='font-size:12px;vertical-align:top;'><textarea name='is' id='id' cols='40' rows='12' style='font-size:10px;vertical-align:top;'>");
             xilent.println(erlog + "</textarea></td></tr>");
-            xilent.println("</table><br>");
+            xilent.println("</table>");
+            xilent.println("<label style='font-size:14px;'>");
             xilent.println("Altta ESP-Wemos pinleri icin bir ornek verilmistir.<br>");
             xilent.println("D0|OUT|DIG|0|0|1|Sarj1_pirizi<br>");
             xilent.println("D1|OUT|PWM|0|0|1|Servo<br>");
             xilent.println("D3|INP|DHT1|1|-2|-5|Temp_Hum<br>");
             xilent.println("A0|INP|ANG|0|0|1024|Volt3v3<br>");
-            xilent.println("<br><br>");
+            xilent.println("</label><br>");
 
 
             xilent.println("<table>  <caption>PROGRAM GiRiSi</caption> <tr> <td scope=\"col\">Program:</td><td scope=\"col\">Program Hata</td></tr>");
@@ -233,7 +234,7 @@ if (Menu == 1) {
             xilent.println("</form>");
             xilent.println("</td><td style='font-size:12px;vertical-align:top;'><textarea name='is' id='id' cols='40' rows='12' style='font-size:10px;vertical-align:top;'>");
             xilent.println(perlog);
-            xilent.println("</textarea></td></tr></table><br>Pinleri invert etmek için : PIN_INVERT; <br><br>");
+            xilent.println("</textarea></td></tr></table>Pinleri invert etmek için : PIN_INVERT; <br>");
 
             xilent.println("</body></html>");
 
