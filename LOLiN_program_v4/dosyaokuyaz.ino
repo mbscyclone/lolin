@@ -150,7 +150,31 @@ void dosyayazpindurum()
                   dosya.println(pindurumrec);
                 }
                 dosya.close();
-                dosyaokupindurum();
+                
+
+if(fben==0){
+                String pindurumrectmp = pindurumrec;                
+                for (int y=0;y<pinsayisi;y++)
+                {
+                  if(pindurumrectmp.length()<2) break;
+                  String pn=pindurumrectmp.substring(0,pindurumrectmp.indexOf(":"));
+                  String ps=pindurumrectmp.substring(pindurumrectmp.indexOf(":")+1,pindurumrectmp.indexOf(","));
+                  pindurumrectmp=pindurumrectmp.substring(pindurumrectmp.indexOf(",")+1,pindurumrectmp.length());
+                  //Serial.println(pn);
+                  //Serial.println("pindurumrectmp : " + pindurumrectmp);
+                  for (int x=0;x<pinsayisi;x++)
+                  {
+                    if(pn==pinname[x]){
+                      PinState[x]=ps;ePinState[x]=ps;
+                    //  Serial.print("pinname ");Serial.print(pn);Serial.print(" pinstate ");Serial.println(ps);
+                    break;
+                    }
+                  }
+                }
+            }
+
+
+
 }
 
 

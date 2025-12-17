@@ -3,7 +3,7 @@ int h;
 void updatesayac()
 {
 pindurumrecyap=false;
-    
+
         for(int x=0;x<pinsayisi;x++){
 
                         if(pinmode[x]=="OUT" & pinsignaltype[x]=="DIG"){
@@ -41,8 +41,11 @@ pindurumrecyap=false;
 
 
                       if(pinmode[x]=="INP" && pinsignaltype[x].indexOf("DHT")==0)
-                      { dhtsayac+=1;
-                         if(dhtsayac>5000){ dhtsayac=0;
+                      { dhtsayac+=1; 
+                         if(dhtsayac>2){
+
+                          Serial.println("DHTDONGUSU"); 
+                              dhtsayac=0;
                               uint8_t DHT_TYPE;
                               if(pinsignaltype[x]=="DHT1") {DHT_TYPE= DHT11;}
                               if(pinsignaltype[x]=="DHT2") {DHT_TYPE= DHT12;}
@@ -53,8 +56,11 @@ pindurumrecyap=false;
 
                               t = DHTA.readTemperature();  // boş iken  celcius // f = DHTA.readTemperature(true); fahrenayt 
                               delay(50);
+                              zamanfark+=50;
+
                               h = DHTA.readHumidity();
                               delay(50);
+                              zamanfark+=50;
 
                               // Check if any reads failed and exit early (to try again).
                               if (isnan(h) || isnan(t))  // || isnan(f)
@@ -90,6 +96,7 @@ pindurumrecyap=false;
                                         Serial.println(".");
                                     }
                               }
+                                                        Serial.println("DHTDONGUSU-çıkış"); 
                         }
 
                       }

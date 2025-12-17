@@ -29,9 +29,9 @@ void httpheader(WiFiClient xilent) {
   xilent.println("<p><form action=\"/firebaseset\" method=\"POST\"><input type=\"submit\" value=\"Firebase ayar\"></form></p></td>");
 
   xilent.println("</tr></table>");
-  xilent.println("<font size=\"2\" color=\"#FFDDDD\">");
-  xilent.println(logintimeout);
-  xilent.println("<br></font>");
+  //xilent.println("<font size=\"2\" color=\"#FFDDDD\">");
+  //xilent.println(logintimeout);
+  //xilent.println("<br></font>");
 }
 
 void htpcl() {
@@ -55,7 +55,7 @@ void htpcl() {
         if (c != '\r' || c != '\n') { header += c; }
 
         if (c == '\n') {
-
+            programrun();
 reConnectsayac=millis();
 
            Serial.println(" header: ");
@@ -87,6 +87,7 @@ String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '
           //////////////////
           // http://192.168.2.84/auth:?capt=2927&unme=admin&pwrd=1234
           // bilgi geldiyse aut = 1 yapmak için
+/*  
           String xo2;
           if (aut == 0) {
             if (header.indexOf("?capt=") > -1) {
@@ -114,10 +115,6 @@ String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '
               }
             }
           }
-
-
-
-
 
           if (aut == 0) {
             if (header.indexOf("/") > -1) {
@@ -163,7 +160,7 @@ String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '
               return;
             }
           }
-
+*/
 
           //////////////////
           //////////////////
@@ -203,19 +200,18 @@ if (Menu == 1) {
 
 
             xilent.println("Giris formati (Bosluk kullanma, Bosluklarin yerine \"|\" isareti kullanilacak.)<br>pinAdi pinModu pinSinyalTipi pinMinDegeri pinDegeri pinMaxDegeri pinEtiketi");
-            xilent.println("<table>  <caption>PIN AYARLARI</caption> <tr> <td scope=\"col\">pin ayarları:</td><td scope=\"col\">x</td></tr>");
-            xilent.println("<td><form method='get' action='pinayar'><br>");
-            xilent.println("<textarea name='is' id='id' cols='50' rows='10' >");
+            xilent.println("<table>  <caption>PIN AYARLARI</caption> <tr> <td scope=\"col\">pin ayarları:</td><td scope=\"col\">Pin Hata</td></tr>");
+            xilent.println("<td><form method='get' action='pinayar'>");
+            xilent.println("<textarea name='is' id='id' cols='40' rows='10' >");
             xilent.println(pinayar);
             xilent.println("</textarea>");
             xilent.println("<br>ESP ye bağlı Cihazları kapatın.<br>");
             xilent.println("<input type='submit' value='Pinayar Kaydet'>");
-            xilent.println("</form></td><td>");
+            xilent.println("</form></td>");
             
 
-            xilent.println("<label style='font-size:12px;vertical-align:top;'>");
-            xilent.println("X</label></td>");
-
+            xilent.println("<td style='font-size:12px;vertical-align:top;'><textarea name='is' id='id' cols='40' rows='12' style='font-size:10px;vertical-align:top;'>");
+            xilent.println(erlog + "</textarea></td></tr>");
             xilent.println("</table><br>");
             xilent.println("Altta ESP-Wemos pinleri icin bir ornek verilmistir.<br>");
             xilent.println("D0|OUT|DIG|0|0|1|Sarj1_pirizi<br>");
@@ -225,19 +221,19 @@ if (Menu == 1) {
             xilent.println("<br><br>");
 
 
-            xilent.println("<table>  <caption>PROGRAM GiRiSi</caption> <tr> <td scope=\"col\">Program:</td><td scope=\"col\">Error Log</td></tr>");
+            xilent.println("<table>  <caption>PROGRAM GiRiSi</caption> <tr> <td scope=\"col\">Program:</td><td scope=\"col\">Program Hata</td></tr>");
             xilent.println("<tr><td>");
 
             xilent.println("<form method='get' action='programkayit'>");
-            xilent.println("<textarea name='is' id='id' cols='50' rows='10' >");
+            xilent.println("<textarea name='is' id='id' cols='40' rows='10' >");
             xilent.println(programdata);
             xilent.println("</textarea>");
             xilent.println("<br>");
             xilent.println("<input type='submit'>");
             xilent.println("</form>");
-            xilent.println("</td><td style='font-size:12px;vertical-align:top;'>");
-            xilent.println(erlog);
-            xilent.println("</td></tr></table><br>Pinleri invert etmek için : PIN_INVERT; <br><br>");
+            xilent.println("</td><td style='font-size:12px;vertical-align:top;'><textarea name='is' id='id' cols='40' rows='12' style='font-size:10px;vertical-align:top;'>");
+            xilent.println(perlog);
+            xilent.println("</textarea></td></tr></table><br>Pinleri invert etmek için : PIN_INVERT; <br><br>");
 
             xilent.println("</body></html>");
 
@@ -776,10 +772,6 @@ if (Menu == 0) {
 
             creator += " B";
 
-
-
-
-
             //LOLİN için
             if (Headerparcala.indexOf("GET /D") > -1) {
 
@@ -895,6 +887,16 @@ if (Menu == 0) {
               }
             }
 
+
+
+
+
+
+
+
+
+
+
             creator += "T";
 
             if (header.indexOf((" /rr120")) > -1) sayfayenile = 120;
@@ -949,6 +951,52 @@ if (Menu == 0) {
               //Programtakip(programdata);
               }
             }
+
+
+
+
+
+
+
+
+
+
+            for (int x = 0; x < sizeof(Pin) + 1; x++) {
+
+              if (pinmode[x] == "OUT" & pinsignaltype[x] == "DIG") {
+                if (PinState[x] == "0.00" || PinState[x] == "0" || PinState[x] == "LOW" || PinState[x] == "OFF") {
+                  if (high_low_invert==false) digitalWrite(Pin[x], LOW);
+                  else digitalWrite(Pin[x], HIGH);
+                }
+
+                if (PinState[x] == "1.00" || PinState[x] == "1" || PinState[x] == "HIGH" || PinState[x] == "ON") {
+                  if (high_low_invert==false) digitalWrite(Pin[x], HIGH);
+                  else digitalWrite(Pin[x], LOW);
+                }
+              }
+
+
+              if (pinmode[x] == "OUT" && pinsignaltype[x] == "PWM") {
+                int PWMdegerint = PinState[x].toInt();
+                Outpwm(pinname[x], PWMdegerint);
+              }
+
+              if (pinmode[x] == "OUT" && pinsignaltype[x] == "SER") {
+                int PWMdegerint = PinState[x].toInt();
+                myservo[x].write(PWMdegerint);
+              }
+              if(PinState[x]!=ePinState[x])programrun();
+            }
+
+            programrun();
+
+
+
+
+
+
+
+
 
 
 
@@ -1047,10 +1095,8 @@ if (Menu == 0) {
             if(fben==1)xilent.println("<form action=\"/firebaseset?fireb=Off\" method=\"POST\"><input type=\"submit\" value=\"FB Kapat\"></form>");
             if(fben==0)xilent.println("<form action=\"/firebaseset?fireb=On\" method=\"POST\"><input type=\"submit\" value=\"FB Aç\"></form>");
 
-            xilent.println("<br><br>");
-int gonderdimbekleint=(((int)gonderdimbekle/100)/10);
-            if(gonderdimbekleint>0) xilent.println("İki gönderme arasında 5 saniye bekle <br>" + (String)(gonderdimbekleint) + " saniye sonra yenile.<br>" );
-
+            xilent.println("<br>");
+            xilent.println("<label style='font-size: 10px;'>"+progmsg+"</label>");
             int pindolusay = -1;
             for (int m = 9; m > 0; m--) {
               if (pinname[m] != "") {
@@ -1083,13 +1129,13 @@ int gonderdimbekleint=(((int)gonderdimbekle/100)/10);
                   if (PinState[x] == "") PinState[x] = "0";  //                    v--- " + pinlabel[x] + " [" +  pinname[x] + "]= " + PinState[x] + "
 
                   if (PinState[x] == "0") {  //                    v--- " + pinlabel[x] + " [" +  pinname[x] + "]= " + PinState[x] + "
-                    if(gonderdimbekleint>0) xilent.println(" -0-");
-                    else xilent.println("<a href=\"/" + pinname[x] + "/on\"><button class=\"button butoff\">-0-</button></a>");
+                    xilent.println("<a href=\"/" + pinname[x] + "/on\"><button class=\"button butoff\">-0-</button></a>");
+                    if(high_low_invert==true) xilent.println( " Çıkış [1] <label style='font-size: 10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label>");
                   }
 
                   if (PinState[x] == "1") {
-                    if(gonderdimbekleint>0) xilent.println(" -1-");
-                    else xilent.println("<a href=\"/" + pinname[x] + "/off\"><button class=\"button button\">-1-</button></a>");
+                    xilent.println("<a href=\"/" + pinname[x] + "/off\"><button class=\"button button\">-1-</button></a>");
+                    if(high_low_invert==true) xilent.println( " Çıkış [0] <label style='font-size: 10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label>");
                   }
                 }
 
@@ -1359,36 +1405,6 @@ if (uri.indexOf("?") > 0) {
 
 
 
-
-
-
-
-            for (int x = 0; x < sizeof(Pin) + 1; x++) {
-
-              if (pinmode[x] == "OUT" & pinsignaltype[x] == "DIG") {
-                if (PinState[x] == "0.00" || PinState[x] == "0" || PinState[x] == "LOW" || PinState[x] == "OFF") {
-                  if (high_low_invert==false) digitalWrite(Pin[x], LOW);
-                  else digitalWrite(Pin[x], HIGH);
-                }
-
-                if (PinState[x] == "1.00" || PinState[x] == "1" || PinState[x] == "HIGH" || PinState[x] == "ON") {
-                  if (high_low_invert==false) digitalWrite(Pin[x], HIGH);
-                  else digitalWrite(Pin[x], LOW);
-                }
-              }
-
-
-              if (pinmode[x] == "OUT" && pinsignaltype[x] == "PWM") {
-                int PWMdegerint = PinState[x].toInt();
-                Outpwm(pinname[x], PWMdegerint);
-              }
-
-              if (pinmode[x] == "OUT" && pinsignaltype[x] == "SER") {
-                int PWMdegerint = PinState[x].toInt();
-                myservo[x].write(PWMdegerint);
-              }
-            }
-
           }
 
 
@@ -1412,13 +1428,9 @@ if (uri.indexOf("?") > 0) {
 
 
           Serial.println("xilent discon.");
-
               xilent.println("HTTP/1.1 200 OK");
-              xilent.println("Content-type:text/html");
-              xilent.println("Connection: close");
-              xilent.println();
               xilent.abort();
-          logintimeout = logintimeoutmax;
+        //  logintimeout = logintimeoutmax;
 
     //xilent.abort();
     //xilent.stop();

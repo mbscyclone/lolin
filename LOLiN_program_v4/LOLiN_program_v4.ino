@@ -60,7 +60,6 @@ String errorlog;
 int CHZz;
 bool psco;
 bool psci;
-int gonderdimbekle;
 
 unsigned long reConnectsayac=millis();
 unsigned long fbreConnetsayac=millis();
@@ -102,26 +101,25 @@ String creator;
 String esphostnameOnek = "";
 String esphostname = "esp-bos";
 bool high_low_invert = false;
-
+String progmsg;
 unsigned int zamanfark;
 
-
-String ssid = "Zyxel";
-String pass = "12345678";
+String ssid = "";
+String pass = "";
 
 int rescanwifi = 0;
 
 
-int aut = 0;
-int autcode;
-int logintimeout;
-int logintimeoutmax=240000;
-String capt;
-String unme="admin";
-String pwrd="1234";
+//int aut = 0;
+//int autcode;
+//int logintimeout;
+//int logintimeoutmax=240000;
+//String capt;
+//String unme="admin";
+//String pwrd="1234";
+
+
 int sayfayenile=0;
-
-
 int Pin[10];
 int pinsayisi=10;
 // pin Adı|pinmode|pin baslangic degeri|pin değeri|pin degerleri|Pin label"
@@ -143,12 +141,10 @@ int dhtsayac = 0;
 String tempstr="";
 String humstr="";
 
-Servo myservo[10];
-
+Servo myservo[9];
 
 String pinayar;
 String Program;
-String olay="a";
 
 
 //DHT dht(DHTPIN, DHTTYPE);
@@ -165,7 +161,8 @@ File dosya;
 
 
 String erlog="";
-int erlogsatir=0;
+String perlog="";
+//int erlogsatir=0;
 String programdata;
 
 
@@ -187,7 +184,7 @@ String fberror="";
 
 
 
-String mylocalip;
+
 
 
 #include <ESP8266WebServer.h>
@@ -343,19 +340,9 @@ void dosyaYazpinayar(){
   dosya.close();
   dosyaokufbyol();
   if(Firebase_ready) fbpinayarlariyaz();
-  //fbpinstateleriyaz();
+
   setup2();
 
-  //ESP.reset();
-
-//  IPAddress lip = WiFi.localIP(); // rastgele zamanda göndermek için sayı
-//  String gvs=String(lip[3]); // rastgele zamanda göndermek için sayı
-//  int gv= gvs.toInt(); // rastgele zamanda göndermek için sayı
-//delay(random(esphostname.length(),esphostname.length()+100)); // rastgele zamanda göndermek için sayı
-//  olay="a";
-//  chgstate=true;
-  
-  // httpgonder();
 }
 
 
@@ -672,14 +659,6 @@ void UservePasskayitlimi(){
 
 
 ///// EEPROM İŞLEMLERİ BAŞLANGICI /////////////////////////
-int datavar = 0;
-
-
-
-
-
-
-
 
 
 
@@ -732,7 +711,7 @@ void espLolin() {
 }
 
 
-int ifcondition=0;
+
 // epromlu versiyonda eprom cleareprom
 /*
 void cleareprom() {
@@ -887,7 +866,7 @@ bool testWifi(void) {
     return false;
   }
   int c1 = 0;
-  Serial.println("Waiting>connecting Wifi");
+  Serial.println("Con Wifi");
   //display.drawBitmap(0, 0,  Lan_off_logo8x16_glcd_bmp, 16, 8, 1);
   //display.println();
   //display.println("Modeme");
@@ -908,7 +887,7 @@ bool testWifi(void) {
     serin();
   }
   Serial.println("");
-  Serial.println("Connect timeout,open AP");
+  Serial.println("ConWifi timeout,open AP");
   return false;
 }
 
@@ -990,20 +969,20 @@ void connectWifi(void) {
   //delay(1000);
   
   if (testWifi()) {
-    Serial.println("Succesfully Connected!!!");
+    Serial.println("Connected!!!");
     Serial.println(WiFi.localIP());
     Serial.println(WiFi.gatewayIP());
-    WiFi.softAP(esphostname, "bebedede14");  // bağlanınca ap kalksın için // koyabiliriz.
+    WiFi.softAP(esphostname, "12345678");  // bağlanınca ap kalksın için // koyabiliriz.
 
   IPAddress lip = WiFi.localIP();
-  mylocalip = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
+  String mylocalip = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
 
     //buzzercal(2000, 3); delay(100);
     //buzzercal(3000, 2); delay(10);
   } else {
 
     WiFi.hostname(esphostname);
-    Serial.println("Turning the HotSpot On");
+    Serial.println("HotSpot On");
     //                                wifiscan();
     //                                lookAP();// S etup HotSpot
     WiFi.softAP("Esp01-bos-v3", "12345678");
@@ -1016,8 +995,6 @@ void connectWifi(void) {
   }
 
   //firebaseRealtime.begin(FIREBASE_REALTIME_URL, FIREBASE_REALTIME_SECRET);
-
-
 }
 
 
@@ -1206,7 +1183,8 @@ erlog="";
   dosya = LittleFS.open("/program.txt", "w+");
   dosya.print(programdata);
   dosya.close();
-
+  dosyaOkupinayar();
+  programrun();
   setup2();
   //ESP.reset();
 
@@ -1221,6 +1199,9 @@ erlog="";
 
 
 
+
+void Karakterduzelt(){
+
 int yakinOlaninkoordinati=0;
 int yazilacakkarakterno;
 String yakinOlan="";
@@ -1228,7 +1209,7 @@ String yakinOlan="";
 String karakter[38];
 String yerinegec[38];
 
-void Karakterduzelt(){
+
    karakter[0] ="%20"; //  :boşluk actionadresi icinde iken
    yerinegec[0] = " ";
  karakter[1] ="+";   //    :boşluk databloğu içinde iken
@@ -1459,7 +1440,6 @@ if (String(lip[0]) != "0" && fben>0 && DATABASE_URL !="" && API_KEY != "" && USE
     app.getApp<RealtimeDatabase>(Database);
 
     Database.url(DATABASE_URL);
-
   }
 
 }
@@ -1501,7 +1481,6 @@ if(webstart>2){
   otaloop();
   app.loop();
 
-  htpcl();
 
 server.handleClient();
 MDNS.update();
@@ -1559,23 +1538,21 @@ if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben>0){
 }
      //if(header=="") 
      zamanfark +=1;
+    //Serial.println(zamanfark);
+  
+  if (zamanfark > 4100)zamanfark= 1;
 
+  if(zamanfark>500 && zamanfark<4072)  htpcl();
+    if(zamanfark>3950 && zamanfark<3955){zamanfark=3960;programrun();}
+  if(zamanfark>3959 && zamanfark<3965){zamanfark=3970;updatesayac();}
 
-            IPAddress lip = WiFi.localIP();
-            String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
+  //if(zamanfark>3950 && zamanfark<3955){zamanfark=3960;updatesayac();}
+  //if(zamanfark>3960 && zamanfark<3965){zamanfark=3970;programrun();}
+  
 
-
-        if (zamanfark > 3500 || zamanfark == 0)
-        {
-          zamanfark=1;
-        }
-
-
-        if (zamanfark > 2950 && zamanfark < 3000)
-        {
-            zamanfark=3001;
-            programrun();
-            if (WiFi.status()==WL_CONNECTED && String(lip[0]) != "0" && fben>0 && DATABASE_URL !="" && API_KEY != "" && USER_EMAIL != "" && USER_PASSWORD != "")
+        if (zamanfark > 4082 && zamanfark < 4100)
+        {  zamanfark= 4100;
+            if (WiFi.status()==WL_CONNECTED && fben>0 && DATABASE_URL !="" && API_KEY != "" && USER_EMAIL != "" && USER_PASSWORD != "")
             {
               if (Firebase_ready)fbsayacoku();
             }
@@ -1605,6 +1582,7 @@ if(WiFi.status() != WL_CONNECTED)
   }
 }
 
+/*
   if(aut==1 & logintimeout>0){
     // delay 4 ve 60 saniye için 60000 / a;
     logintimeout-= 4;
@@ -1612,7 +1590,7 @@ if(WiFi.status() != WL_CONNECTED)
   if(logintimeout<=0)aut=0;
 
 aut=1; // silinecek
-
+*/
 
   if(say>880){
     if(say==881){
@@ -1638,7 +1616,7 @@ aut=1; // silinecek
   {
     say+=1;
   }
-  updatesayac();
+
 }
 
 
@@ -1827,6 +1805,7 @@ Serial.print("pingirdiartisilici:  >>>  "); Serial.println(pingirdi);
 
 
 
+String Karakterduzeltfunc(String gelent){
 
 String gelentt;
 String gidens;
@@ -1836,7 +1815,9 @@ String sdf2;
 int yuzdemi;
 int artimi;
 
-String Karakterduzeltfunc(String gelent){
+String karakter[38];
+String yerinegec[38];
+
  karakter[0] ="+";   //    :boşluk databloğu içinde iken
           yerinegec[0] = " ";
  karakter[1] ="%20"; //  :boşluk actionadresi icinde iken
@@ -1999,12 +1980,12 @@ gidens="";
      }
 
       gelentt="";
-      String sdf="";
+      sdf="";
 
       String gidenrn=gidentt;
       gidentt="";
       //Serial.println(gidens);
-      String gidens="";
+      gidens="";
       Serial.println(gidenrn);
 
     for(int x=0;x<gidenrn.length()+1;x++)
