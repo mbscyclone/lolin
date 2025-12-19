@@ -543,7 +543,7 @@ dosyaokufburl();dosyaokufbapi();dosyaokufbyol();dosyaokufbusername();dosyaokufbu
 
 if(fben==1 && DATABASE_URL !="" && API_KEY != "" && USER_EMAIL != "" && USER_PASSWORD != "")
 {
-  errstring ="Ok";
+  errstring ="Firebase Ayarları yapılmış.";
 }
 
 // autocomplete=\"off\"
@@ -590,7 +590,7 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
               
 
 ////////
-
+          if(DATABASE_URL !="" && API_KEY != "" && USER_EMAIL != "" && USER_PASSWORD != ""){
               xilent.println("<form action=\"/firebaseset\"><label for=\"option\">Firebase protokolu acilsin mi?:</label><select id=\"fireb\" name=\"fireb\" ");
 
               xilent.println(">");
@@ -624,7 +624,7 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
 
               xilent.println(">Acik</ option>");
               xilent.println("</select><input type=\"submit\" value=\"Submit\"></form>");
-
+          }
 ////////
 
 

@@ -52,7 +52,7 @@ String  USER_PASSWORD = ""; // "bebedede14";
 
 
 
-
+int fbresulsay=0;
 
 
 
@@ -1144,6 +1144,7 @@ void dosyaOkuprogram(){
           //Serial.println("gecicipinayar v ");
           //Serial.println(gecicipinayar);
           dosya.close();
+          if(programdata.indexOf("%0D")>-1)programdata="";
   }else{
     programdata=" \n";
   }
@@ -1416,6 +1417,7 @@ void connectfb()
 //dosyaokufben();
 
   if(fben==1){
+  fbresulsay=0;
   Firebase_ready=true;
   dosyaokufburl();
   dosyaokufbapi();
@@ -1424,7 +1426,7 @@ void connectfb()
   dosyaokufbuserpass();
   
             IPAddress lip = WiFi.localIP();
-if (String(lip[0]) != "0" && fben>0 && DATABASE_URL !="" && API_KEY != "" && USER_EMAIL != "" && USER_PASSWORD != "")
+if (WiFi.status()==WL_CONNECTED)
   {
     UserAuth user_auth(API_KEY, USER_EMAIL, USER_PASSWORD, 3000 /* expire period in seconds (<3600) */);
     Firebase.printf("Firebase Client v%s\n", FIREBASE_CLIENT_VERSION);
@@ -1525,20 +1527,11 @@ MDNS.update();
   }
 
 
-if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben>0){
-  if(millis()-fbreConnetsayac>60000)
-  {
-    fbreConnetsayac=millis();
-    fben=1;
-    dosyayazfben();
+if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben==1){
     connectfb();
-  }
-
-//delay(1);
 }
-     //if(header=="") 
+
      zamanfark +=1;
-    //Serial.println(zamanfark);
   
   if (zamanfark > 4100)zamanfark= 1;
 
@@ -1552,16 +1545,11 @@ if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben>0){
 
         if (zamanfark > 4082 && zamanfark < 4100)
         {  zamanfark= 4100;
-            if (WiFi.status()==WL_CONNECTED && fben>0 && DATABASE_URL !="" && API_KEY != "" && USER_EMAIL != "" && USER_PASSWORD != "")
+            if (WiFi.status()==WL_CONNECTED && fben==1)
             {
               if (Firebase_ready)fbsayacoku();
             }
         
-          if(!Firebase_ready)
-          {
-            fberror="Firebase not ready";
-            if(fben>1 && fben<5 && WiFi.status()==!WL_CONNECTED)fberror="Firebase Ayarları hatalı. Yada internet erişimi yok. <br> Usb portundan Cihazı bilgisayara bağlayın, COM port seçin (115200 baud hızında) veri okuyun. <br> ESP resetledikten sonra Seri porttan gelen verilerle hatayı görün.";
-          }
         }
 
 

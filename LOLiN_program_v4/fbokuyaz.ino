@@ -1,6 +1,6 @@
 int fbsayac=0;
 void fbsayacoku()
-{
+{  if(fben==0)return;
 
                       String getpath="/" + YOL + "/r/"+esphostname;
 //                    String resul=Firebase.RTDB.getString(&fbdo, getpath) ? fbdo.to<const char *>() : fbdo.errorReason().c_str();
@@ -10,8 +10,8 @@ Serial.println("Get str." + resul);
 
                           if(resul.indexOf("not connected")>-1)
                           {
-                            httpserver.begin();
-                            connectfb();
+                            if(fbresulsay>20)Firebase_ready=false;
+                            else fbresulsay+=1;
                           }
 
                           if(resul.indexOf("path not exist")>-1 || resul=="null")
@@ -20,6 +20,13 @@ Serial.println("Get str." + resul);
                           }
                           else
                           {
+                            Serial.println(fbresulsay);
+                            if(resul=="" || resul=="null"){
+                                if(fbresulsay>20)Firebase_ready=false;
+                                else fbresulsay+=1;
+                            }
+
+
                             if(resul=="9")fbpinstatelerioku();
                             if(psco==true || psci==true) fbpinstateleriyaz();
                           }
