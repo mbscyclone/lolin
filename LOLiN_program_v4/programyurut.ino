@@ -1,7 +1,3 @@
-String satirp[100];
-String degis[80];
-String degdeg[80];
-// 0-10  PİN     11-30 bool    31-50 bool sonuç  51-70 degiskenler 71-80  FBden gonderilecek bilgi
 
 int degisecekno = -10000;
 
@@ -20,7 +16,7 @@ void programrun() {
     degis[i] = pinname[i];
     degdeg[i] = PinState[i];
   }
-  for (int i = 11; i < 81; i++) {
+  for (int i = 11; i < 71; i++) {
     degdeg[i] = "";
     degis[i] = "";
   }
@@ -34,9 +30,10 @@ void programrun() {
   for (int q = 1; q < 100; q++) {
     satirsayisip = q;
     if (ptm.length() < 3) break;
+    if (ptm.indexOf("\n")>4 && ptm.indexOf("\n")<6) break;
     satirp[q] = ptm.substring(0, ptm.indexOf("\n"));
-    satirislem();
     ptm = ptm.substring(ptm.indexOf("\n") + 1, ptm.length());
+    satirislem();
     //Serial.println("satirp "); Serial.println(satirp[q]);
 
     if (perlog != "") return;
@@ -48,19 +45,49 @@ void programrun() {
     //Serial.print(pinname[sta] + " pinstate:");Serial.println(PinStatetmp[sta]);
   }
   ////////////////////////////////////////////////////////
+
+// fbde başka cihaza gonderilecek varmı bak ////////////////
+
+
+
+
+
+////////////////////////////////////////////////////////////
 }
 
 void satirislem() {
   String satiruppercase = satirp[satirsayisip];
   satiruppercase.toUpperCase();
-  //Serial.println(satiruppercase);
+  Serial.println(satiruppercase);
   // if için ///////////////////////////////////////////
 
   if (satiruppercase.indexOf("//") == 0) return;
+
+  if (satiruppercase.indexOf("FBC ") == 0) firebasecihaztanitimi();
   if (satiruppercase.indexOf("IF") == 0) gotoif();
   if (satiruppercase.indexOf("BOOL") == 0) gotobool();
 
   // ????????????????????????????????????????????? sonra ne yaparız bilmem
+}
+
+void firebasecihaztanitimi()
+{
+  Serial.println("FBCihaz tanıtımı");
+  for(int ii=0;ii<11;ii++)
+  {
+      if(satirp[satirsayisip].indexOf("=")>5){
+        if(fbc[ii]=="" || fbc[ii]=="null" || fbc[ii]==satirp[satirsayisip].substring(4,satirp[satirsayisip].indexOf("=")))
+        {
+          String fbcvefbcyol=satirp[satirsayisip]; 
+            fbc[ii]=fbcvefbcyol.substring(4,fbcvefbcyol.indexOf("="));
+            fbcyol[ii]=fbcvefbcyol.substring(fbcvefbcyol.indexOf("=")+1,fbcvefbcyol.indexOf(";"));
+            Serial.print("ii      ");Serial.println(ii);
+            Serial.print("FBcihaz ");Serial.println(fbc[ii]);
+            Serial.print("FBcyol  ");Serial.println(fbcyol[ii]);
+          break;
+        }
+      }else{progmsg+="fbc hatası. fbc fb1=/yol/cihaz; şeklinde olmalı. satır no: " + (String)satirsayisip + " komut: " + satirp[satirsayisip]+"\n";}
+  }
 }
 
 void gotobool() {
@@ -84,7 +111,7 @@ void gotobool() {
   }
 
 
-  for (int j = 11; j < 31; j++)  // bool değişkenler 11-30
+  for (int j = 31; j < 51; j++)  // bool değişkenler 11-30
   {
     if (degis[j] == boolnametmp) {
       degdeg[j] = boolstatetmp;
@@ -170,7 +197,7 @@ void gotoif() {
   aktifpinno = -10000;
 
 
-  for (int pinbul = 0; pinbul < 81; pinbul++) {  //Serial.print("pinname: "); Serial.println(pinname[pinbul]);
+  for (int pinbul = 0; pinbul < 71; pinbul++) {  //Serial.print("pinname: "); Serial.println(pinname[pinbul]);
     if (sol == degis[pinbul]) {
       solstate = degdeg[pinbul];
       aktifpinno = pinbul;
@@ -183,12 +210,14 @@ void gotoif() {
 
   if (perlog != "") return;
 
+  /*
   Serial.println("PARANTEZ İÇİ");
   Serial.print("sol ");
   Serial.print(sol);
   Serial.print("  ");
   Serial.print(sag);
   Serial.println(" sag");
+*/
 
   //Serial.print("op ");Serial.println(op);
 
@@ -215,8 +244,8 @@ void gotoif() {
 
   //PinStatetmp[aktifpinno]=sonucdegeri;
 
-  if (ifsonuc) Serial.println("DOĞRU");
-  else Serial.println("YANLIŞ");
+  //if (ifsonuc) Serial.println("DOĞRU");
+  //else Serial.println("YANLIŞ");
 
   if (ifsonuc == true) ifparantezdisi(satiruppercase, satirsayisip);
 }
@@ -247,13 +276,13 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
   if(yapilacaklar.indexOf("{")>-1)
   {
     int sonsatir=satirsayisip;
-    Serial.print("ptm:");Serial.println(ptm);
+    //Serial.print("ptm:");Serial.println(ptm);
     String tmpsatir = ptm.substring(0, ptm.length());
     String tmpsatirincele=tmpsatir.substring(0, tmpsatir.indexOf("\n"));
-        Serial.print("tmpsatirincele:");Serial.println(tmpsatirincele);
+        //Serial.print("tmpsatirincele:");Serial.println(tmpsatirincele);
     for(int g=satirsayisip;g<100;g++){
       tmpsatirincele = tmpsatir.substring(0, tmpsatir.indexOf("\n"));
-      Serial.print("tmpsatirincele:");Serial.println(tmpsatirincele);
+      //Serial.print("tmpsatirincele:");Serial.println(tmpsatirincele);
       if(tmpsatirincele.indexOf("}")>-1){
         sonsatir=g;
         break;
@@ -265,8 +294,8 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
     tmpsatir.replace("\n","");
    yapilacaklar=tmpsatir.substring(tmpsatir.indexOf("{")+1,tmpsatir.indexOf("}"));
   }
-  Serial.print("yapilacaklar:");   
-  Serial.println(yapilacaklar);
+  //Serial.print("yapilacaklar:");   
+  //Serial.println(yapilacaklar);
   //sonsatir belli;
   
   
@@ -285,10 +314,10 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
       yapilacakis = yapilacaklar.substring(0, yapilacaklar.indexOf(";"));
       yapilacaklar = yapilacaklar.substring(yapilacaklar.indexOf(";") + 1, yapilacaklar.length());
       yapilacaklarislemsayisi = i;
-      Serial.print("yapılacak");
-      Serial.println(yapilacakis);
-      Serial.print("yapilacaklarislemsayisi ");
-      Serial.println(yapilacaklarislemsayisi);
+      //Serial.print("yapılacak");
+      //Serial.println(yapilacakis);
+      //Serial.print("yapilacaklarislemsayisi ");
+      //Serial.println(yapilacaklarislemsayisi);
       // tam burada yapılacak hesabına git
       yap(yapilacakis,yapilacaklarislemsayisi);
       if (yapilacaklar.length() < 3) break;
@@ -302,10 +331,10 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
 
 void yap(String yapilacak,int islemno)
 {
-      Serial.print("yapılacak");
-      Serial.println(yapilacak);
-      Serial.print("işlem no");
-      Serial.println(islemno);
+      //Serial.print("yapılacak  ");
+      //Serial.println(yapilacak);
+      //Serial.print("  işlem no  ");
+      //Serial.println(islemno);
 
     String noktalivirgulekadar = yapilacak;
       String dsol = noktalivirgulekadar.substring(0, noktalivirgulekadar.indexOf("="));
@@ -316,44 +345,45 @@ void yap(String yapilacak,int islemno)
           if (indis < 11) {
             if (dsol == degis[indis]) { 
             degdeg[indis] = dsag;
-            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "\n";
+            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "<br>";
             Serial.print(pinname[indis] + " ------> ");Serial.println(degis[indis]);
             break;
             }
-          } else if (indis >= 11 && indis < 31)  // bool ifade leri tut
+          } else if (indis >= 11 && indis < 31)  // degiskenleri tut
           {
             if (dsol == degis[indis]) { 
             degdeg[indis] = dsag;
-            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "\n";
+            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "<br>";
             //Serial.print(pinname[indis] + " ------> ");Serial.println(degis[indis]);
             break;
             }
-          } else if (indis >= 31 && indis < 51)  // bool sonuçlar çıkacak
+          } else if (indis >= 31 && indis < 51)  // bool degisken
           {
             if (dsol == degis[indis]) { 
             degdeg[indis] = dsag;
-            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "\n";
+            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "<br>";
             //Serial.print(pinname[indis] + " ------> ");Serial.println(degis[indis]);
             break;
             }
-          } else if (indis >= 51 && indis < 71)  // degiskenler
+          } else if (indis >= 51 && indis < 71)  // bool sonuc
           {
             if (dsol == degis[indis]) { 
             degdeg[indis] = dsag;
-            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "\n";
-            //Serial.print(pinname[indis] + " ------> ");Serial.println(degis[indis]);
-            break;
-            }
-          } else if (indis >= 71 && indis < 81)  // FB gonderilecek Başka çihazlara
-          {
-            if (dsol == degis[indis]) { 
-            degdeg[indis] = dsag;
-            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "\n";
+            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "<br>";
             //Serial.print(pinname[indis] + " ------> ");Serial.println(degis[indis]);
             break;
             }
           }
+          
+            if (dsol == fbc[indis]) { 
+            fbtd[indis] = dsag;
+                        efbtd[indis] = dsag;
+            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "<br>";
+            Serial.print(fbcyol[indis] + " ------> ");Serial.println(fbtd[indis]);
+            break;
+            }
 
-          // 0-10  PİN     11-30 bool    31-50 bool sonuç  51-70 degiskenler 71-80  FBden gonderilecek bilgi
+// 0-10  PİN     11-30 degisken    31-50 booldegisken  51-70 boolsonuc
     }
+
   }

@@ -33,6 +33,12 @@ Serial.println("Get str." + resul);
 
 }
 
+void fbbaskacihazagonder()
+{
+  
+}
+
+
 void fbsayacguncelle()
 {
 

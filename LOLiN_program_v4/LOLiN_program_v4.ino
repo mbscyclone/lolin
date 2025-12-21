@@ -146,6 +146,17 @@ Servo myservo[9];
 String pinayar;
 String Program;
 
+// PROGRAM İÇİN ////////////////////////
+String satirp[100];
+String degis[70];
+String degdeg[70];
+String fbc[10]; 
+String fbcyol[10];
+String fbtd[10];
+String efbtd[10];   //FBden gonderilecek bilgi eslikisi 
+// 0-10  PİN     11-30 degisken    31-50 booldegisken  51-70 boolsonuc
+
+////////////////////////////////////////
 
 //DHT dht(DHTPIN, DHTTYPE);
 //DHT DHTA(D8, DHT11);
@@ -1252,7 +1263,8 @@ String yerinegec[38];
 //         - * /  aynı
  karakter[19] ="%21"; //  :!
    yerinegec[19] = "!";
-
+ karakter[20] ="%3A"; //  :!
+   yerinegec[20] = ":";
  
 
 String progtmp = programdata;
@@ -1262,7 +1274,7 @@ String Yazilacakprogramdata;
       yakinOlaninkoordinati=10000;
   for(int y=0;y<1100;y++){
     if(progtmp.length()<1)break;
-    for(int x=0;x<20;x++){
+    for(int x=0;x<21;x++){
     if(progtmp.indexOf(karakter[x])>-1){
         if(yakinOlaninkoordinati > progtmp.indexOf(karakter[x])){
           yakinOlaninkoordinati = progtmp.indexOf(karakter[x]);

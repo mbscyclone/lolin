@@ -1004,7 +1004,7 @@ if (Menu == 0) {
             IPAddress lip = WiFi.localIP();
             String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
 
-            xilent.println("<!DOCTYPE html><html><head><title> ESP8266-Pro.v4  -> " + lipStr + " </title>");
+            xilent.println("<!DOCTYPE html><html><head><title>" + esphostname + "  -> " + lipStr + " - ESP8266-Pro.v4</title>");
 
             xilent.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
             xilent.println("<meta charset=\"UTF-8\">");
@@ -1044,6 +1044,8 @@ if (Menu == 0) {
             xilent.println("<label style='font-size: 10px;'>Sayfayı yenileme için alttaki düğmeyi kullanabilirsiniz</label><br>");
             xilent.println("<table style=\"border:5px solid black;width:00px\"><tr>");
             xilent.println("<td style=\"border:0px solid black;width:90p; align:center; \">");
+            
+            xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
             if(sayfayenile==120)
             xilent.println("<form action=\"/rr120\" method=\"POST\"><input type=\"submit\" value=\"120s\" style='width:50px;background-color:yellow;'></form></td>");
             else
@@ -1096,8 +1098,6 @@ if (Menu == 0) {
             if(fben==1)xilent.println("<form action=\"/firebaseset?fireb=Off\" method=\"POST\"><input type=\"submit\" value=\"FB Kapat\"></form>");
             if(fben==0)xilent.println("<form action=\"/firebaseset?fireb=On\" method=\"POST\"><input type=\"submit\" value=\"FB Aç\"></form>");
 
-            xilent.println("<br>");
-            xilent.println("<label style='font-size: 10px;'>"+progmsg+"</label>");
             int pindolusay = -1;
             for (int m = 9; m > 0; m--) {
               if (pinname[m] != "") {
@@ -1131,12 +1131,12 @@ if (Menu == 0) {
 
                   if (PinState[x] == "0") {  //                    v--- " + pinlabel[x] + " [" +  pinname[x] + "]= " + PinState[x] + "
                     xilent.println("<a href=\"/" + pinname[x] + "/on\"><button class=\"button butoff\">-0-</button></a>");
-                    if(high_low_invert==true) xilent.println( " Çıkış [1] <label style='font-size: 10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label>");
+                    if(high_low_invert==true) xilent.println( " Çıkış [1]");
                   }
 
                   if (PinState[x] == "1") {
                     xilent.println("<a href=\"/" + pinname[x] + "/off\"><button class=\"button button\">-1-</button></a>");
-                    if(high_low_invert==true) xilent.println( " Çıkış [0] <label style='font-size: 10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label>");
+                    if(high_low_invert==true) xilent.println( " Çıkış [0]");
                   }
                 }
 
@@ -1338,10 +1338,14 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
               }
             }
 
-              xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
-
-            xilent.println("<br>" + errorlog + "<br><p><a href=\"/Menu1\"><button class=\"button butayr\">Ayarlar</button></a></p>");
-
+            xilent.println("<hr style=\"height:5px;border-width:1;color:black;background-color:black\">");
+            xilent.println("<div align=\"left\">");
+            xilent.println("<table><td style=\"border:2px solid black;width:400p; align:center; \">");
+            if(high_low_invert==true) xilent.println("<label style='font-size: 10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label><br>");
+            if(progmsg!="")xilent.println("<label style='font-size: 10px;'>"+progmsg+"</label><br>");
+            if(errorlog!="")xilent.println("<br>Hata: "  + errorlog + "<br>");
+            xilent.println("</td></table></div><p><a href=\"/Menu1\"><button class=\"button butayr\">Ayarlar</button></a></p>");
+            
 
 
             // The HTTP response ends with another blank line
