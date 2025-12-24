@@ -4,6 +4,21 @@ void updatesayac()
 {
 pindurumrecyap=false;
 
+        for (int fbg=0;fbg<11;fbg++)
+        {
+          if(fbc[fbg].length()>0)
+          {
+            //Serial.println("fbcyol: " + fbcyol[fbg]);
+            //Serial.println("fbtd[fbg] " + fbtd[fbg] + "     efbtd[fbg]" +efbtd[fbg] );
+            if(fbtd[fbg]!=efbtd[fbg])
+            {
+
+              fbbaskacihazagonder(fbcyol[fbg], fbtd[fbg], fbg);
+            }
+          }
+        }
+
+
         for(int x=0;x<pinsayisi;x++){
 
                         if(pinmode[x]=="OUT" & pinsignaltype[x]=="DIG"){
@@ -156,6 +171,5 @@ pindurumrecyap=false;
               {
                 dosyayazpindurum();
               }
-
     }
 

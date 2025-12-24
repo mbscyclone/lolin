@@ -26,22 +26,78 @@ Serial.println("Get str." + resul);
                                 else fbresulsay+=1;
                             }
 
-
-                            if(resul=="9")fbpinstatelerioku();
+                            if(resul.indexOf("|")>-1){
+                              String rsltt=resul.substring(resul.indexOf("|")+1,resul.length());
+                              resul=resul.substring(0,resul.indexOf("|"));
+                              fbsayacyanioku(rsltt);
+                            if(resul.toInt()==9 || resul.toInt()==19)fbpinstatelerioku();
+                              if(resul.toInt()==10){resul="-1";fbpinstateleriyaz();}
+                              if(resul.toInt()>18) {resul="8";fbpinstateleriyaz();}
+                              }
                             if(psco==true || psci==true) fbpinstateleriyaz();
                           }
 
 }
 
-void fbbaskacihazagonder()
+void fbsayacyanioku(String rsltt)
 {
-  
+                                  String pnm=rsltt.substring(0,rsltt.indexOf(":"));
+                                  String pns=rsltt.substring(rsltt.indexOf(":")+1,rsltt.indexOf(","));
+                                  rsltt = rsltt.substring(rsltt.indexOf(",")+1,rsltt.length());
+                                  //Serial.println(pnm+" "+pns);
+                                  
+                                for(int hh=0;hh<pinsayisi;hh++)
+                                    {
+                                      if(pnm == pinname[hh])
+                                      { 
+                                        if(pinmode[hh]!="INP"){
+                                            
+                                            if(psco==false && pns!=fbPinState[hh])
+                                            {
+                                              PinState[hh] =pns;
+                                              ePinState[hh] = pns;
+                                              fbPinState[hh] = pns;
+                                              pindurumrecyap=true;
+                                            }
+                                        }
+                                        break;
+                                      }
+                                    }
+}
+
+
+void fbbaskacihazagonder(String yol2,String fbdt,int fbg)
+{
+                      String getpath2=yol2;
+//                    String resul=Firebase.RTDB.getString(&fbdo, getpath2) ? fbdo.to<const char *>() : fbdo.errorReason().c_str();
+                      String resul = Database.get<String>(aClient, getpath2);
+                      Serial.println(getpath2 +"  ");
+                      Serial.println("Get str." + resul);
+                          if(resul.indexOf("path not exist")>-1 || resul=="null")
+                          {
+
+                          }
+                          else{
+                            String setpath2=yol2;
+                            String dats2=fbdt;
+                            int sayac=resul.toInt();
+                            if(sayac==9)sayac=19; else sayac=10;
+                            dats2=String(sayac) + "|" + fbdt;
+                            Serial.println("DAAATS: " + dats2);
+                            bool statusz =Database.set<string_t>(aClient, setpath2, string_t(dats2));
+                            if (statusz)
+                                {Serial.println("ok");
+                                efbtd[fbg]=fbtd[fbg];
+                                }
+                            else
+                                Firebase.printf("Error, msg: %s, code: %d\n", aClient.lastError().message().c_str(), aClient.lastError().code());
+                                fbtd[fbg]=efbtd[fbg];
+                          }
 }
 
 
 void fbsayacguncelle()
 {
-
                             String setpath="/" + YOL + "/r/"+esphostname;
                             fbsayac+=1;
                             if(fbsayac>7)fbsayac=0;
