@@ -1,6 +1,6 @@
 int fbsayac=0;
 void fbsayacoku()
-{  if(fben==0)return;
+{
 
                       String getpath="/" + YOL + "/r/"+esphostname;
 //                    String resul=Firebase.RTDB.getString(&fbdo, getpath) ? fbdo.to<const char *>() : fbdo.errorReason().c_str();
@@ -10,22 +10,16 @@ Serial.println("Get str." + resul);
 
                           if(resul.indexOf("not connected")>-1)
                           {
-                            if(fbresulsay>20)Firebase_ready=false;
-                            else fbresulsay+=1;
+                            Serial.println("not connected");
                           }
 
                           if(resul.indexOf("path not exist")>-1 || resul=="null")
                           {
+                            Serial.println("path not exist");
                             fbdataguncelle();
                           }
                           else
                           {
-                            Serial.println(fbresulsay);
-                            if(resul=="" || resul=="null"){
-                                if(fbresulsay>20)Firebase_ready=false;
-                                else fbresulsay+=1;
-                            }
-
                             if(resul.indexOf("|")>-1){
                               String rsltt=resul.substring(resul.indexOf("|")+1,resul.length());
                               resul=resul.substring(0,resul.indexOf("|"));
@@ -41,6 +35,7 @@ Serial.println("Get str." + resul);
 
 void fbsayacyanioku(String rsltt)
 {
+  Serial.println("fbsayacyaniokudayım");
                                   String pnm=rsltt.substring(0,rsltt.indexOf(":"));
                                   String pns=rsltt.substring(rsltt.indexOf(":")+1,rsltt.indexOf(","));
                                   rsltt = rsltt.substring(rsltt.indexOf(",")+1,rsltt.length());
@@ -68,6 +63,11 @@ void fbsayacyanioku(String rsltt)
 
 void fbbaskacihazagonder(String yol2,String fbdt,int fbg)
 {
+                      Serial.print("yol2: ");Serial.println(yol2);
+                      Serial.print("fbdt: ");Serial.println(fbdt);
+                      Serial.print("fbg: ");Serial.println(fbg);
+                      
+                       delay(10);
                       String getpath2=yol2;
 //                    String resul=Firebase.RTDB.getString(&fbdo, getpath2) ? fbdo.to<const char *>() : fbdo.errorReason().c_str();
                       String resul = Database.get<String>(aClient, getpath2);
@@ -75,7 +75,7 @@ void fbbaskacihazagonder(String yol2,String fbdt,int fbg)
                       Serial.println("Get str." + resul);
                           if(resul.indexOf("path not exist")>-1 || resul=="null")
                           {
-
+                                
                           }
                           else{
                             String setpath2=yol2;
@@ -95,9 +95,9 @@ void fbbaskacihazagonder(String yol2,String fbdt,int fbg)
                           }
 }
 
-
 void fbsayacguncelle()
 {
+
                             String setpath="/" + YOL + "/r/"+esphostname;
                             fbsayac+=1;
                             if(fbsayac>7)fbsayac=0;
@@ -124,7 +124,7 @@ void fbdataguncelle()
 
 void fbpinstatelerioku()
 {
-    
+
                     dosyaokufbyol();
                     String getpath="/" + YOL + "/pins/"+esphostname+"pin";
                           //  int str_len = getpath.length() + 1; 
@@ -191,7 +191,6 @@ Serial.println("Get str. resul");
 
 void fbpinayarlarioku()
 {
-
                             // pin ayarlarını yükle
                             String getpath="/" + YOL + "/pays/" + esphostname + "pay";
                             Serial.print("Gpath: " + getpath);
@@ -224,7 +223,6 @@ void fbpinayarlarioku()
 
 void fbpinayarlariyaz()
 {
-
                             // pin ayarlarını yükle
                             String setpath="/" + YOL + "/pays/" + esphostname + "pay";
                             String dats="";
@@ -241,7 +239,6 @@ void fbpinayarlariyaz()
 
 void fbpinstateleriyaz()
 {
-
 
                             String setpath="/" + YOL + "/pins/" + esphostname+ "pin";
                             String dats="";

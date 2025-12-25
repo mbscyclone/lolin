@@ -4,20 +4,20 @@ void updatesayac()
 {
 pindurumrecyap=false;
 
-        for (int fbg=0;fbg<11;fbg++)
-        {
-          if(fbc[fbg].length()>0)
-          {
-            //Serial.println("fbcyol: " + fbcyol[fbg]);
-            //Serial.println("fbtd[fbg] " + fbtd[fbg] + "     efbtd[fbg]" +efbtd[fbg] );
-            if(fbtd[fbg]!=efbtd[fbg])
-            {
-
-              fbbaskacihazagonder(fbcyol[fbg], fbtd[fbg], fbg);
-            }
-          }
+        if(Firebase_ready==true){
+                for (int fbg=0;fbg<11;fbg++)
+                {
+                  if(fbc[fbg].length()>0)
+                  {
+                    Serial.println("fbcyol: " + fbcyol[fbg]);
+                    Serial.println("fbtd[fbg] " + fbtd[fbg] + "     efbtd[fbg]" +efbtd[fbg] );
+                    if(fbtd[fbg]!=efbtd[fbg])
+                    {
+                      fbbaskacihazagonder(fbcyol[fbg], fbtd[fbg], fbg);
+                    }
+                  }
+                }
         }
-
 
         for(int x=0;x<pinsayisi;x++){
 
@@ -57,7 +57,7 @@ pindurumrecyap=false;
 
                       if(pinmode[x]=="INP" && pinsignaltype[x].indexOf("DHT")==0)
                       { dhtsayac+=1; 
-                         if(dhtsayac>2){
+                         if(dhtsayac>5){
 
                           Serial.println("DHTDONGUSU"); 
                               dhtsayac=0;
@@ -71,11 +71,9 @@ pindurumrecyap=false;
 
                               t = DHTA.readTemperature();  // boş iken  celcius // f = DHTA.readTemperature(true); fahrenayt 
                               delay(50);
-                              zamanfark+=50;
 
                               h = DHTA.readHumidity();
                               delay(50);
-                              zamanfark+=50;
 
                               // Check if any reads failed and exit early (to try again).
                               if (isnan(h) || isnan(t))  // || isnan(f)

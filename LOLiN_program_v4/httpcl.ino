@@ -1,6 +1,3 @@
-
-String headerydk;
-
 void httpheader(WiFiClient xilent) {
   xilent.println("<!DOCTYPE HTML>\r\n<html>");
   xilent.println("<head><meta name=\"viewport\" xo=\"width=device-width, initial-scale=1\">");
@@ -48,33 +45,21 @@ void htpcl() {
       if (xilent.available()) {  // if there's bytes to read from the xilent,
       
       //zamanfark=1;
-      
+      for(int q=0;q<2000;q++){
         char c = xilent.read();  // read a byte, then
-        //Serial.print(c);                    // print it out the serial monitor
-            Serial.print(c);
-        if (c != '\r' || c != '\n') { header += c; }
-
-        if (c == '\n') {
+                
+        //Serial.print((int)c);
+        if(int(c)==255)break;
+                Serial.print(c);  // print it out the serial monitor
+        header += c; 
+      }
+        if(header.indexOf("\n")>-1)
+         {
+          header=header.substring(0,header.indexOf("\n"));
             programrun();
-reConnectsayac=millis();
+            reConnectsayac=millis();
 
-           Serial.println(" header: ");
-           Serial.println(header);
-          if(header.indexOf("favicon")>-1)return;
 
-          if (header == headerOld) {
-            Serial.println("aynı");
-            if (headerydk == headerOld) {
-              Serial.println("bu da aynı");
-              return;
-            } else {
-              headerydk = headerOld;
-            }
-Serial.println(header);
-
-          } else {
-            headerOld = header;
-          }
 
 IPAddress lip = WiFi.localIP();
 String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
@@ -174,8 +159,6 @@ String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '
 
           if (header.indexOf("/Menu0") > -1) Menu = 0;
           if (header.indexOf("/Menu1") > -1) Menu = 1;
-
-
 
 if (Menu == 1) {
 
@@ -703,6 +686,7 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
             xilent.println("<br><br><br><br><br>coded by " + creator + ". ESP control  (ver:04__14.12.2025)<br><br><br>");
             xilent.println();
             /////xilent.abort();;
+
 }
 
 if (Menu == 0) {
@@ -1403,12 +1387,10 @@ if (uri.indexOf("?") > 0) {
 
 
           xilent.println("</body></html>");
-                        xilent.println();
+          xilent.println();
 
             //xilent.flush();
             //xilent.close();
-
-
 
           }
 
@@ -1430,19 +1412,13 @@ if (uri.indexOf("?") > 0) {
                 }
               }
 
-
-
-          Serial.println("xilent discon.");
-              xilent.println("HTTP/1.1 200 OK");
-              xilent.abort();
         //  logintimeout = logintimeoutmax;
 
     //xilent.abort();
     //xilent.stop();
-
+              delay(1);
         }
       }
     }
   }
-
 }

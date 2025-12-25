@@ -48,7 +48,7 @@ String YOL="";
 String USER_EMAIL = ""; // "asadafag@gmail.com";
 String  USER_PASSWORD = ""; // "bebedede14";
 
-
+String authdebug;
 
 
 
@@ -148,8 +148,8 @@ String Program;
 
 // PROGRAM İÇİN ////////////////////////
 String satirp[100];
-String degis[70];
-String degdeg[70];
+String degis[80];
+String degdeg[80];
 String fbc[10]; 
 String fbcyol[10];
 String fbtd[10];
@@ -197,7 +197,7 @@ String fberror="";
 
 
 
-
+/*
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 ESP8266WebServer server(8080);
@@ -224,7 +224,7 @@ void handleNotFound() {
   server.send(404, "text/plain", message);
 }
 
-
+*/
 
 
 
@@ -758,7 +758,9 @@ void cleareprom() {
 void setup2(){
 dosyaOkuprogram();
 String progtmp=programdata; progtmp.toUpperCase();
-if(progtmp.indexOf("PIN_INVERT;") >-1 ) high_low_invert=true; else high_low_invert=false;
+if(progtmp.indexOf("//PIN_INVERT;")<0)
+  if(progtmp.indexOf("PIN_INVERT;") >-1) high_low_invert=true; else high_low_invert=false;
+
 //Serial.println("sorunyok");
 //Serial.println("sorunyok2");
         //DHT DHTA(D7, DHT11);
@@ -819,7 +821,7 @@ for (int c=0;c<pinsayisi;c++){
 
 // servo ise /////////////////////////////////////////////////////////////////
 // myservo.attach(2);
-// loopa 
+// lo opa 
     //myservo.write(pos);  // tell servo to go to position in variable 'pos'
     //delay(15);           // waits 15ms for the servo to reach the position
 ////////////////////////////////////////////////////////////////////////////////
@@ -834,7 +836,7 @@ for (int c=0;c<pinsayisi;c++){
 
 // DHT dht(DHTPIN, DHTTYPE);
 
-// loopa
+// lo opa
 /*
   float h = dht.readHumidity();
   // Read temperature as Celsius (the default)
@@ -861,9 +863,6 @@ for (int c=0;c<pinsayisi;c++){
 
 
 
-
-String headerOld;
-int headerclear = 0;
 
 
 int Menu=0;
@@ -1164,6 +1163,8 @@ void dosyaOkuprogram(){
 
 void dosyaYazprogram()
 {
+  Karakterduzelt();
+  String programdatatm=programdata;
   reConnectsayac=millis();
   for(int x=0 ; x < floatdegiskenismisayisi+1 ; x++){
   floatdegiskenismi[x]="";
@@ -1184,7 +1185,7 @@ for(int x=0 ; x < pinsayisi ; x++){
 
 
 
-Karakterduzelt();
+
 //Serial.print("Yazilacakprogramdata:");
 erlog="";
 
@@ -1245,7 +1246,7 @@ String yerinegec[38];
  karakter[10] ="%3F"; //  :?
    yerinegec[10] = "?";
  karakter[11] ="%0D%0A"; //: \r\n  (enter ve satır sonu) karakterleri
-   yerinegec[11] = "\r\n";
+   yerinegec[11] = "\n";
  karakter[12] ="%3E"; //  :>
    yerinegec[12] = ">";
  karakter[13] ="%3C"; //  :<
@@ -1298,10 +1299,7 @@ String Yazilacakprogramdata;
 
     //Yazilacakprogramdata.toUpperCase();
     programdata=Yazilacakprogramdata.substring(0,Yazilacakprogramdata.length()-2);
-
     if(programdata.indexOf(" HTTP/1.1")>-1)programdata = programdata.substring(0,programdata.indexOf(" HTTP/1.1")+1);
-    
-
 
 }
 
@@ -1354,8 +1352,10 @@ void setup() {
   dosyaOkupinayar();
   //dosyaokupindurum();
   dosyaOkuprogram();
-  if(programdata.indexOf("PIN_INVERT;")>-1)
-  { 
+
+  if(programdata.indexOf("//PIN_INVERT;")<0)
+   if(programdata.indexOf("PIN_INVERT;")>-1)
+   { 
     high_low_invert=true;
 
     for(int x=0;x<pinsayisi+1;x++)
@@ -1401,15 +1401,13 @@ void setup() {
       Serial.println("Web server Lunched.");
   }
 
+/*
   if (MDNS.begin("esp8266")) { Serial.println("MDNS responder started"); }
-
   server.on("/", handleRoot);
-
   server.onNotFound(handleNotFound);
-
     server.begin();
   Serial.println("8080 server started");
-
+*/
 //delay(10);
 
 //Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
@@ -1429,8 +1427,6 @@ void connectfb()
 //dosyaokufben();
 
   if(fben==1){
-  fbresulsay=0;
-  Firebase_ready=true;
   dosyaokufburl();
   dosyaokufbapi();
   dosyaokufbyol();
@@ -1446,13 +1442,11 @@ if (WiFi.status()==WL_CONNECTED)
     set_ssl_client_insecure_and_buffer(ssl_client);
 
     Serial.println("Initializing app...");
-    initializeApp(aClient, app, getAuth(user_auth), auth_debug_print, "🔐 authTask");
-
+  //initializeApp(aClient, app, getAuth(user_auth), auth_debug_print, "🔐 authTask");
+    initializeApp(aClient, app, getAuth(user_auth), auth_debug , "🔐 authTask");
     // Or intialize the app and wait.
     // initializeApp(aClient, app, getAuth(user_auth), 120 * 1000, auth_debug_print);
-
     app.getApp<RealtimeDatabase>(Database);
-
     Database.url(DATABASE_URL);
   }
 
@@ -1465,18 +1459,16 @@ void Programtakip(String progdata);
 
 
 
-
 uint8_t serstat;
 
 int dhtokusayac=0;
 void loop() {
 
 //Serial.println(httpserver.status());
-
-
 if(webstart>2){
   webstart+=1;
-  if(webstart>1000)
+  zamanfark=1;
+  if(webstart>6000)
   {
     if(Firebase_ready)
     {
@@ -1493,11 +1485,13 @@ if(webstart>2){
     }
   // put your main code here, to run repeatedly:
   otaloop();
+  htpcl();
   app.loop();
 
-
+/*
 server.handleClient();
 MDNS.update();
+*/
 
   if (rescanwifi == 1) {
     wifiscan();
@@ -1531,37 +1525,39 @@ MDNS.update();
 
 
 
-  headerclear++;
-  if (headerclear > 500) {
-    headerclear = 0;
-    headerOld = "";
-    header="";
-  }
 
-
+if(authdebug=="10")Firebase_ready=true; else Firebase_ready=false;
 if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben==1){
+
+  fbresulsay+=1;
+  if(fbresulsay>100000)
+  {
+    fbresulsay=0;
     connectfb();
+  }
 }
 
      zamanfark +=1;
   
-  if (zamanfark > 4100)zamanfark= 1;
+  if (zamanfark > 7100) zamanfark= 1;
 
-  if(zamanfark>500 && zamanfark<4072)  htpcl();
-    if(zamanfark>3950 && zamanfark<3955){zamanfark=3960;programrun();}
-  if(zamanfark>3959 && zamanfark<3965){zamanfark=3970;updatesayac();}
+  if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
+  if(zamanfark>5057 && zamanfark<5060){zamanfark=5061;updatesayac();}
 
   //if(zamanfark>3950 && zamanfark<3955){zamanfark=3960;updatesayac();}
   //if(zamanfark>3960 && zamanfark<3965){zamanfark=3970;programrun();}
   
 
-        if (zamanfark > 4082 && zamanfark < 4100)
-        {  zamanfark= 4100;
-            if (WiFi.status()==WL_CONNECTED && fben==1)
+        if (zamanfark >= 7072 && zamanfark < 7080)
+        {  zamanfark= 7082;
+            Serial.print("auth debug code:");Serial.println(authdebug);
+            if(authdebug.toInt()==10)Firebase_ready=true; else Firebase_ready=false;
+            Serial.println(fben);
+            Serial.println(Firebase_ready);
+            if(Firebase_ready==true)
             {
-              if (Firebase_ready)fbsayacoku();
+              fbsayacoku();
             }
-        
         }
 
 
@@ -1795,6 +1791,8 @@ Serial.print("pingirdiartisilici:  >>>  "); Serial.println(pingirdi);
     }
     */
      // pinayar=yazilacakpinayar;
+
+     
      pinayar=pingirdi;
       pinayartmp="";
 
@@ -1992,7 +1990,7 @@ gidens="";
     {
       if(gidenrn.indexOf("\n\n")>-1)
       {
-        gidens += gidenrn.substring(0, gidenrn.indexOf("\n\n")) + "\n";
+        gidens += gidenrn.substring(0, (gidenrn.indexOf("\n\n"))) + "\n";
             gidenrn=gidenrn.substring(gidenrn.indexOf("\n\n")+2,gidenrn.length());
       } else 
       {
@@ -2000,9 +1998,7 @@ gidens="";
         break;
       }
     }
-
-      if(gidenrn.indexOf("\n\n\n")>-1)gidens = gidens.substring(0, gidenrn.indexOf("\n\n\n"));
-
+      String gidenstm=gidens;
       Serial.println(gidens);
       return gidens;
       

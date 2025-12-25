@@ -13,15 +13,17 @@ String ptm;
 void programrun() {
   for (int i = 0; i < 11; i++)  // İLK 10 SAYI 10 PİN İSİM VE DEĞERLERİNİ AL degis degdeg e yaz
   {
+    if(programdata.substring(0,1)=="\n")programdata.substring(1,programdata.length());//arada programdata için temizlik yap
     degis[i] = pinname[i];
     degdeg[i] = PinState[i];
+    fbc[i]="";fbcyol[i]="";fbtd[i]="";
   }
   for (int i = 11; i < 71; i++) {
     degdeg[i] = "";
     degis[i] = "";
   }
 
-
+  if(programdata.length()<4)return;
 
   progmsg = "";
 
@@ -33,7 +35,8 @@ void programrun() {
     if (ptm.indexOf("\n")>4 && ptm.indexOf("\n")<6) break;
     satirp[q] = ptm.substring(0, ptm.indexOf("\n"));
     satirislem();
-    ptm = ptm.substring(ptm.indexOf("\n") + 1, ptm.length());
+    if(ptm.substring(ptm.indexOf("\n")>-1)) ptm = ptm.substring(ptm.indexOf("\n") + 1, ptm.length());
+    else return;
     //Serial.println("satirp "); Serial.println(satirp[q]);
 
     if (perlog != "") return;
@@ -141,8 +144,6 @@ void gotoif() {
 
   String satiruppercase = satirp[satirsayisip];
   satiruppercase.toUpperCase();
-  String parantezdisi = satiruppercase.substring(satiruppercase.indexOf(")") + 1, satiruppercase.indexOf(";"));
-
 
 
 
@@ -278,13 +279,20 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
   {
     //Serial.print("ptm:");Serial.println(ptm);
     yapilacaklar=ptm.substring(ptm.indexOf("{")+1,ptm.indexOf("}"));
-    ptm.substring(ptm.indexOf("}"),ptm.length());
   //  Serial.print("yapilacaklar:");   
   //  Serial.println(yapilacaklar);
     yapilacaklar.replace("\n","");
+  }else
+  {
+    ptm=ptm.substring(ptm.indexOf("\n")+1,ptm.length());
   }
-  Serial.print("yapilacaklar:");   
-  Serial.println(yapilacaklar);
+  //Serial.print("programdata:");   
+  //Serial.println(programdata);
+  
+  //Serial.print("ptm:");   
+  //Serial.println(ptm);
+  //Serial.print("yapilacaklar:");   
+  //Serial.println(yapilacaklar);
   //sonsatir belli;
   
   
@@ -301,15 +309,20 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
       }    //baştaki boşlukları sil
 
       yapilacakis = yapilacaklar.substring(0, yapilacaklar.indexOf(";"));
-      yapilacaklar = yapilacaklar.substring(yapilacaklar.indexOf(";") + 1, yapilacaklar.length());
       yapilacaklarislemsayisi = i;
-      //Serial.print("yapılacak");
-      //Serial.println(yapilacakis);
+      Serial.print("yapılacak ");
+      Serial.println(yapilacakis);
       //Serial.print("yapilacaklarislemsayisi ");
       //Serial.println(yapilacaklarislemsayisi);
       // tam burada yapılacak hesabına git
       yap(yapilacakis,yapilacaklarislemsayisi);
-      if (yapilacaklar.length() < 3) break;
+      yapilacaklar = yapilacaklar.substring(yapilacaklar.indexOf(";") + 1, yapilacaklar.length());
+
+      if(yapilacaklar.indexOf("}")<1){
+        yapilacaklar="";
+        ptm=ptm.substring(ptm.indexOf("}"),ptm.length());
+        }
+      if (yapilacaklar.length() < 1){break;}
     }
   } else {
     perlog += (String)satirsayisip + ". satırda / satır sonunda ';' unutulmuş.\n";
@@ -331,17 +344,21 @@ void yap(String yapilacak,int islemno)
       for (int indis = 0; indis < 81; indis++)  // her islem için döngü
       {
           if (indis < 11) {
-            //Serial.print("dsol ve fbc :");Serial.println(dsol + "   " + fbc[indis]);
-            if (dsol == fbc[indis]) { 
+            String fbcupercase=fbc[indis];
+            fbcupercase.toUpperCase();
+        //if(indis<2)Serial.print("dsol ve fbc :");Serial.println(dsol + "   " + fbcupercase);
+            if (dsol == fbcupercase) { 
+    if(indis<2)Serial.print("efbtd ve fbtd :");Serial.println(efbtd[indis] + "   " + fbtd[indis]);
             fbtd[indis] = dsag;
+            if(efbtd[indis]!=fbtd[indis]){
+              Serial.print("dsol ve fbc :");Serial.println(dsol + "   " + fbcupercase);
                         //efbtd[indis] = dsag;
-            progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "<br>";
-            //Serial.print(fbcyol[indis] + " ------> ");Serial.println(fbtd[indis]);
+              progmsg += fbc[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "<br>";
+              Serial.print(fbcyol[indis] + " ------> ");Serial.println(fbtd[indis]);
+            }
             break;
             }
-          }
-          
-          if (indis < 11) {
+
             if (dsol == degis[indis]) { 
             degdeg[indis] = dsag;
             progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "<br>";

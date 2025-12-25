@@ -1,6 +1,6 @@
 
 void serin()
-{
+{ return;
   if(Serial.available())
   {
         String sergel=Serial.readStringUntil('\n');
