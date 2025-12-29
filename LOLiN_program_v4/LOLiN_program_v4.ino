@@ -188,6 +188,9 @@ String fberror="";
 
 
 
+String htServerip;
+String edegisenler;
+String degisenler;
 
 
 
@@ -196,8 +199,6 @@ String fberror="";
 
 
 
-
-/*
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 ESP8266WebServer server(8080);
@@ -211,6 +212,7 @@ void handleRoot() {
   server.send(200, "text/plain", gd);
 }
 
+
 void handleNotFound() {
   String message = "File Not Found\n\n";
   message += "URI: ";
@@ -221,10 +223,23 @@ void handleNotFound() {
   message += server.args();
   message += "\n";
   for (uint8_t i = 0; i < server.args(); i++) { message += " " + server.argName(i) + ": " + server.arg(i) + "\n"; }
-  server.send(404, "text/plain", message);
+
+String serip = server.uri();
+  if(serip.indexOf("/ser")>-1){
+
+  dosyaokumyssidname();
+  IPAddress lip = WiFi.localIP();
+  String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
+  String gd=YOL + "[" + esphostname + "]" +lipStr;  
+  server.send(200, "text/plain", gd);
+
+  serip=serip.substring(serip.indexOf("ser:")+4,serip.length());
+  Serial.println("Server geldi          ");Serial.println(serip);
+  htserverkaydet(serip);
+  }else server.send(404, "text/plain", message);
 }
 
-*/
+
 
 
 
@@ -1390,7 +1405,7 @@ void setup() {
 
   dosyaokufben();
 
-//httpserver.setNoDelay(true);
+httpserver.setNoDelay(true);
 
 
 
@@ -1401,13 +1416,13 @@ void setup() {
       Serial.println("Web server Lunched.");
   }
 
-/*
+
   if (MDNS.begin("esp8266")) { Serial.println("MDNS responder started"); }
   server.on("/", handleRoot);
   server.onNotFound(handleNotFound);
     server.begin();
   Serial.println("8080 server started");
-*/
+
 //delay(10);
 
 //Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
@@ -1416,6 +1431,8 @@ void setup() {
 
     setup2();
     otasetup();
+
+if(WiFi.status()==WL_CONNECTED)htserveroku();
 
 }
 
@@ -1488,10 +1505,10 @@ if(webstart>2){
   htpcl();
   app.loop();
 
-/*
+
 server.handleClient();
 MDNS.update();
-*/
+
 
   if (rescanwifi == 1) {
     wifiscan();

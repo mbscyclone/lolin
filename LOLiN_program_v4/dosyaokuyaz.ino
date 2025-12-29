@@ -1,3 +1,30 @@
+void htserveroku(){
+                 dosya.close();
+                dosya = LittleFS.open("/httpserverip.txt", "r");
+                if (dosya) {
+                String sip = dosya.readStringUntil('\n');
+                htServerip = sip.substring(0,sip.length()-1);
+                //Serial.print("fben:");
+                //Serial.println(fben);
+                }
+                dosya.close();
+}
+
+void htserverkaydet(String hServerip)
+{
+                dosya.close();
+                LittleFS.remove("/httpserverip.txt");
+                dosya = LittleFS.open("/httpserverip.txt", "w+");
+                if (dosya) {
+                  dosya.println(String(hServerip));
+                }
+                dosya.close();
+                htserveroku();
+}
+
+
+
+
 
 void dosyaokussidpass() {
 

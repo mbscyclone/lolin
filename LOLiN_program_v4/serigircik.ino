@@ -1,6 +1,6 @@
 
 void serin()
-{ return;
+{ 
   if(Serial.available())
   {
         String sergel=Serial.readStringUntil('\n');
@@ -122,13 +122,14 @@ void serin()
 
       if(sergel.length()<1 || sergel.indexOf("yardım")>-1)
       {
-            Serial.println("wifitara - wifi taramak için");
-            Serial.println("ssid=    - ssid ayarları başlatmak için.");
-            Serial.println("ismim=   - Cihaza isim vermek için.");
-            Serial.println("fburl=   - Firebase ayarları başlatmak için.");
-            Serial.println("fben=    - Firebase açmak için. fben=1, kapatmak için fben=0");
-            Serial.println("durum=   - durumları listeler");
-            Serial.println("reset  - Cihazı resetler. ");
+            Serial.println("wifitara   - wifi taramak için");
+            Serial.println("ssid=      - ssid ayarları başlatmak için.");
+            Serial.println("ismim=     - Cihaza isim vermek için.");
+            Serial.println("fburl=     - Firebase ayarları başlatmak için.");
+            Serial.println("fben=      - Firebase açmak için. fben=1, kapatmak için fben=0");
+            Serial.println("htserverip - Httpserver ip gösterir");
+            Serial.println("durum      - durumları listeler");
+            Serial.println("reset      - Cihazı resetler. ");
       }
   
 
@@ -141,7 +142,10 @@ void serin()
             Serial.println(httpserver.status());
       }
 
-
+      if(sergel.indexOf("htserverip")>-1)
+      {
+            Serial.println("http 8080 Serveri : "+ htServerip);
+      }
 
 //////////////////////////////////////////////////////////yardım bitti
 

@@ -1094,15 +1094,14 @@ if (Menu == 0) {
               xilent.println("Connection: close");
               xilent.println();
               ////xilent.abort();;
-              return;
+              //return;
             }
             int pindolusay=pinayar.length();
             if(pindolusay>0)
+          xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
           for (int x = 0; x < pindolusay; x++) {
-
-
+              if(pinname[x].length()>6)break;
               if (pinname[x] != "") {
-                xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
                 //xilent.println(pinsignaltype[x] + "<br>");
                 if (pinmode[x] == "OUT" && pinsignaltype[x] == "DIG") {
                   // Display current state, and ON/OFF buttons for GPIO x
@@ -1124,80 +1123,6 @@ if (Menu == 0) {
 
 
                 if (pinmode[x] == "OUT" && pinsignaltype[x] == "PWM") {
-
-
-
-/*
-const char* cvv1 = R"literal(<div class='slidecontainer'><form method='get' id='form)literal";
-
-const char* cvv11 = R"literalcvv11(' action='/)literalcvv11";
-
-const char* cvv2 = R"literal1(<input type='range' min=')literal1";
-
-
-const char* minva1 = R"literal2(' max=')literal2";
-
-const char* maxva1 = R"literal3(' value=')literal3";
-
-
-
-                  //<button class="button butayr"> > </button>
-const char* cvv3 = R"literal4(' class='slider' name='pwm' id='myRange)literal4";
-
-const char* cvv31 = R"literal31('>
-  <span id='demo)literal31";
-
-const char* cvv32 = R"literalcvv32('></span>
-
-  <input type='submit' style='width:50px;' value='>'></form></div>
-
-
-<script>
-var slider = document.getElementById('myRange)literalcvv32";
-
-const char* cvv33 = R"literalcvv33(');
-var output)literalcvv33";
-
-
-const char* out331 = R"literalout331( = document.getElementById('demo)literalout331";
-
-const char* cvv34 = R"literalcvv34(');
-output)literalcvv34";
-
-const char* out333 = R"literalout333(.innerHTML = slider.value;
-
-slider.oninput = function() {
-  output)literalout333";
-
-
-const char* out332 = R"literalout332(.innerHTML = this.value;
-}
-slider.onmouseup = function () {
- document.getElementById("form)literalout332";
-
-const char* cvv35 = R"literalcvv35(").submit();
-}
-</script>
-)literalcvv35";
-
-                  String cv1 = String(cvv1);
-                  String cv11 = String(cvv11);
-                  String cv2 = String(cvv2);
-                  String minv = String(minva1);
-                  String maxv = String(maxva1);
-                  String cv3 = String(cvv3);
-                  String cv31 = String(cvv31);
-                  String cv32 = String(cvv32);
-                  String cv33 = String(cvv33);
-                  String out31 = String(out331);
-                  String cv34 = String(cvv34);
-                  String out33 = String(out333);
-                  String out32 = String(out332);
-                  String cv35 = String(cvv35);
-                  //Serial.print("pinmaxvalue[x] :");Serial.print(pinmaxvalue[x]);
-
-                  xilent.println("<br><br>" + cv1 + pinname[x] + cv11 + pinname[x] + "'>" + pinlabel[x] + " [" + pinname[x] + "]" + cv2 + "" + pinminvalue[x] + minv + pinmaxvalue[x] + maxv + PinState[x] + cv3 + pinname[x] + cv31 + pinname[x] + cv32 + pinname[x] + cv33 + pinname[x] + out31 + pinname[x] + cv34 + pinname[x] + out33 + pinname[x] + out32 + pinname[x] + cv35);
-*/
 
 
 const char* liter = R"lite1(<div class='slidecontainer'>
@@ -1315,25 +1240,29 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
 
 
 
-
+                 xilent.println("<hr style=\"height:5px;border-width:1;color:black;background-color:black\">");
               }
             }
 
-            xilent.println("<hr style=\"height:5px;border-width:1;color:black;background-color:black\">");
+
             xilent.println("<div align=\"left\">");
             xilent.println("<table><td style=\"border:2px solid black;align:center; \">");
             if(high_low_invert==true) xilent.println("<label style='font-size: 10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label><br>");
             if(progmsg!="")xilent.println("<label style='font-size: 10px;'>"+progmsg+"</label><br>");
             if(errorlog!="")xilent.println("<br>Hata: "  + errorlog + "<br>");
+if(esphostname=="SERVER"){
             xilent.println("<label style='font-size: 12px;vertical-align: top;'>İşlem kayıtları</label></a><br>");
             xilent.println("<textarea name='is' id='id' cols='40' rows='20' >");
-            xilent.println(SERVERlogbuf);
+            xilent.println(SERVERlogbuf);  //xilent.println(SERVERlogbuf);
             xilent.println("</textarea><br></td>");
+
+
+  if(WiFi.status()==WL_CONNECTED){
              if(kimdir>0){ 
                           xilent.println("<td width=\"300\" align=\"center\" style='vertical-align: top;border:2px solid black;'>");
                           xilent.println("<label style='font-size: 12px;'>Ağ taraması " +String((int)((kimdir*100)/255)) + " %</label>");
                           xilent.println("<a href='/agtdur'><label style='font-size: 12px;' type='submit'>Taramayı durdur</label></a><br>");
-                          int vif= (int)(((kimdirsonyeri*100)/255)/3.3);
+                          int vif= (int)(((kimdirsonyeri*100)/255)/3);
                           String susluce="[";
                           for(int progresbar=1;progresbar<vif;progresbar++)
                           {
@@ -1356,16 +1285,24 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                             }else break;
                           }
                           xilent.println("</textarea>");
-                          xilent.println("</td>");
+                          String testserv = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(kimdir);
+                          xilent.println("<label style='font-size:10px;'>");
+                          xilent.println(String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + "0");
+                          xilent.println(" ·····< </label>");
+                          xilent.println("<label style='font-size:12px;'>");
+                          xilent.println(testserv);
+                          xilent.println("</label>");
+                          xilent.println("<label style='font-size:10px;'>");
+                          xilent.println(" >····· "+ String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + "255");
+                          xilent.println("</label></td>");
              }
              if(kimdir<1){ 
                           xilent.println("<td width=\"300\" align=\"center\" style='vertical-align: top;border:2px solid black;'>");
                           xilent.println("<a href='/agtara'><label style='font-size: 12px;' type='submit'>Ağ taraması baştan</label></a>");
                           if(kimdir<1 && kimdirsonyeri>0)xilent.println("<a href='/agtard'><label style='font-size: 12px;' type='submit'> , devam et</label></a>");
                           else xilent.println("<br>");
-                          xilent.println("<br>");
 
-                          int vif= (int)(((kimdirsonyeri*100)/255)/3.3);
+                          int vif= (int)(((kimdirsonyeri*100)/255)/3);
                           String susluce="[";
                           for(int progresbar=1;progresbar<vif;progresbar++)
                           {
@@ -1393,6 +1330,8 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                           }
                           xilent.println("</td>");
              }
+  }
+}
             xilent.println("</table></div><p><a href=\"/Menu1\"><button class=\"button butayr\">Ayarlar</button></a></p>");
             
 

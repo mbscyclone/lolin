@@ -1,7 +1,9 @@
 float t;
 int h;
+
 void updatesayac()
 {
+degisenler="";          
 pindurumrecyap=false;
 
         if(Firebase_ready==true){
@@ -18,6 +20,8 @@ pindurumrecyap=false;
                   }
                 }
         }
+
+
 
         for(int x=0;x<pinsayisi;x++){
 
@@ -120,7 +124,7 @@ pindurumrecyap=false;
           if(ePinState[x]!=PinState[x])
           {
               //Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
-
+            
             if(pinsignaltype[x]=="ANG")
             {
 
@@ -132,32 +136,39 @@ pindurumrecyap=false;
                 Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
                 psci=true;
                 ePinState[x] = PinState[x];
+                degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
               }else
               {
                 PinState[x]=fbPinState[x];
                 ePinState[x] = PinState[x];
               }
 
-
             }else if (pinsignaltype[x].indexOf("DH")>-1)
                       {
                           psci=true;
                           
                           ePinState[x] = PinState[x];
+                degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
                       }
             else{
-                       if(pinmode[x]!="OUT")
-                       {
-
-                         ePinState[x] = PinState[x]; 
-                       }
                        if(pinmode[x]=="OUT")
                        {
                          psco=true;
                          pindurumrecyap=true;
                          ePinState[x] = PinState[x];
+                         degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
+                       }
+
+                       if(pinmode[x]=="INP")
+                       {
+                         psci=true;
+                         ePinState[x] = PinState[x];
+                         degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
                        }
                 }
+                if(degisenler!= edegisenler && htServerip.length()>0){
+                  sendserver(degisenler);
+                  }
 
           }
 

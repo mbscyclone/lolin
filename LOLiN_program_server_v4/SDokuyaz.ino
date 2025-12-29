@@ -31,56 +31,43 @@ void printDirectory(File dir, int numTabs) {
 
 // printdirectory files sonu
 
-String dosyaicerigi;
-
-void SDyaz(String filename,String sdyeyazilacak){
-
-/* // dosya boyutunu verir ////////////////////////////////////////
-  File mqttserverlogfile;
-  mqttserverlogfile=SD.open("/mqttserverlog.txt",FILE_READ);
-  if (mqttserverlogfile) {
-      int mqttserverlogfilefilesize=(mqttserverlogfile.size(),DEC);
-      Serial.println( mqttserverlogfilefilesize );
-      mqttserverlogfile.close();
-  }
-  else 
-  {
-      int mqttserverlogfilefilesize=0;
-            Serial.println( mqttserverlogfilefilesize );
-      mqttserverlogfile.close();
-  }
-*/ // dosya boyutunu verir bitti ///////////////////////////////////////////
 
 
-
-
+void SDyaz(String filepath,String sdyeyazilacak){
 
 String dd;
-
+String filename=filepath+zaman.substring(0,6)+"/"+zaman.substring(6,8)+".txt";
   mySdFile = SD.open(filename, FILE_WRITE);
   // if the file opened okay, write to it:
-  dd=sdyeyazilacak+dosyaicerigi;
+  dd=zaman+" " + sdyeyazilacak;
   if (mySdFile) {
     mySdFile.println(dd);
     // close the file:
-    mySdFile.close();
+
     
-    Serial.println();
+    Serial.println(zaman);
     Serial.println();
     Serial.println(sdyeyazilacak);
     Serial.println();
-    Serial.println();
-    SERVERlogbuf="";
-    eSERVERlogbuf="";
+    SERVERlogbuf+= zaman+" " + sdyeyazilacak +"\n";
+    String testbuf=SERVERlogbuf;
+    testbuf.replace("\n","");
+    int fark=SERVERlogbuf.length()-testbuf.length();
+    if(fark>20)
+    {
+      SERVERlogbuf = SERVERlogbuf.substring((SERVERlogbuf.indexOf("\n")+1),SERVERlogbuf.length());
+    }
   } else {
     // if the file didn't open, print an error:
     Serial.println("error opening SERVERlog.txt");
   }
+      mySdFile.close();
 }
 
 
-
+/*
 void SDoku(String filename){
+  String dosyaicerigi;
 dosyaicerigi="";
   // re-open the file for reading:
   mySdFile = SD.open(filename, FILE_READ);
@@ -90,19 +77,26 @@ dosyaicerigi="";
     // read from the file until there's nothing else in it:
     while (mySdFile.available()) 
     {
-        dosyaicerigi=mySdFile.read();
-    }
-        Serial.println(dosyaicerigi);
-        SERVERLog=dosyaicerigi;
+        dosyaicerigi=mySdFile.readString();
 
+        if(dosyaicerigi.length()>50){
+          dosyaicerigi.substring(dosyaicerigi.length()-50,dosyaicerigi.length());
+        }
+        Serial.println(dosyaicerigi);
+        SERVERlogbuf=dosyaicerigi;
+        eSERVERlogbuf=dosyaicerigi;
     // close the file:
-    mySdFile.close();
+    }
+
   } else {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
   }
-
+    mySdFile.close();
 }
+*/
+
+
 
 /*
 void SDoku(String filename){

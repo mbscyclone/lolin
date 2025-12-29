@@ -91,10 +91,10 @@ void httptara()
 
 
     if(kimdir==(int)(lip[3]))kimdir+=1;
-    if(kimdir>255){kimdir=-1;return;}
     String testserver = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(kimdir);
-    testserver="http://" + testserver + ":8080";
+    testserver="http://" + testserver + ":8080/ser:"+ lipStr;
     kimdir+=1;
+    if(kimdir>255){kimdir=-1;kimdirsonyeri=-1;return;}
     kimdirsonyeri=kimdir;
 
   Serial.println(testserver);

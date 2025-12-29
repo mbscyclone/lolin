@@ -207,7 +207,7 @@ void handleRoot() {
             dosyaokumyssidname();
             IPAddress lip = WiFi.localIP();
             String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
-            String gd=YOL + "[" + esphostname + "]" +lipStr;  
+            String gd = YOL + "[" + esphostname + "]" + lipStr;  
   server.send(200, "text/plain", gd);
 }
 
@@ -221,7 +221,11 @@ void handleNotFound() {
   message += server.args();
   message += "\n";
   for (uint8_t i = 0; i < server.args(); i++) { message += " " + server.argName(i) + ": " + server.arg(i) + "\n"; }
-  server.send(404, "text/plain", message);
+  server.send(200, "text/plain", "ok");//server.send(404, "text/plain", "ok");//message);
+  String seruri=(String)server.uri();
+  String suri=seruri.substring(1,seruri.length());
+  Serial.println(suri);
+  SDyaz("/serverlog/",suri);
 }
 
 
@@ -245,7 +249,7 @@ String rcv[20];
 int MaxUserkayidi=5;
 
 
-String SERVERLog; 
+//String SERVERLog; 
 String SERVERlogbuf;
 String eSERVERlogbuf;
 String SERVERkullanici;
@@ -1444,11 +1448,12 @@ httpserver.setNoDelay(true);
 
 
 
-
+if(esphostname=="SERVER"){
   Serial.print("Initializing SD card...");
 
   if (SD.begin(SS)) {
     SD_ok=true;
+  //  SDoku("/serverlog.txt");
   }else{
     Serial.println("initialization failed!");
   }
@@ -1469,10 +1474,11 @@ httpserver.setNoDelay(true);
   Serial.println("done!");
 
 
-      SDoku("/serverlog.txt");
+
 
 if(WiFi.status()==WL_CONNECTED)
 {
+  //  SDoku("/serverlog.txt");
     configtimeonline();
 
   time_t tnow = time(nullptr);
@@ -1487,7 +1493,7 @@ if(WiFi.status()==WL_CONNECTED)
 
 }
 
-
+}
 
 
 
@@ -1502,6 +1508,7 @@ void connectfb()
 {
 //dosyaokufben();
 
+fben=0;
   if(fben==1){
   dosyaokufburl();
   dosyaokufbapi();
@@ -1526,7 +1533,7 @@ if (WiFi.status()==WL_CONNECTED)
     Database.url(DATABASE_URL);
   }
 
-}
+  }
 }
 
 
@@ -1677,7 +1684,7 @@ if(WiFi.status() != WL_CONNECTED)
 aut=1; // silinecek
 */
 
-   if (kimdir<1 && millis() - urltestsayac > 60000) {
+   if (kimdir<1 && millis() - urltestsayac > 2000) {
     urltestsayac = millis();
     /*
     // Set time via NTP, as required for x.509 validation
@@ -1694,7 +1701,6 @@ aut=1; // silinecek
         Serial.print("Current time: ");
         Serial.print(asctime(&timeinfo));
         */
-
   configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
 /*
   Serial.print("Waiting for NTP time sync: ");
@@ -1712,12 +1718,13 @@ aut=1; // silinecek
 
   timeinfo = localtime (&tnow);
   strftime (buffer,80,"Local time:%y%m%d%H%M%S",timeinfo);
-  Serial.println(buffer);
+  //Serial.println(buffer);
 zaman="";
     for (int tarihsaat=11;tarihsaat<23;tarihsaat++){
         zaman += buffer[tarihsaat];
     }
     Serial.print("zaman: "); Serial.println(zaman);
+   
 }
 
 
@@ -1760,12 +1767,13 @@ zaman="";
 
 
 // SD kart takılı mı testi
+if(esphostname=="SERVER"){
                       if(SD_ok==false)
                       {
                       
                       if(Menu!=3)
                       {
-                        Serial.println(SDtestsayac);
+                        Serial.println("SDtestsayac:");Serial.println(SDtestsayac);
                           if(SDtestsayac>5)
                           {
                                 if (SD.begin(SS)) 
@@ -1782,16 +1790,7 @@ zaman="";
                       }
 
    // yazmayı gerektirecek bişey varsa yaz
-      if(SD_ok==true){
-
-        if(SERVERlogbuf.indexOf(":usr")>-1 || SERVERlogbuf.indexOf(":chz")>-1 )
-        {
-
-          if(SD_ok==true) SDyaz("/serverlog.txt", SERVERlogbuf);
-
-        }
-      } 
-
+}
 
 
 

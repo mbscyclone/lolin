@@ -5,7 +5,7 @@ void fbsayacoku()
                       String getpath="/" + YOL + "/r/"+esphostname;
 //                    String resul=Firebase.RTDB.getString(&fbdo, getpath) ? fbdo.to<const char *>() : fbdo.errorReason().c_str();
                       String resul = Database.get<String>(aClient, getpath);
-Serial.println(getpath +"  ");
+Serial.print(getpath +"  ");Serial.println(WiFi.localIP());
 Serial.println("Get str." + resul);
 
                           if(resul.indexOf("not connected")>-1)

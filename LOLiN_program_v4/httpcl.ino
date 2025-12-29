@@ -664,7 +664,7 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
               xilent.println("<br>Wifi ismim       :" + esphostname);
               if (WiFi.status() == WL_CONNECTED) xilent.println("<br>Bağlanılan Wifi  :" + ssid + "  Sinyal gücü : " + WiFi.RSSI());
               else xilent.println("<br>Kayıtlı Wifi  :" + ssid + "  bağlanılamadı.");
-              if(pinsatir[0].length()<2) xilent.println("<br>Pin ayarları yapılmamış!");
+              if(pinayar.length()<2) xilent.println("<br>Pin ayarları yapılmamış!");
               else xilent.println("<br>Pin ayarları tamam");
               xilent.println("<br>Firebase data yolu:" + YOL);
               xilent.println("<br>Firebase url     :" + DATABASE_URL);
