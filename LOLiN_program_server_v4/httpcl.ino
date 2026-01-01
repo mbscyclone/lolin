@@ -885,7 +885,7 @@ if (Menu == 0) {
             creator += "T";
             if(kimdir<1 && header.indexOf(" /agtara") > -1){kimdir=1;kimdirsonyeri=1;espv4sayac=1;}
             if(kimdir<1 && header.indexOf(" /agtard") > -1){kimdir=kimdirsonyeri;}
-            if(kimdir>1 && header.indexOf(" /agtdur") > -1){kimdir=-1;}
+            if(kimdir>1 && header.indexOf(" /agtdur") > -1){kimdir=-2;}
             if (header.indexOf((" /rr120")) > -1) sayfayenile = 120;
             if (header.indexOf((" /rr30")) > -1) sayfayenile = 30;
             if (header.indexOf((" /rr10")) > -1) sayfayenile = 10;

@@ -189,7 +189,8 @@ String fberror="";
 
 
 
-
+int kimdir=-1;
+int kimdirsonyeri=-1;
 
 
 
@@ -202,8 +203,10 @@ String fberror="";
 #include <ESP8266mDNS.h>
 ESP8266WebServer server(8080);
 
-void handleRoot() {
+unsigned long tarazamani=millis();
 
+void handleRoot() {
+  if(kimdir>-1)return;
             dosyaokumyssidname();
             IPAddress lip = WiFi.localIP();
             String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
@@ -212,6 +215,7 @@ void handleRoot() {
 }
 
 void handleNotFound() {
+  if(kimdir>-1)return;
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
@@ -255,8 +259,7 @@ String eSERVERlogbuf;
 String SERVERkullanici;
 unsigned long urltestsayac;
 String zaman;
-int kimdir=0;
-int kimdirsonyeri=0;
+
 int espv4sayac=1;
 String bulunanespv4[20];
 
@@ -1540,7 +1543,7 @@ if (WiFi.status()==WL_CONNECTED)
 
 void Programtakip(String progdata);
 
-unsigned long tarazamani=millis();
+
 
 uint8_t serstat;
 
@@ -1548,9 +1551,9 @@ int dhtokusayac=0;
 void loop() {
 if(WiFi.status()==WL_CONNECTED)
 {
-  if(kimdir>0)
+  if(kimdir>-1)
   {
-      if(millis()-tarazamani > 1500)
+      if(millis()-tarazamani > 800)
       {
         tarazamani=millis();
         httptara();
@@ -1582,8 +1585,8 @@ if(webstart>2){
   app.loop();
 
 
-server.handleClient();
-MDNS.update();
+
+
 
 
   if (rescanwifi == 1) {
@@ -1684,50 +1687,6 @@ if(WiFi.status() != WL_CONNECTED)
 aut=1; // silinecek
 */
 
-   if (kimdir<1 && millis() - urltestsayac > 2000) {
-    urltestsayac = millis();
-    /*
-    // Set time via NTP, as required for x.509 validation
-     configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
-       time_t now = time(nullptr);
-        while (now < 8 * 3600 * 2) {
-          delay(500);
-          Serial.print(".");
-          now = time(nullptr);
-        }
-        Serial.println("");
-        struct tm timeinfo;
-        gmtime_r(&now, &timeinfo);
-        Serial.print("Current time: ");
-        Serial.print(asctime(&timeinfo));
-        */
-  configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
-/*
-  Serial.print("Waiting for NTP time sync: ");
-  time_t now = time(nullptr);
-  while (now < 8 * 3600 * 2) {
-    delay(500);
-    Serial.println(".");
-    now = time(nullptr);
-  }
-*/
-  time_t tnow = time(nullptr);
-  struct tm *timeinfo;
-  char buffer [80];
-
-
-  timeinfo = localtime (&tnow);
-  strftime (buffer,80,"Local time:%y%m%d%H%M%S",timeinfo);
-  //Serial.println(buffer);
-zaman="";
-    for (int tarihsaat=11;tarihsaat<23;tarihsaat++){
-        zaman += buffer[tarihsaat];
-    }
-    Serial.print("zaman: "); Serial.println(zaman);
-   
-}
-
-
 
 
 
@@ -1803,6 +1762,58 @@ if(esphostname=="SERVER"){
   {
     say+=1;
   }
+
+
+
+  if(kimdir>-1)return;
+  server.handleClient();
+  MDNS.update();
+   if (kimdir<1 && millis() - urltestsayac > 2000) {
+    urltestsayac = millis();
+    /*
+    // Set time via NTP, as required for x.509 validation
+     configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
+       time_t now = time(nullptr);
+        while (now < 8 * 3600 * 2) {
+          delay(500);
+          Serial.print(".");
+          now = time(nullptr);
+        }
+        Serial.println("");
+        struct tm timeinfo;
+        gmtime_r(&now, &timeinfo);
+        Serial.print("Current time: ");
+        Serial.print(asctime(&timeinfo));
+        */
+  configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
+/*
+  Serial.print("Waiting for NTP time sync: ");
+  time_t now = time(nullptr);
+  while (now < 8 * 3600 * 2) {
+    delay(500);
+    Serial.println(".");
+    now = time(nullptr);
+  }
+*/
+  time_t tnow = time(nullptr);
+  struct tm *timeinfo;
+  char buffer [80];
+
+
+  timeinfo = localtime (&tnow);
+  strftime (buffer,80,"Local time:%y%m%d%H%M%S",timeinfo);
+  //Serial.println(buffer);
+   zaman="";
+    for (int tarihsaat=11;tarihsaat<23;tarihsaat++){
+        zaman += buffer[tarihsaat];
+    }
+    Serial.print("zaman: "); Serial.println(zaman);
+}
+
+
+
+
+
 
 }
 

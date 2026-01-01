@@ -1599,6 +1599,7 @@ if(authdebug!=10 && WiFi.status()==WL_CONNECTED && fben==1){
   }
 }
 
+
      zamanfark +=1;
   
   if (zamanfark > 2100) zamanfark= 1;
