@@ -53,7 +53,7 @@ String filename=filepath+zaman.substring(0,6)+"/"+zaman.substring(6,8)+".txt";
     String testbuf=SERVERlogbuf;
     testbuf.replace("\n","");
     int fark=SERVERlogbuf.length()-testbuf.length();
-    if(fark>20)
+    if(fark>10)
     {
       SERVERlogbuf = SERVERlogbuf.substring((SERVERlogbuf.indexOf("\n")+1),SERVERlogbuf.length());
     }

@@ -1,13 +1,13 @@
 int fbsayac=0;
 void fbsayacoku()
 {
+if(fbpinayaryaz==true){fbpinayaryaz=false;fbpinayarlariyaz();}
 
                       String getpath="/" + YOL + "/r/"+esphostname;
 //                    String resul=Firebase.RTDB.getString(&fbdo, getpath) ? fbdo.to<const char *>() : fbdo.errorReason().c_str();
                       String resul = Database.get<String>(aClient, getpath);
 Serial.print(getpath +"  ");Serial.println(WiFi.localIP());
 Serial.println("Get str." + resul);
-
                           if(resul.indexOf("not connected")>-1)
                           {
                             Serial.println("not connected");
@@ -24,10 +24,11 @@ Serial.println("Get str." + resul);
                               String rsltt=resul.substring(resul.indexOf("|")+1,resul.length());
                               resul=resul.substring(0,resul.indexOf("|"));
                               fbsayacyanioku(rsltt);
+                            }
                             if(resul.toInt()==9 || resul.toInt()==19)fbpinstatelerioku();
-                              if(resul.toInt()==10){resul="-1";fbpinstateleriyaz();}
-                              if(resul.toInt()>18) {resul="8";fbpinstateleriyaz();}
-                              }
+                            if(resul.toInt()==10){resul="-1";fbpinstateleriyaz();}
+                            //if(resul.toInt()>18) {resul="8";fbpinstateleriyaz();}
+                            
                             if(psco==true || psci==true) fbpinstateleriyaz();
                           }
 
@@ -35,26 +36,22 @@ Serial.println("Get str." + resul);
 
 void fbsayacyanioku(String rsltt)
 {
-  Serial.println("fbsayacyaniokudayım");
                                   String pnm=rsltt.substring(0,rsltt.indexOf(":"));
                                   String pns=rsltt.substring(rsltt.indexOf(":")+1,rsltt.indexOf(","));
                                   rsltt = rsltt.substring(rsltt.indexOf(",")+1,rsltt.length());
                                   //Serial.println(pnm+" "+pns);
                                   
-                                for(int hh=0;hh<pinsayisi;hh++)
+                                for(int hh=0;hh<11;hh++)
                                     {
                                       if(pnm == pinname[hh])
                                       { 
-                                        if(pinmode[hh]!="INP"){
-                                            
                                             if(psco==false && pns!=fbPinState[hh])
                                             {
                                               PinState[hh] =pns;
-                                              ePinState[hh] = pns;
+                                              //ePinState[hh] = pns;
                                               fbPinState[hh] = pns;
-                                              pindurumrecyap=true;
+                                              //pindurumrecyap=true;
                                             }
-                                        }
                                         break;
                                       }
                                     }
@@ -102,13 +99,13 @@ void fbsayacguncelle()
                             fbsayac+=1;
                             if(fbsayac>7)fbsayac=0;
 //                            String resul=Firebase.RTDB.setString(&fbdo, setpath, F("0")) ? (String)fbsayac : fbdo.errorReason().c_str();
-                              Database.set<string_t>(aClient, setpath, string_t((String)fbsayac));
+                            Database.set<string_t>(aClient, setpath, string_t((String)fbsayac));
 }
 
 
 void fbdataguncelle()
 {
-
+Serial.println("fbdataguncelle------------");
                               // pin ayarlarını yaz
                                   fbpinayarlariyaz();
                               /////////////////////////////
@@ -143,7 +140,7 @@ Serial.println("Get str. resul");
                           else
                           {
                             String reslt=resul;
-
+                                degisenler="";
                                 for(int h=0;h<pinsayisi;h++)
                                 {
                                   if(reslt==".")break;
@@ -156,14 +153,15 @@ Serial.println("Get str. resul");
                                     {
                                       if(pnm == pinname[hh])
                                       { 
+
                                         if(pinmode[hh]!="INP"){
-                                            
                                             if(psco==false && pns!=fbPinState[hh])
                                             {
+                                              
                                               PinState[hh] =pns;
-                                              ePinState[hh] = pns;
                                               fbPinState[hh] = pns;
-                                              pindurumrecyap=true;
+                                              //pindurumrecyap=true;
+                                              degisenler += pinname[hh] + ":" + PinState[hh]+">" + pinlabel[hh] + ",";
                                             }
 
                                         }
@@ -171,9 +169,9 @@ Serial.println("Get str. resul");
                                         break;
                                       }
                                     }
-                                    
+
                                 }
-                                if(pindurumrecyap==true)dosyayazpindurum();
+                                //if(pindurumrecyap==true)dosyayazpindurum();
                                 Serial.print("psco:");
                                 Serial.print(psco);
                                 Serial.print("  psci:");
@@ -247,7 +245,7 @@ void fbpinstateleriyaz()
                                   //if(pinname[h].indexOf("|")>-1)break;
                                   //Serial.print(pinname[h] + " ");Serial.println(PinState[h]);
                                   if(PinState[h]=="")PinState[h]="0";
-                                  if( pinname[h].length()>0) dats+=pinname[h] + ":" + PinState[h] + ",";
+                                  if(pinname[h].length()>0) dats+=pinname[h] + ":" + PinState[h] + ",";
                                 }
                                 
 //                            String resul=Firebase.RTDB.setString(&fbdo, setpath, dats) ? "ok" : fbdo.errorReason().c_str();
@@ -255,7 +253,7 @@ void fbpinstateleriyaz()
 
                                     for(int hh=0;hh<pinsayisi;hh++)
                                     {
-                                              ePinState[hh] = PinState[hh];
+                                              //ePinState[hh] = PinState[hh];
                                               fbPinState[hh] = PinState[hh];
                                     }
                             psco=false;

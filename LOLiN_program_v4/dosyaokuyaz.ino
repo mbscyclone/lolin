@@ -119,7 +119,7 @@ void dosyayazfben()
 
 
 
-
+/*
 void dosyaokupindurum()
 {
                 pindurumrecyap=false;
@@ -203,7 +203,7 @@ if(fben==0){
 
 
 }
-
+*/
 
 
 

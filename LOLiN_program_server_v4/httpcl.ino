@@ -1072,18 +1072,21 @@ if (Menu == 0) {
               xilent.println("  Ipadr: ");
               xilent.println(lipStr);
             }
-              if (header.indexOf("fireb=On") > -1) {
-                fben = 1;
-              dosyayazfben();
-              }
 
-            xilent.println("<br>");
-            if(fben==0)xilent.println("Firebase Kapalı");
-            if(fben==1)xilent.println("Firebase Açık");
+            if(esphostname!="SERVER"){
+                  if (header.indexOf("fireb=On") > -1) {
+                    fben = 1;
+                  dosyayazfben();
+                  }
+
+                  xilent.println("<br>");
+                  if(fben==0)xilent.println("Firebase Kapalı");
+                  if(fben==1)xilent.println("Firebase Açık");
+                  
+                  if(fben==1)xilent.println("<form action=\"/firebaseset?fireb=Off\" method=\"POST\"><input type=\"submit\" value=\"FB Kapat\"></form>");
+                  if(fben==0)xilent.println("<form action=\"/firebaseset?fireb=On\" method=\"POST\"><input type=\"submit\" value=\"FB Aç\"></form>");
+            }
             
-            if(fben==1)xilent.println("<form action=\"/firebaseset?fireb=Off\" method=\"POST\"><input type=\"submit\" value=\"FB Kapat\"></form>");
-            if(fben==0)xilent.println("<form action=\"/firebaseset?fireb=On\" method=\"POST\"><input type=\"submit\" value=\"FB Aç\"></form>");
-
             if (pinayar.length()<2) {
               xilent.println("<p> Pinler Ayarları Yok</p>");
               xilent.println("<br><br><br><br><p><a href=\"/Menu1\"><button class=\"button butayr\">Ayarlar</button></a></p>");
@@ -1251,7 +1254,7 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
             if(progmsg!="")xilent.println("<label style='font-size: 10px;'>"+progmsg+"</label><br>");
             if(errorlog!="")xilent.println("<br>Hata: "  + errorlog + "<br>");
 if(esphostname=="SERVER"){
-            xilent.println("<label style='font-size: 12px;vertical-align: top;'>İşlem kayıtları</label></a><br>");
+            xilent.println("<label style='font-size: 12px;vertical-align: top;' title='Tamamı SD karta yazılı'>İşlem kayıtları (Son 10 işlem)</label></a><br>");
             xilent.println("<textarea name='is' id='id' cols='40' rows='20' >");
             xilent.println(SERVERlogbuf);  //xilent.println(SERVERlogbuf);
             xilent.println("</textarea><br></td>");

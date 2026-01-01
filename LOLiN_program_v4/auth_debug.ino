@@ -13,9 +13,9 @@ void auth_debug(AsyncResult &aResult)
         Firebase.printf("Debug task: %s, msg: %s\n", aResult.uid().c_str(), aResult.debug().c_str());
     }
 
-    if (aResult.isError())
-    {
-        Firebase.printf("Error task: %s, msg: %s, code: %d\n", aResult.uid().c_str(), aResult.error().message().c_str(), aResult.error().code());
-    }
+//    if (aResult.isError())
+//    {
+//        Firebase.printf("Error task: %s, msg: %s, code: %d\n", aResult.uid().c_str(), aResult.error().message().c_str(), aResult.error().code());
+//    }
     authdebug=aResult.eventLog().code();
 }

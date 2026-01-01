@@ -4,9 +4,9 @@ int h;
 void updatesayac()
 {
 degisenler="";          
-pindurumrecyap=false;
+//pindurumrecyap=false;
 
-        if(Firebase_ready==true){
+        if(authdebug==10){
                 for (int fbg=0;fbg<11;fbg++)
                 {
                   if(fbc[fbg].length()>0)
@@ -54,9 +54,11 @@ pindurumrecyap=false;
                         //delay(5);
                         PinState[x] = digitalRead(Pin[x]);
 
-                         }
+                        }
 
-
+                        if(pinmode[x]=="INP" && pinsignaltype[x]=="HCE"){
+                          hcsr04loop(x);
+                        }
 
 
                       if(pinmode[x]=="INP" && pinsignaltype[x].indexOf("DHT")==0)
@@ -133,17 +135,14 @@ pindurumrecyap=false;
 
 
               if(abs(epinstate-pinstate)>10){
-                Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
+                //Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
                 psci=true;
                 ePinState[x] = PinState[x];
                 degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
-              }else
-              {
-                PinState[x]=fbPinState[x];
-                ePinState[x] = PinState[x];
               }
 
-            }else if (pinsignaltype[x].indexOf("DH")>-1)
+            }
+            else if (pinsignaltype[x].indexOf("DH")>-1)
                       {
                           psci=true;
                           
@@ -154,31 +153,39 @@ pindurumrecyap=false;
                        if(pinmode[x]=="OUT")
                        {
                          psco=true;
-                         pindurumrecyap=true;
+                         //pindurumrecyap=true;
                          ePinState[x] = PinState[x];
                          degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
                        }
 
                        if(pinmode[x]=="INP")
                        {
-                         psci=true;
-                         ePinState[x] = PinState[x];
-                         degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
+                         if(pinsignaltype[x]=="HCE" && PinState[x].toInt()>2)
+                         {
+                          psci=true;
+                          ePinState[x] = PinState[x];
+                          degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
+                         } else
+                              {
+                              psci=true;
+                              ePinState[x] = PinState[x];
+                              degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
+                              }
                        }
                 }
-                if(degisenler!= edegisenler && htServerip.length()>0){
-                  sendserver(degisenler);
-                  }
+
 
           }
 
-
-
         }
-
+/*
               if(pindurumrecyap==true)
               {
                 dosyayazpindurum();
               }
-    }
+*/
+      if(degisenler!= edegisenler && htServerip.length()>0){
+      sendserver(degisenler);
+      }
+}
 

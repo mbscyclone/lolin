@@ -32,7 +32,7 @@ FirebaseApp app;
 RealtimeDatabase Database;
 AsyncResult databaseResult;
 bool taskComplete = false;
-bool Firebase_ready=false;
+
 
 
 String USER_EMAIL1 = ""; // "asd"     @ işareti sonradan eklenecek
@@ -48,7 +48,7 @@ String YOL="";
 String USER_EMAIL = ""; // "asadafag@gmail.com";
 String  USER_PASSWORD = ""; // "bebedede14";
 
-String authdebug;
+int authdebug;
 
 
 
@@ -62,7 +62,6 @@ bool psco;
 bool psci;
 
 unsigned long reConnectsayac=millis();
-unsigned long fbreConnetsayac=millis();
 
 
 
@@ -134,9 +133,11 @@ String ePinState[10];
 String fbPinState[10];
 String pinmaxvalue[10];
 String pinlabel[10];
-String pindurumrec;
-bool pindurumrecyap;
+//String pindurumrec;
+//bool pindurumrecyap;
 int dhtsayac = 0;
+int hcsrT;
+int hcsrE;
 
 String tempstr="";
 String humstr="";
@@ -168,7 +169,7 @@ String yazi;
 
 File dosya;
 
-
+bool pinayarchg=false;
 
 
 String erlog="";
@@ -281,7 +282,7 @@ erlog="";
 
 if(Pinlertpm.length()>0){
 
-          for (int x=0;x<Pinlertpm.length();x++){
+          for (int x=0;x<1000;x++){
               if(Pinlertpm.length()<3) break;
               String pinnametm=Pinlertpm.substring(0,Pinlertpm.indexOf("|"));
               int pinismiint;
@@ -322,9 +323,9 @@ if(Pinlertpm.length()>0){
                     int asd=Pinlertpm.substring(0,Pinlertpm.indexOf("|")).toInt();
                     if(asd<0)PinState[x]="0";
                     if(asd>180)PinState[x]=180;
-                  }else PinState[x] = Pinlertpm.substring(0,Pinlertpm.indexOf("|")); 
+                  } else PinState[x] = Pinlertpm.substring(0,Pinlertpm.indexOf("|")); 
 
-                  ePinState[x]=PinState[x];
+                  //ePinState[x]=PinState[x];
                 }
               }
 
@@ -349,26 +350,51 @@ if(Pinlertpm.length()>0){
             if(Pinlertpm.length()<5) break;
 
           }
-           pinlerdagitildi == true;dosyaokupindurum();
+
+          if(pinayar.indexOf("|HCT|")>-1)
+          {
+            if(pinayar.indexOf("|HCE|")>-1)
+            {
+              for(int x=0;x<pinsayisi+1;x++)
+              {
+                      if(pinsignaltype[x]=="HCT"){
+                      hcsrT=Pin[x];
+                      }
+                      if(pinsignaltype[x]=="HCE"){
+                      hcsrE=Pin[x];
+                      }
+              }
+            }
+            else
+            {
+              erlog+="HCE yok, HCT pinayarlarında belirtilmiş fakat Echo pin satırı belirtilmemiş.";
+            }
+          }
+
+          if(pinayar.indexOf("|HCE|")>-1 && pinayar.indexOf("|HCT|")<0)erlog+="HCT yok, HCE pinayarlarında belirtilmiş fakat Triger pin satırı belirtilmemiş.";
+
+           pinlerdagitildi == true;//dosyaokupindurum();
         }
       }
 }
 
-
+bool fbpinayaryaz=false;
 void dosyaYazpinayar(){
+  pinayarchg=false;
   reConnectsayac=millis();
+  pinayar= Karakterduzeltfunc(pinayar);
   dosya.close();
   LittleFS.remove("/pinayar.txt");
-  Serial.println(pinayar);
+  
   dosya = LittleFS.open("/pinayar.txt", "w+");
   //pinayarYuzdeliifadesil();
   dosya.print(pinayar);
   dosya.close();
+  Serial.println(pinayar);
+
   dosyaokufbyol();
-  if(Firebase_ready) fbpinayarlariyaz();
-
+  if(authdebug==10) fbpinayaryaz=true;
   setup2();
-
 }
 
 
@@ -772,9 +798,11 @@ void cleareprom() {
 
 void setup2(){
 dosyaOkuprogram();
+dosyaOkupinayar();
 String progtmp=programdata; progtmp.toUpperCase();
 if(progtmp.indexOf("//PIN_INVERT;")<0)
   if(progtmp.indexOf("PIN_INVERT;") >-1) high_low_invert=true; else high_low_invert=false;
+
 
 //Serial.println("sorunyok");
 //Serial.println("sorunyok2");
@@ -1211,7 +1239,6 @@ erlog="";
   dosya = LittleFS.open("/program.txt", "w+");
   dosya.print(programdata);
   dosya.close();
-  dosyaOkupinayar();
   programrun();
   setup2();
   //ESP.reset();
@@ -1398,6 +1425,7 @@ void setup() {
 
 
   dosyaokumyssidname();
+  htserveroku();
   //delay(2);
   dosyaokussidpass();
   //delay(2);
@@ -1409,10 +1437,28 @@ httpserver.setNoDelay(true);
 
 
 
-  if (WiFi.status() != WL_CONNECTED) connectWifi();
+if (WiFi.status() != WL_CONNECTED) connectWifi();
+
+
+//delay(10);
+
+//Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
+
+  dosyaokufburl();
+  dosyaokufbapi();
+  dosyaokufbyol();
+  dosyaokufbusername();
+  dosyaokufbuserpass();
+
+if(fben!=0)connectfb();
+
   if(webstart==0){
     webstart=3;
       httpserver.begin();
+            butonactcoloku();
+            butonpascoloku();
+            butonayrcoloku();
+            butonpbgcoloku();
       Serial.println("Web server Lunched.");
   }
 
@@ -1423,11 +1469,10 @@ httpserver.setNoDelay(true);
     server.begin();
   Serial.println("8080 server started");
 
-//delay(10);
 
-//Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
 
-    connectfb();
+
+
 
     setup2();
     otasetup();
@@ -1444,12 +1489,9 @@ void connectfb()
 //dosyaokufben();
 
   if(fben==1){
-  dosyaokufburl();
-  dosyaokufbapi();
-  dosyaokufbyol();
-  dosyaokufbusername();
-  dosyaokufbuserpass();
   
+  //dosyaokufburl();dosyaokufbapi();dosyaokufbyol();dosyaokufbusername();dosyaokufbuserpass();
+
             IPAddress lip = WiFi.localIP();
 if (WiFi.status()==WL_CONNECTED)
   {
@@ -1487,7 +1529,7 @@ if(webstart>2){
   zamanfark=1;
   if(webstart>6000)
   {
-    if(Firebase_ready)
+    if(authdebug==10)
     {
       webstart=1;
       fbpinayarlarioku();
@@ -1495,20 +1537,24 @@ if(webstart>2){
   }
 }
 
-    if(Firebase_ready && webstart==2)
+    if(authdebug==10 && webstart==2)
     {
       fbpinstatelerioku();
       webstart=1;
     }
   // put your main code here, to run repeatedly:
   otaloop();
-  htpcl();
+  if(zamanfark<2070)htpcl();
   app.loop();
 
 
 server.handleClient();
 MDNS.update();
 
+if(pinayarchg==true)
+{
+  dosyaYazpinayar();
+}
 
   if (rescanwifi == 1) {
     wifiscan();
@@ -1543,11 +1589,10 @@ MDNS.update();
 
 
 
-if(authdebug=="10")Firebase_ready=true; else Firebase_ready=false;
-if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben==1){
+if(authdebug!=10 && WiFi.status()==WL_CONNECTED && fben==1){
 
   fbresulsay+=1;
-  if(fbresulsay>100000)
+  if(fbresulsay>3000)
   {
     fbresulsay=0;
     connectfb();
@@ -1556,27 +1601,35 @@ if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben==1){
 
      zamanfark +=1;
   
-  if (zamanfark > 7100) zamanfark= 1;
+  if (zamanfark > 2100) zamanfark= 1;
 
-  if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
-  if(zamanfark>5057 && zamanfark<5060){zamanfark=5061;updatesayac();}
+  //if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
+  if(zamanfark>1057 && zamanfark<1060){
+    zamanfark=1061;
+    programrun();
+    updatesayac();
+    }
 
   //if(zamanfark>3950 && zamanfark<3955){zamanfark=3960;updatesayac();}
   //if(zamanfark>3960 && zamanfark<3965){zamanfark=3970;programrun();}
   
-
-        if (zamanfark >= 7072 && zamanfark < 7080)
-        {  zamanfark= 7082;
-            Serial.print("auth debug code:");Serial.println(authdebug);
-            if(authdebug.toInt()==10)Firebase_ready=true; else Firebase_ready=false;
-            Serial.println(fben);
-            Serial.println(Firebase_ready);
-            if(Firebase_ready==true)
-            {
-              fbsayacoku();
-            }
+        if(authdebug==10){
+        if (zamanfark >= 2072 && zamanfark < 2080)
+        {
+                zamanfark= 2082;
+                //Serial.print("auth debug code:");Serial.println(authdebug);
+                Serial.println(fben);
+                Serial.println(authdebug);
+                if(authdebug==10)
+                {
+                  fbsayacoku();
+                }
+          }
         }
-
+        else
+        {
+          if(zamanfark>1061)zamanfark=1;
+        }
 
 
 
@@ -1592,6 +1645,9 @@ if(WiFi.status() != WL_CONNECTED)
   {
     reConnectsayac=millis();
     connectWifi();
+
+    if(WiFi.status() == WL_CONNECTED)connectfb();
+
   }
 }
 
@@ -1640,7 +1696,7 @@ aut=1; // silinecek
 
 void dosyayazssidpass()
 {
-                  reConnectsayac=0;
+                  reConnectsayac=millis();
                 dosya.close();
                 LittleFS.remove("/ssidpass.txt");
                 dosya = LittleFS.open("/ssidpass.txt", "w+");
@@ -1818,8 +1874,50 @@ Serial.print("pingirdiartisilici:  >>>  "); Serial.println(pingirdi);
 
 
 
+String Karakterduzeltfunc(String gelent)
+{ 
+  gelent.replace("+"," ");
+  gelent.replace("%20"," ");
+  gelent.replace("%26","&");
+  gelent.replace("%28","(");
+  gelent.replace("%29",")");
+  gelent.replace("%7C","|");
+  gelent.replace("%3B",";");
+  gelent.replace("%3D","=");
+  gelent.replace("%3F","?");
+  gelent.replace("%3E",">");
+  gelent.replace("%3C","<");
+  gelent.replace("%7B","{");
+  gelent.replace("%7D","}");
+  gelent.replace("%5B","[");
+  gelent.replace("%5D","]");
+  gelent.replace("%2B","+");
+  gelent.replace("%21","!");
+  gelent.replace("%0D%0A","\n");
+  gelent.replace("%22","\"");
+  gelent.replace("%3A",":");
+  gelent.replace("%3B","\"");
+  gelent.replace("%23","#");
+  gelent.replace("%27","'");
+  gelent.replace("%2C",",");
+  gelent.replace("%C5%9E","Ş");
+  gelent.replace("%C5%9F","ş");
+  gelent.replace("%C3%87","Ç");
+  gelent.replace("%C3%A7","ç");
+  gelent.replace("%C3%96","Ö");
+  gelent.replace("%C3%B6","ö");
+  gelent.replace("%C3%9C","Ü");
+  gelent.replace("%C3%BC","ü");
+  gelent.replace("%C4%9E","Ğ");
+  gelent.replace("%C4%9F","ğ");
+  gelent.replace("%C4%B1","ı");
+  gelent.replace("%C4%B0","İ");
+  gelent.replace("%2F","/");
+  gelent.replace("%25","%");
+  return gelent;
+}
 
-
+/*
 String Karakterduzeltfunc(String gelent){
 
 String gelentt;
@@ -1889,7 +1987,7 @@ String yerinegec[38];
         yerinegec[23] = "#";
 
   karakter[24] ="%27";  
-        yerinegec[24] = ",";
+        yerinegec[24] = "'";
 
   karakter[25] ="%2C";  
         yerinegec[25] = ",";
@@ -2021,3 +2119,4 @@ gidens="";
       
 
   }
+*/

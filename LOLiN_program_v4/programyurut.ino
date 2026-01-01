@@ -11,6 +11,7 @@ int aktifpinno;
 String ptm;
 
 void programrun() {
+  Serial.println("programrun giriş-----------");
   for (int i = 0; i < 11; i++)  // İLK 10 SAYI 10 PİN İSİM VE DEĞERLERİNİ AL degis degdeg e yaz
   {
     if(programdata.substring(0,1)=="\n")programdata.substring(1,programdata.length());//arada programdata için temizlik yap
@@ -43,12 +44,12 @@ void programrun() {
   }
 
   // en son işlem burası //////////////////////////////////
-  for (int sta = 0; sta < pinsayisi + 1; sta++) {
+  for (int sta = 0; sta < 11; sta++) {
     PinState[sta] = degdeg[sta];
     //Serial.print(pinname[sta] + " pinstate:");Serial.println(PinStatetmp[sta]);
   }
   ////////////////////////////////////////////////////////
-
+Serial.println("programrun ÇIKIŞ-----------");
 // fbde başka cihaza gonderilecek varmı bak ////////////////
 
 
@@ -310,8 +311,8 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
 
       yapilacakis = yapilacaklar.substring(0, yapilacaklar.indexOf(";"));
       yapilacaklarislemsayisi = i;
-      Serial.print("yapılacak ");
-      Serial.println(yapilacakis);
+//      Serial.print("yapılacak ");
+//      Serial.println(yapilacakis);
       //Serial.print("yapilacaklarislemsayisi ");
       //Serial.println(yapilacaklarislemsayisi);
       // tam burada yapılacak hesabına git
@@ -348,13 +349,13 @@ void yap(String yapilacak,int islemno)
             fbcupercase.toUpperCase();
         //if(indis<2)Serial.print("dsol ve fbc :");Serial.println(dsol + "   " + fbcupercase);
             if (dsol == fbcupercase) { 
-    if(indis<2)Serial.print("efbtd ve fbtd :");Serial.println(efbtd[indis] + "   " + fbtd[indis]);
+            //if(indis<2)Serial.print("efbtd ve fbtd :");Serial.println(efbtd[indis] + "   " + fbtd[indis]);
             fbtd[indis] = dsag;
             if(efbtd[indis]!=fbtd[indis]){
-              Serial.print("dsol ve fbc :");Serial.println(dsol + "   " + fbcupercase);
+            //  Serial.print("dsol ve fbc :");Serial.println(dsol + "   " + fbcupercase);
                         //efbtd[indis] = dsag;
               progmsg += fbc[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacak + "<br>";
-              Serial.print(fbcyol[indis] + " ------> ");Serial.println(fbtd[indis]);
+            //  Serial.print(fbcyol[indis] + " ------> ");Serial.println(fbtd[indis]);
             }
             break;
             }

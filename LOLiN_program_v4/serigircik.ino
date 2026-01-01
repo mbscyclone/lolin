@@ -106,7 +106,7 @@ void serin()
         fben=1;
         dosyayazfben();
         Serial.println("Firebase açıldı.");
-        fbreConnetsayac=20001;
+        fbresulsay=3001;
       }
 
       if(sergel.indexOf("fben=0")==0)
@@ -120,7 +120,7 @@ void serin()
 
 /// yardım başı /////////////////////////////////////////////////////////
 
-      if(sergel.length()<1 || sergel.indexOf("yardım")>-1)
+      if(sergel.length()<1 || sergel.indexOf("yardım")==0)
       {
             Serial.println("wifitara   - wifi taramak için");
             Serial.println("ssid=      - ssid ayarları başlatmak için.");
@@ -133,7 +133,7 @@ void serin()
       }
   
 
-      if(sergel.indexOf("durum")>-1)
+      if(sergel.indexOf("durum")==0)
       {
             Serial.println("firebase Açık  : "+ String(fben));
 //            if(Firebase.ready())Serial.println("Firebase durumu: Bağlı" );
@@ -142,11 +142,33 @@ void serin()
             Serial.println(httpserver.status());
       }
 
-      if(sergel.indexOf("htserverip")>-1)
+      if(sergel.indexOf("htserverip")==0)
       {
             Serial.println("http 8080 Serveri : "+ htServerip);
       }
 
+
+      if(sergel.indexOf("dosyasil:")==0)
+      {
+                String ds=sergel.substring(sergel.indexOf("il:")+3,sergel.length());
+                dosya.close();
+                LittleFS.remove(ds);
+                Serial.println(ds + " dosyası silindi.");
+      }
+
+      if(sergel.indexOf("dosyaoku:")==0)
+      {
+                String ds=sergel.substring(sergel.indexOf("ku:")+3,sergel.length());
+                dosya.close();
+                dosya = LittleFS.open(ds, "r");
+                if (dosya) {
+                String en = dosya.readString();
+                Serial.println(ds + "dosya içeriği"); Serial.println(dosya);
+                }else{
+                Serial.println(ds + " dosyası yok ");
+                }
+                dosya.close();
+      }
 //////////////////////////////////////////////////////////yardım bitti
 
 

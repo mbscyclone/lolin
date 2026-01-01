@@ -10,13 +10,13 @@ void sendserver(String goserver)
 
             WiFiClient client2;
             HTTPClient http2;
-            http2.setTimeout(100);
+            http2.setTimeout(200);
             http2.begin(client2, msg2);  // HTTP
 
             //Serial.print("[HTTP] GET...\n");
             // start connection and send HTTP header and body
             int httpCode2 = http2.GET();
-            delay(100);
+            delay(200);
             // httpCode will be negative on error
             if (httpCode2 > 0) {
             edegisenler=degisenler;

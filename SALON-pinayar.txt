@@ -1,0 +1,10 @@
+D1|INP|HCT|0|0|1|hctrig
+D2|INP|HCE|0|0|1|hcecho
+
+
+fbc fb1=/kev1/r/BAHCE;
+if(D2>14)fb1=D1:0;
+if(D2<14)fb1=D1:1;
+
+
+
