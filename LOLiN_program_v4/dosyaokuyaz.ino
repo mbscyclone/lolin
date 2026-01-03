@@ -115,6 +115,8 @@ void dosyayazfben()
                 dosya.close();
                 dosyaokufben();
                 if(fben==1)connectfb();
+                delay(100);
+                
 }
 
 

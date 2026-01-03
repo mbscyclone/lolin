@@ -599,6 +599,8 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
               if (header.indexOf("fireb=Off") > -1) {
                 fben = 0;
                 dosyayazfben();
+              delay(10);
+              ESP.reset();
               }
                     if(fben == 0)
                     {
@@ -613,6 +615,8 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
               if (header.indexOf("fireb=On") > -1) {
                 fben = 1;
               dosyayazfben();
+              delay(10);
+              ESP.reset();
               }
                     if(fben == 1)
                     {
@@ -641,7 +645,7 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
 
 
 
-            if (header.indexOf("/esprestart") > -1)ESP.reset();
+            if (header.indexOf("/resetle") > -1)ESP.reset();
             
 
 
@@ -1075,18 +1079,21 @@ if (Menu == 0) {
               if (header.indexOf("fireb=On") > -1) {
                 fben = 1;
               dosyayazfben();
+              delay(10);
+              ESP.reset();
               }
               if (header.indexOf("fireb=Off") > -1) {
                 fben = 0;
                 dosyayazfben();
+                delay(10);ESP.reset();
               }
 
             xilent.println("<br>");
             if(fben==0)xilent.println("Firebase Kapalı");
             if(fben==1)xilent.println("Firebase Açık");
             
-            if(fben==1)xilent.println("<form action=\"/firebaseset?fireb=Off\" method=\"POST\"><input type=\"submit\" value=\"FB Kapat\"></form>");
-            if(fben==0)xilent.println("<form action=\"/firebaseset?fireb=On\" method=\"POST\"><input type=\"submit\" value=\"FB Aç\"></form>");
+            if(fben==1)xilent.println("<form action=\"/firebaseset?fireb=Off\" method=\"POST\"><input type=\"submit\" value=\"FB Kapat\"> ! Reset çekilir ! </form>");
+            if(fben==0)xilent.println("<form action=\"/firebaseset?fireb=On\" method=\"POST\"><input type=\"submit\" value=\"FB Aç\"> ! Reset çekilir ! </form>");
 
             int pindolusay = -1;
             for (int m = 9; m > 0; m--) {

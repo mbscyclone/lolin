@@ -17,7 +17,7 @@
 //#include <MQTT.h>
 #include <Servo.h>
 #include <DHT.h>
-
+#include "Melody.h"
 //#include <WebSocketsServer.h>
 //#include <ESP8266WebServer.h>
 #include <FirebaseClient.h>
@@ -116,10 +116,11 @@ int rescanwifi = 0;
 //String capt;
 //String unme="admin";
 //String pwrd="1234";
-
+int PIN_TONE;
 
 int sayfayenile=0;
 int Pin[10];
+String VRP[5];
 int pinsayisi=10;
 // pin Adı|pinmode|pin baslangic degeri|pin değeri|pin degerleri|Pin label"
 String pinsatir[10];
@@ -138,6 +139,7 @@ String pinlabel[10];
 int dhtsayac = 0;
 int hcsrT;
 int hcsrE;
+int bestursay=0;
 
 String tempstr="";
 String humstr="";
@@ -237,7 +239,49 @@ String serip = server.uri();
   serip=serip.substring(serip.indexOf("ser:")+4,serip.length());
   Serial.println("Server geldi          ");Serial.println(serip);
   htserverkaydet(serip);
-  }else server.send(404, "text/plain", message);
+  }
+  else if(serip.indexOf("/data:")>-1)
+  {
+    serip=serip.substring(serip.indexOf("data:")+5,serip.length());
+
+    for(int z=0;z<11;z++)
+    {
+      if(serip.length()<1)break;
+      String pnm;
+      String pns;
+                                if(serip.indexOf(":")>-1){
+                                   pnm=serip.substring(0,serip.indexOf(":"));
+                                   if(serip.indexOf(",")>-1){
+                                   pns=serip.substring(serip.indexOf(":")+1,serip.indexOf(","));
+                                  serip = serip.substring(serip.indexOf(",")+1,serip.length());
+                                   }else
+                                   {
+                                   pns=serip.substring(serip.indexOf(":")+1,serip.length());
+                                  serip = "";
+                                   }
+                                if(pnm.indexOf("VR")==0)
+                                {
+                                Serial.println(pnm+" "+pns);
+                                  for(int vrr=0;vrr<6;vrr++)
+                                  {
+                                    if(pnm.indexOf("VR"+(String)vrr)==0)VRP[vrr]=pns;
+                                  }
+                                }
+                                else
+                                for(int hh=0;hh<11;hh++)
+                                {
+                                      if(pnm == pinname[hh])
+                                      { 
+                                            if(psco==false && pns!=fbPinState[hh])
+                                            {
+                                              PinState[hh] =pns;
+                                            }
+                                        break;
+                                      }
+                                }
+                                }
+    }
+  } else server.send(404, "text/plain", message);
 }
 
 
@@ -252,7 +296,8 @@ bool pinlerdagitildi=false;
 String Pinler;
 String Pinlertpm;
 void dosyaOkupinayar(){
-
+Serial.println("dosyaokupinayar pinayar okumaya geldim.");
+delay(1000);
   dosya.close();
     //LittleFS.remove("/pinayar.txt");
   dosya = LittleFS.open("/pinayar.txt", "r");
@@ -264,23 +309,25 @@ void dosyaOkupinayar(){
           dosya.close();
         Pinlertpm=pinayar;
         //Serial.println(pinayar);
-for (int x=0;x<pinsayisi+1;x++)
-{
-pinname[x]="";
-pinmode[x]="";
-pinsignaltype[x]="";
-pinminvalue[x]="";
-pinval[x]="";
-PinState[x]="";
-ePinState[x]="";
-fbPinState[x]="";
-pinmaxvalue[x]="";
-pinlabel[x]="";
-}
-
-erlog="";
 
 if(Pinlertpm.length()>0){
+          for (int x=0;x<pinsayisi+1;x++)
+          {
+          pinname[x]="";
+          pinmode[x]="";
+          pinsignaltype[x]="";
+          pinminvalue[x]="";
+          pinval[x]="";
+          PinState[x]="";
+          ePinState[x]="";
+          fbPinState[x]="";
+          pinmaxvalue[x]="";
+          pinlabel[x]="";
+          }
+
+          erlog="";
+
+
 
           for (int x=0;x<1000;x++){
               if(Pinlertpm.length()<3) break;
@@ -326,6 +373,10 @@ if(Pinlertpm.length()>0){
                   } else PinState[x] = Pinlertpm.substring(0,Pinlertpm.indexOf("|")); 
 
                   //ePinState[x]=PinState[x];
+                  if(pinsignaltype[x]=="BUZ")
+                  {
+                    PIN_TONE = Pin[x];
+                  }
                 }
               }
 
@@ -1599,16 +1650,22 @@ if(authdebug!=10 && WiFi.status()==WL_CONNECTED && fben==1){
   }
 }
 
-
+if(Menu==0){
      zamanfark +=1;
   
   if (zamanfark > 2100) zamanfark= 1;
+
+  if(zamanfark>857 && zamanfark<860){
+    zamanfark=861;
+    vrkontrol();
+    }
 
   //if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
   if(zamanfark>1057 && zamanfark<1060){
     zamanfark=1061;
     programrun();
     updatesayac();
+    vrkontrol();
     }
 
   //if(zamanfark>3950 && zamanfark<3955){zamanfark=3960;updatesayac();}
@@ -1632,8 +1689,7 @@ if(authdebug!=10 && WiFi.status()==WL_CONNECTED && fben==1){
           if(zamanfark>1061)zamanfark=1;
         }
 
-
-
+}else zamanfark=1;
 
 
 
@@ -1690,7 +1746,35 @@ aut=1; // silinecek
 }
 
 
-//httpgonder();
+void vrkontrol()
+{
+
+for(int vr=0;vr<6;vr++)
+{
+  if(VRP[vr].length()>0)
+  {
+      Serial.println("VR"+(String)vr + ": " + VRP[vr]);
+      if(VRP[vr].indexOf("BUZ>")==0)
+      {
+        String notalar=VRP[vr].substring(VRP[vr].indexOf(":")+1,VRP[vr].length());
+          notalar=notalar.substring(notalar.indexOf("BUZ>")+4,notalar.length());
+        play(notalar);
+        if(bestursay==0)VRP[vr]="";
+      }
+
+
+    if(VRP[vr].indexOf("SEND>")==0)
+    {
+      String htpServerip=VRP[vr].substring(VRP[vr].indexOf(":")+1,VRP[vr].length());
+        htpServerip=htpServerip.substring(htpServerip.indexOf("SEND>")+5,htpServerip.indexOf(">"));
+        String gonderilecek=htpServerip.substring(htpServerip.indexOf(">")+1,htpServerip.length());
+      sendserver(htpServerip, gonderilecek);
+    }
+
+
+  }
+}
+}
 
 
 
@@ -1876,7 +1960,7 @@ Serial.print("pingirdiartisilici:  >>>  "); Serial.println(pingirdi);
 
 
 String Karakterduzeltfunc(String gelent)
-{ 
+{ Serial.println("Karakterduzelte girdim");
   gelent.replace("+"," ");
   gelent.replace("%20"," ");
   gelent.replace("%26","&");

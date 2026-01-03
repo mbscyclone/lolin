@@ -1,6 +1,12 @@
 int fbsayac=0;
+String esayacyani="";
 void fbsayacoku()
 {
+  if(bestursay>0)
+  {
+    bestursay+=1;
+    if(bestursay>3)bestursay=0;
+  }
 if(fbpinayaryaz==true){fbpinayaryaz=false;fbpinayarlariyaz();}
 
                       String getpath="/" + YOL + "/r/"+esphostname;
@@ -26,23 +32,33 @@ Serial.println("Get str." + resul);
                               fbsayacyanioku(rsltt);
                             }
                             if(resul.toInt()==9 || resul.toInt()==19)fbpinstatelerioku();
-                            if(resul.toInt()==10){resul="-1";fbpinstateleriyaz();}
-                            //if(resul.toInt()>18) {resul="8";fbpinstateleriyaz();}
                             
-                            if(psco==true || psci==true) fbpinstateleriyaz();
+                            if(resul.toInt()==10){resul="-1";fbpinstateleriyaz();}
+                              else                         
+                                if(psco==true || psci==true) fbpinstateleriyaz();
+
                           }
 
 }
 
 void fbsayacyanioku(String rsltt)
-{
+{ if(esayacyani!=rsltt){bestursay=1;esayacyani=rsltt;}
+
                                   String pnm=rsltt.substring(0,rsltt.indexOf(":"));
                                   String pns=rsltt.substring(rsltt.indexOf(":")+1,rsltt.indexOf(","));
                                   rsltt = rsltt.substring(rsltt.indexOf(",")+1,rsltt.length());
-                                  //Serial.println(pnm+" "+pns);
-                                  
+
+                                if(pnm.indexOf("VR")==0)
+                                {
+                                Serial.println(pnm+" "+pns);
+                                  for(int vrr=0;vrr<6;vrr++)
+                                  {
+                                    if(pnm.indexOf("VR"+(String)vrr)==0)VRP[vrr]=pns;
+                                  }
+                                }
+                                else
                                 for(int hh=0;hh<11;hh++)
-                                    {
+                                {
                                       if(pnm == pinname[hh])
                                       { 
                                             if(psco==false && pns!=fbPinState[hh])
@@ -54,14 +70,14 @@ void fbsayacyanioku(String rsltt)
                                             }
                                         break;
                                       }
-                                    }
+                                }
 }
 
 
 void fbbaskacihazagonder(String yol2,String fbdt,int fbg)
 {
-                      Serial.print("yol2: ");Serial.println(yol2);
-                      Serial.print("fbdt: ");Serial.println(fbdt);
+                      //Serial.print("yol2: ");Serial.println(yol2);
+                      //Serial.print("fbdt: ");Serial.println(fbdt);
                       Serial.print("fbg: ");Serial.println(fbg);
                       
                        delay(10);
@@ -93,8 +109,7 @@ void fbbaskacihazagonder(String yol2,String fbdt,int fbg)
 }
 
 void fbsayacguncelle()
-{
-
+{  if(bestursay!=0)return;
                             String setpath="/" + YOL + "/r/"+esphostname;
                             fbsayac+=1;
                             if(fbsayac>7)fbsayac=0;
@@ -106,6 +121,11 @@ void fbsayacguncelle()
 void fbdataguncelle()
 {
 Serial.println("fbdataguncelle------------");
+
+                              //sayac zaman guncelle 0 yap
+                                  fbsayacguncelle();
+                              ////////////////////////////
+
                               // pin ayarlarını yaz
                                   fbpinayarlariyaz();
                               /////////////////////////////
@@ -113,10 +133,6 @@ Serial.println("fbdataguncelle------------");
                               //pinstateleri yaz
                                   fbpinstateleriyaz();
                               /////////////////////////////
-
-                              //sayac zaman guncelle 0 yap
-                                  fbsayacguncelle();
-                              ////////////////////////////
 }
 
 void fbpinstatelerioku()
@@ -177,11 +193,11 @@ Serial.println("Get str. resul");
                                 Serial.print("  psci:");
                                 Serial.println(psci);
 
-                              if(psco==true || psci==true) fbpinstateleriyaz();
+                              if(psco==true || psci==true){fbpinstateleriyaz();}
                             //String resul=Firebase.RTDB.setString(&fbdo, setpath, dats) ? "ok" : fbdo.errorReason().c_str();
                             //Database.set<string_t>(aClient, setpath, string_t(dats));
                             //Serial.println("Set string... " + setpath + " " + resul);
-                              fbsayacguncelle();
+
                           }
 }
 
@@ -237,7 +253,7 @@ void fbpinayarlariyaz()
 
 void fbpinstateleriyaz()
 {
-
+                            fbsayacguncelle();
                             String setpath="/" + YOL + "/pins/" + esphostname+ "pin";
                             String dats="";
                                 for(int h=0;h<pinsayisi;h++)
@@ -260,7 +276,6 @@ void fbpinstateleriyaz()
                             psci=false;
 
 
-                            fbsayacguncelle();
 }
 
 

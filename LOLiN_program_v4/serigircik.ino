@@ -90,6 +90,11 @@ void serin()
         Serial.println( USER_PASSWORD + " [USER_PASSWORD] güncellendi," + "\n FB bilgileri güncellendi. Kayıt için fbset yazınız.");
       }
 
+      if(sergel.indexOf("pl ")==0)
+      {
+        String mel=sergel.substring(sergel.indexOf("pl ")+3,sergel.length());
+        play(mel);
+      }
 
       if(sergel.indexOf("fbset")==0)
       {

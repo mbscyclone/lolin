@@ -11,8 +11,8 @@ degisenler="";
                 {
                   if(fbc[fbg].length()>0)
                   {
-                    Serial.println("fbcyol: " + fbcyol[fbg]);
-                    Serial.println("fbtd[fbg] " + fbtd[fbg] + "     efbtd[fbg]" +efbtd[fbg] );
+                    //Serial.println("fbcyol: " + fbcyol[fbg]);
+                    //Serial.println("fbtd[fbg] " + fbtd[fbg] + "     efbtd[fbg]" +efbtd[fbg] );
                     if(fbtd[fbg]!=efbtd[fbg])
                     {
                       fbbaskacihazagonder(fbcyol[fbg], fbtd[fbg], fbg);
@@ -127,22 +127,8 @@ degisenler="";
           {
               //Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
             
-            if(pinsignaltype[x]=="ANG")
-            {
 
-              int epinstate = ePinState[x].toInt();
-              int pinstate  =  PinState[x].toInt();
-
-
-              if(abs(epinstate-pinstate)>10){
-                //Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
-                psci=true;
-                ePinState[x] = PinState[x];
-                degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
-              }
-
-            }
-            else if (pinsignaltype[x].indexOf("DH")>-1)
+             if (pinsignaltype[x].indexOf("DH")>-1)
                       {
                           psci=true;
                           
@@ -166,6 +152,21 @@ degisenler="";
                           ePinState[x] = PinState[x];
                           degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
                          } else
+                              if(pinsignaltype[x]=="ANG")
+                              {
+
+                                int epinstate = ePinState[x].toInt();
+                                int pinstate  =  PinState[x].toInt();
+
+
+                                if(abs(epinstate-pinstate)>10){
+                                  //Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
+                                  psci=true;
+                                  ePinState[x] = PinState[x];
+                                  degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
+                                }
+
+                              } else
                               {
                               psci=true;
                               ePinState[x] = PinState[x];
@@ -185,7 +186,7 @@ degisenler="";
               }
 */
       if(degisenler!= edegisenler && htServerip.length()>0){
-      sendserver(degisenler);
+      sendserver(htServerip, degisenler);
       }
 }
 

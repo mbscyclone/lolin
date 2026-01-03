@@ -12,5 +12,4 @@ void hcsr04loop(int x)
     if(distance >2){
     if(abs(edistance-distance)>5){PinState[x]=distance;edistance=distance;}
     }
-    else PinState[x]= "";
 }

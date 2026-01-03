@@ -1,8 +1,8 @@
 #include <WiFiClient.h>
 
-void sendserver(String goserver)
+void sendserver(String htpServerip, String goserver)
 { if(goserver.length()<5)return;
-  String msg2 = "http://" + htServerip + ":8080/"+ YOL + "/" + esphostname + "-" + goserver;
+  String msg2 = "http://" + htpServerip + ":8080/"+ YOL + "/" + esphostname + "-" + goserver;
 
           Serial.println(msg2);
       
