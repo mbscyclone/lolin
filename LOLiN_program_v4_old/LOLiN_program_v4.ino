@@ -137,8 +137,8 @@ String pinlabel[10];
 //String pindurumrec;
 //bool pindurumrecyap;
 int dhtsayac = 0;
-int hcsrT[10];
-int hcsrE[10];
+int hcsrT;
+int hcsrE;
 int bestursay=0;
 
 String tempstr="";
@@ -323,8 +323,6 @@ if(Pinlertpm.length()>0){
           fbPinState[x]="";
           pinmaxvalue[x]="";
           pinlabel[x]="";
-          hcsrT[x]=-1;
-          hcsrE[x]=-1;
           }
 
           erlog="";
@@ -379,25 +377,6 @@ if(Pinlertpm.length()>0){
                   {
                     PIN_TONE = Pin[x];
                   }
-
-                  if(pinsignaltype[x]=="HCE")
-                  {
-                    hcsrE[x] = Pin[x];
-
-                    if(pinminvalue[x]=="D0")hcsrT[x]=Pin[0];
-                    if(pinminvalue[x]=="D1")hcsrT[x]=Pin[1];
-                    if(pinminvalue[x]=="D2")hcsrT[x]=Pin[2];
-                    if(pinminvalue[x]=="D3")hcsrT[x]=Pin[3];
-                    if(pinminvalue[x]=="D4")hcsrT[x]=Pin[4];
-                    if(pinminvalue[x]=="D5")hcsrT[x]=Pin[5];
-                    if(pinminvalue[x]=="D6")hcsrT[x]=Pin[6];
-                    if(pinminvalue[x]=="D7")hcsrT[x]=Pin[7];
-                    if(pinminvalue[x]=="D8")hcsrT[x]=Pin[8];
-                    if(pinminvalue[x]=="A0")hcsrT[x]=Pin[9];
-
-
-                  }
-
                 }
               }
 
@@ -422,6 +401,28 @@ if(Pinlertpm.length()>0){
             if(Pinlertpm.length()<5) break;
 
           }
+
+          if(pinayar.indexOf("|HCT|")>-1)
+          {
+            if(pinayar.indexOf("|HCE|")>-1)
+            {
+              for(int x=0;x<pinsayisi+1;x++)
+              {
+                      if(pinsignaltype[x]=="HCT"){
+                      hcsrT=Pin[x];
+                      }
+                      if(pinsignaltype[x]=="HCE"){
+                      hcsrE=Pin[x];
+                      }
+              }
+            }
+            else
+            {
+              erlog+="HCE yok, HCT pinayarlarında belirtilmiş fakat Echo pin satırı belirtilmemiş.";
+            }
+          }
+
+          if(pinayar.indexOf("|HCE|")>-1 && pinayar.indexOf("|HCT|")<0)erlog+="HCT yok, HCE pinayarlarında belirtilmiş fakat Triger pin satırı belirtilmemiş.";
 
            pinlerdagitildi == true;//dosyaokupindurum();
         }
@@ -1656,8 +1657,6 @@ if(Menu==0){
 
   if(zamanfark>857 && zamanfark<860){
     zamanfark=861;
-    programrun();
-    updatesayac();
     vrkontrol();
     }
 
