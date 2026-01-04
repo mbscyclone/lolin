@@ -1,4 +1,4 @@
-unsigned long duration=50;
+unsigned long duration=200;
 double frequency;
 void play(String melody)
 {

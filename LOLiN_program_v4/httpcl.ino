@@ -35,6 +35,7 @@ void httpheader(WiFiClient xilent) {
 
 void htpcl() {
   WiFiClient xilent = httpserver.available();
+  header.reserve(512);
   header="";
   if (xilent) {
 
@@ -60,7 +61,7 @@ void htpcl() {
             reConnectsayac=millis();
 
         zamanfark=1050;
-        Serial.println("httttttttttt--------------");
+        Serial.println("httttt-----");
 
 IPAddress lip = WiFi.localIP();
 String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
@@ -454,7 +455,7 @@ Serial.println("baradan geçtim)");
 
 
 
-              xilent.println("<br>(Firebase).com  =< Realtime Database >=  Ayarlari<br><br>");
+              xilent.println("<br>Realtime Database Ayarlari<br><br>");
 
 
 String errstring="";
@@ -478,23 +479,23 @@ if(header.indexOf("?fburl=")>-1)
   API_KEY=header.substring(header.indexOf("&fbapi=")+7,header.indexOf("&fbyol"));
   if(API_KEY.length()<32)
   {
-    errstring += "API_KEY Yanlış girilmiş.<br>";
+    errstring += "API_KEY Yanlış.<br>";
   }
     
   if(API_KEY.length()<1 || API_KEY=="")
   {
-    errstring += " API_KEY boş bırakılmış.<br>";
+    errstring += " API_KEY boş.<br>";
   }
 
    YOL=header.substring(header.indexOf("&fbyol=")+7,header.indexOf(" HTTP/1.1"));
   if(YOL.length()>10)
   {
-    errstring += "YOL Yanlış girilmiş.<br>";
+    errstring += "YOL Yanlış.<br>";
   }
     
   if(YOL.length()<1 || YOL=="")
   {
-    errstring += " YOL boş bırakılmış.<br>";
+    errstring += " YOL boş.<br>";
   }
 
 
@@ -516,27 +517,27 @@ if(header.indexOf("?fbeml1=")>-1)
   USER_EMAIL1=header.substring(header.indexOf("?fbeml1=")+8,header.indexOf("&fbeml2="));
   if(USER_EMAIL1.length()==0 || USER_EMAIL1=="")
   {
-    errstring += "E-MAIL ön boş birakilmis.<br>";
+    errstring += "E-MAIL ön boş.<br>";
   }
      USER_EMAIL2=header.substring(header.indexOf("&fbeml2=")+8,header.indexOf("&fbupw="));
   if(USER_EMAIL2.indexOf(".")<0)
   {
-    errstring += "E-MAIL Yanlis girilmis.<br>";
+    errstring += "E-MAIL Yanlis.<br>";
   }
   if(USER_EMAIL2.length()==0 || USER_EMAIL2=="")
   {
-    errstring += "E-MAIL boş birakilmis.<br>";
+    errstring += "E-MAIL boş.<br>";
   } 
   
   USER_PASSWORD=header.substring(header.indexOf("&fbupw=")+7,header.indexOf(" HTTP/1.1"));
   if(USER_PASSWORD.length()<2)
   {
-    errstring += " PASSWORD Yanlış girilmiş.<br>";
+    errstring += " PASSWORD Yanlış.<br>";
   }
     
   if(USER_PASSWORD.length()<1 || USER_PASSWORD=="")
   {
-    errstring += " PASSWORD boş bırakılmış.<br>";
+    errstring += " PASSWORD boş.<br>";
   }
   if(errstring==""){dosyayazfbusername();dosyayazfbuserpass(); }
 }
@@ -558,16 +559,16 @@ USER_EMAIL2=USER_EMAIL.substring(USER_EMAIL.indexOf("@")+1,USER_EMAIL.length());
 
 
               xilent.println("<form method='get' action='/firebaseset'>");
-              xilent.println("<label>FBRTD nin URL ve API_KEY'i  yazın <br> URL  : </label>");
+              xilent.println("<label>FBRTD nin URL ve API_KEY'i yazın <br> URL  : </label>");
               xilent.println("<input name='fburl' id='fburl' style=\"width:350px;\" value='");
               xilent.println(DATABASE_URL);
               xilent.println("'><br><br>");
-              xilent.println("<label>API_KEY : </label><input name='fbapi' id='fbapi' style=\"width:320px;\" value='");
+              xilent.println("<label>API_KEY:</label><input name='fbapi' id='fbapi' style=\"width:320px;\" value='");
               xilent.println(API_KEY);
               xilent.println("'><br><br>");
               xilent.println("<label>Database deki Yol (Örnek: Balıkesir ev1: bev1, yazlık 10Yz1, gibi kısa kodlar kullanın)<br> YOL : </label><input name='fbyol' id='fbyol' style=\"width:70px;\" value='");
               xilent.println(YOL);
-              xilent.println("'>    <input type='submit'>");
+              xilent.println("'><input type='submit'>");
               xilent.println("</form>");
               xilent.println("<hr style=\"height:4px;border-width:0;color:black;background-color:gray\">");
               
@@ -583,16 +584,16 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
               
 
               xilent.println("<br><br>");
-              xilent.println("<label>PASSWORD : </label><input name='fbupw' id='fbupw' style=\"width:120px;\" value='");
+              xilent.println("<label>PASSWORD:</label><input name='fbupw' id='fbupw' style=\"width:120px;\" value='");
               xilent.println(USER_PASSWORD);
-              xilent.println("'>    <input type='submit'>");
+              xilent.println("'><input type='submit'>");
               xilent.println("</form>");
               xilent.println("<br><hr style=\"height:4px;border-width:0;color:black;background-color:gray\">");
               
 
 ////////
           if(DATABASE_URL !="" && API_KEY != "" && USER_EMAIL != "" && USER_PASSWORD != ""){
-              xilent.println("<form action=\"/firebaseset\"><label for=\"option\">Firebase protokolu acilsin mi?:</label><select id=\"fireb\" name=\"fireb\" ");
+              xilent.println("<form action=\"/firebaseset\"><label for=\"option\">Firebase protokolu:</label><select id=\"fireb\" name=\"fireb\" ");
 
               xilent.println(">");
 
@@ -651,7 +652,7 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
 
 
 
-            if (header.indexOf("POST / HTTP/1.1") > -1 || header.indexOf("GET / HTTP/1.1") > -1 || header.indexOf("/Menu1") > -1) {
+            if (header.indexOf("/ HTTP/1.1") > -1 || header.indexOf("/ HTTP/1.1") > -1 || header.indexOf("/Menu1") > -1) {
 
               //Serial.println(Menu);
               //Serial.println(header);
@@ -746,25 +747,25 @@ if (Menu == 0) {
 
 
             if (Headerparcala.indexOf(" /butonactcol") > -1) {
-              Headerparcala = Headerparcala.substring(Headerparcala.indexOf(" /butonactcol") + 17, Headerparcala.length());
+              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/butonactcol") + 16, Headerparcala.length());
               butonactcol = Headerparcala.substring(0, Headerparcala.indexOf(" HTTP"));
               butonactcolyaz();
             }
 
             if (Headerparcala.indexOf(" /butonpascol") > -1) {
-              Headerparcala = Headerparcala.substring(Headerparcala.indexOf(" /butonpascol") + 17, Headerparcala.length());
+              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/butonpascol") + 16, Headerparcala.length());
               butonpascol = Headerparcala.substring(0, Headerparcala.indexOf(" HTTP"));
               butonpascolyaz();
             }
 
             if (Headerparcala.indexOf(" /butonayrcol") > -1) {
-              Headerparcala = Headerparcala.substring(Headerparcala.indexOf(" /butonayrcol") + 17, Headerparcala.length());
+              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/butonayrcol") + 16, Headerparcala.length());
               butonayrcol = Headerparcala.substring(0, Headerparcala.indexOf(" HTTP"));
               butonayrcolyaz();
             }
 
             if (Headerparcala.indexOf(" /butonpbgcol") > -1) {
-              Headerparcala = Headerparcala.substring(Headerparcala.indexOf(" /butonpbgcol") + 17, Headerparcala.length());
+              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/butonpbgcol") + 16, Headerparcala.length());
               //Serial.println(Headerparcala);
               butonpbgcol = Headerparcala.substring(0, Headerparcala.indexOf(" HTTP"));
               butonpbgcolyaz();
@@ -1004,7 +1005,7 @@ if (Menu == 0) {
             xilent.println("<link rel=\"icon\" href=\"data:,\">");
             // CSS to style the on/off buttons
             // Feel free to change the background-color and font-size attributes to fit your preferences
-            xilent.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+            xilent.println("<style>html{ font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
             // xilent.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;text-decoration: none; font-size: 20px; margin: 2px; cursor: pointer;}");
 
 
@@ -1103,7 +1104,7 @@ if (Menu == 0) {
               }
             }
             if (pindolusay == -1) {
-              xilent.println("<p> Pinler Ayarları Yok</p>");
+              xilent.println("<p>Pin Ayarları Yok</p>");
               xilent.println("<br><br><br><br><p><a href=\"/Menu1\"><button class=\"button butayr\">Ayarlar</button></a></p>");
               // The HTTP response ends with another blank line
               xilent.println("HTTP/1.1 200 OK");
@@ -1346,7 +1347,8 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
 
 
             // The HTTP response ends with another blank line
-            xilent.println("coded by " + creator + ". ESP control  (ver:01__01.09.2025)<br><br>");
+            xilent.println("coded by " + creator + ". ESP kontrol (v4");
+            xilent.println("<label style='font-size:1px;'>"+ WiFi.macAddress() +"</label>04.01.2026)<br><br>");
             //String butonactcol = "#d1ca03";
             //String butonpascol = "#A3A3A3";
             //String butonayrcol = "#20d3c8";
@@ -1398,7 +1400,8 @@ if (uri.indexOf("?") > 0) {
 
           // menu0bitti
 
-          //xilent.println("<footer></footer>");
+          
+
           xilent.println("</body></html>");
           xilent.println();
 
@@ -1406,8 +1409,7 @@ if (uri.indexOf("?") > 0) {
             //xilent.close();
 
           }
-
-              delay(1);
+              yield();
         }
       }
     }

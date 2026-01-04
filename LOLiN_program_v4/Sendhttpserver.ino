@@ -27,4 +27,5 @@ void sendserver(String htpServerip, String goserver)
             }
 
           }
+            yield();
 }

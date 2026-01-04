@@ -297,8 +297,8 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
   
   //Serial.print("ptm:");   
   //Serial.println(ptm);
-  //Serial.print("yapilacaklar:");   
-  //Serial.println(yapilacaklar);
+  Serial.print("yapilacaklar:");   
+  Serial.println(yapilacaklar);
   //sonsatir belli;
   
   
@@ -317,25 +317,20 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
       yapilacakis = yapilacaklar.substring(0, yapilacaklar.indexOf(";"));
       yapilacakisn = yapilacaklarn.substring(0, yapilacaklarn.indexOf(";"));
       yapilacaklarislemsayisi = i;
-//      Serial.print("yapılacak ");
-//      Serial.println(yapilacakis);
+      Serial.print("yapılacak ");
+      Serial.println(yapilacakis);
       //Serial.print("yapilacaklarislemsayisi ");
       //Serial.println(yapilacaklarislemsayisi);
       // tam burada yapılacak hesabına git
       yap(yapilacakisn,yapilacaklarislemsayisi);
       yapilacaklar = yapilacaklar.substring(yapilacaklar.indexOf(";") + 1, yapilacaklar.length());
       yapilacaklarn = yapilacaklarn.substring(yapilacaklarn.indexOf(";") + 1, yapilacaklarn.length());
-      if(yapilacaklar.indexOf("}")<1){
-        yapilacaklar="";
-        ptm=ptm.substring(ptm.indexOf("}"),ptm.length());
-        }
       if (yapilacaklar.length() < 1){break;}
     }
   } else {
     perlog += (String)satirsayisip + ". satırda / satır sonunda ';' unutulmuş.\n";
     return;
   }
-  return;
 }
 
 void yap(String yapilacakn,int islemno)
@@ -365,14 +360,14 @@ void yap(String yapilacakn,int islemno)
               progmsg += fbc[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacakn + "<br>";
             //  Serial.print(fbcyol[indis] + " ------> ");Serial.println(fbtd[indis]);
             }
-            break;
             }
 
             if (dsol == degis[indis]) { 
             degdeg[indis] = dsag;
+            PinState[indis] = dsag;
             progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacakn + "<br>";
-            //Serial.print(pinname[indis] + " ------> ");Serial.println(degis[indis]);
-            break;
+            Serial.print(pinname[indis] + " ------> ");Serial.println(degis[indis]);
+            Serial.print(pinname[indis] + " ------> ");Serial.println(dsag);
             }
           } else if (indis >= 11 && indis < 31)  // degiskenleri tut
           {
@@ -380,7 +375,6 @@ void yap(String yapilacakn,int islemno)
             degdeg[indis] = dsag;
             progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacakn + "<br>";
             //Serial.print(pinname[indis] + " ------> ");Serial.println(degis[indis]);
-            break;
             }
           } else if (indis >= 31 && indis < 51)  // bool degisken
           {
@@ -388,7 +382,6 @@ void yap(String yapilacakn,int islemno)
             degdeg[indis] = dsag;
             progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacakn + "<br>";
             //Serial.print(pinname[indis] + " ------> ");Serial.println(degis[indis]);
-            break;
             }
           } else if (indis >= 51 && indis < 71)  // bool sonuc
           {
@@ -396,7 +389,6 @@ void yap(String yapilacakn,int islemno)
             degdeg[indis] = dsag;
             progmsg += degis[indis] + " Program satiri " + (String)satirsayisip + " yuzunden degisti. " + "  Komut: " + satirp[satirsayisip] + " iş:" + yapilacakn + "<br>";
             //Serial.print(pinname[indis] + " ------> ");Serial.println(degis[indis]);
-            break;
             }
           }
           

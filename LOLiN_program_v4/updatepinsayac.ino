@@ -188,5 +188,6 @@ degisenler="";
       if(degisenler!= edegisenler && htServerip.length()>0){
       sendserver(htServerip, degisenler);
       }
+        yield();
 }
 

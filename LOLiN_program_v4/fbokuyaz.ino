@@ -5,7 +5,7 @@ void fbsayacoku()
   if(bestursay>0)
   {
     bestursay+=1;
-    if(bestursay>3)bestursay=0;
+    if(bestursay>4)bestursay=0;
   }
 if(fbpinayaryaz==true){fbpinayaryaz=false;fbpinayarlariyaz();}
 
@@ -14,10 +14,6 @@ if(fbpinayaryaz==true){fbpinayaryaz=false;fbpinayarlariyaz();}
                       String resul = Database.get<String>(aClient, getpath);
 Serial.print(getpath +"  ");Serial.println(WiFi.localIP());
 Serial.println("Get str." + resul);
-                          if(resul.indexOf("not connected")>-1)
-                          {
-                            Serial.println("not connected");
-                          }
 
                           if(resul.indexOf("path not exist")>-1 || resul=="null")
                           {
@@ -38,7 +34,7 @@ Serial.println("Get str." + resul);
                                 if(psco==true || psci==true) fbpinstateleriyaz();
 
                           }
-
+  yield();
 }
 
 void fbsayacyanioku(String rsltt)
@@ -213,11 +209,15 @@ void fbpinayarlarioku()
 
 
                             String dats="";
-                                for(int h=0;h<pinsayisi;h++)
-                                {
-                                  if( pinsatir[h].length()>0) dats+="[" + pinsatir[h] + "]";
-                                }
+                                //for(int h=0;h<pinsayisi;h++)
+                                //{
+                                //  if( pinsatir[h].length()>0) dats+="[" + pinsatir[h] + "]";
+                                //}
 
+                                dats="[" + pinayar;
+                                dats.replace("\n","][");
+                                dats.replace("[]","");
+                                if(dats.length()>1)dats=dats.substring(0,dats.length()-1);
 
                           if(resul.indexOf("path not exist")>-1 || resul=="null")
                           {
@@ -227,6 +227,7 @@ void fbpinayarlarioku()
                             Serial.println(resul);
                             Serial.println(dats);
                             if(resul != dats) fbpinayarlariyaz();
+                            else{Serial.println("aynı");}
                           }
 
 
@@ -240,10 +241,15 @@ void fbpinayarlariyaz()
                             // pin ayarlarını yükle
                             String setpath="/" + YOL + "/pays/" + esphostname + "pay";
                             String dats="";
-                                for(int h=0;h<pinsayisi;h++)
-                                {
-                                  if( pinsatir[h].length()>0) dats+="[" + pinsatir[h] + "]";
-                                }
+                                //for(int h=0;h<pinsayisi;h++)
+                                //{
+                                //  if( pinsatir[h].length()>0) dats+="[" + pinsatir[h] + "]";
+                                //}
+                                dats="[" + pinayar;
+                                dats.replace("\n","][");
+                                dats.replace("[]","");
+                                if(dats.length()>1)dats=dats.substring(0,dats.length()-1);
+
                             //Serial.print("Spath: " + setpath);Serial.println(dats);
 //                            String resul=Firebase.RTDB.setString(&fbdo, setpath, dats) ? "ok" : fbdo.errorReason().c_str();
                            Database.set<string_t>(aClient, setpath, string_t(dats));

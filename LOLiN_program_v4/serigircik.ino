@@ -174,6 +174,11 @@ void serin()
                 }
                 dosya.close();
       }
+
+      if(sergel.indexOf("mac")==0)
+      {
+        Serial.print("Mac:");Serial.println(Serial.println(WiFi.macAddress()));
+      }
 //////////////////////////////////////////////////////////yardım bitti
 
 

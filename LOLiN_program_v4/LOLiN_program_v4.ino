@@ -24,7 +24,6 @@
 #include "ExampleFunctions.h" // Provides the functions used in the examples.
 
 
-
 SSL_CLIENT ssl_client;
 using AsyncClient = AsyncClientClass;
 AsyncClient aClient(ssl_client);
@@ -123,7 +122,8 @@ int Pin[10];
 String VRP[5];
 int pinsayisi=10;
 // pin Adı|pinmode|pin baslangic degeri|pin değeri|pin degerleri|Pin label"
-String pinsatir[10];
+
+//String pinsatir[10];
 String pinname[10];
 String pinmode[10];
 String pinsignaltype[10];
@@ -134,6 +134,9 @@ String ePinState[10];
 String fbPinState[10];
 String pinmaxvalue[10];
 String pinlabel[10];
+
+
+
 //String pindurumrec;
 //bool pindurumrecyap;
 int dhtsayac = 0;
@@ -150,9 +153,9 @@ String pinayar;
 String Program;
 
 // PROGRAM İÇİN ////////////////////////
-String satirp[100];
-String degis[80];
-String degdeg[80];
+String satirp;
+String degis[20];
+String degdeg[20];
 String fbc[10]; 
 String fbcyol[10];
 String fbtd[10];
@@ -287,16 +290,18 @@ String serip = server.uri();
 
 
 
-
-
-
+String macadr1="8c"; // SALON
+//String macadr1="50"; // BAHCE
 
 bool pinlerdagitildi=false;
-
 String Pinler;
 String Pinlertpm;
+String macadr;
+String macadr2=":ce:4e:ca:0e:56"; // SALON
+//String macadr2=":02:91:E0:43:9E"; //BAHCE
+
 void dosyaOkupinayar(){
-Serial.println("dosyaokupinayar pinayar okumaya geldim.");
+Serial.println("dosyaokupinayar.");
 delay(1000);
   dosya.close();
     //LittleFS.remove("/pinayar.txt");
@@ -345,7 +350,7 @@ if(Pinlertpm.length()>0){
               
               x = pinismiint;
 
-              pinsatir[x] = Pinlertpm.substring(0,Pinlertpm.indexOf("\n"));
+              //pinsatir[x] = Pinlertpm.substring(0,Pinlertpm.indexOf("\n"));
 
               //Serial.println(j);
               pinname[x] = Pinlertpm.substring(0,Pinlertpm.indexOf("|"));
@@ -394,7 +399,6 @@ if(Pinlertpm.length()>0){
                     if(pinminvalue[x]=="D7")hcsrT[x]=Pin[7];
                     if(pinminvalue[x]=="D8")hcsrT[x]=Pin[8];
                     if(pinminvalue[x]=="A0")hcsrT[x]=Pin[9];
-
 
                   }
 
@@ -1434,8 +1438,8 @@ void setup() {
     Serial.println("Dosya sistemi başarısız");
   }
 
-
-
+Serial.println(ESP.getResetReason());
+Serial.println(ESP.getResetInfo());
    pinMode(LED_BUILTIN, OUTPUT);
 
 
@@ -1485,7 +1489,8 @@ void setup() {
 
 httpserver.setNoDelay(true);
 
-
+macadr=macadr1+macadr2;
+macadr.toUpperCase();
 
 if (WiFi.status() != WL_CONNECTED) connectWifi();
 
@@ -1572,6 +1577,7 @@ uint8_t serstat;
 
 int dhtokusayac=0;
 void loop() {
+//Serial.print("Free heap: "); Serial.println(ESP.getFreeHeap());
 
 //Serial.println(httpserver.status());
 if(webstart>2){
@@ -1605,6 +1611,10 @@ if(pinayarchg==true)
 {
   dosyaYazpinayar();
 }
+
+// geciktirmee
+if(macadr!=WiFi.macAddress()){delay(1000);}
+
 
   if (rescanwifi == 1) {
     wifiscan();
@@ -1656,7 +1666,7 @@ if(Menu==0){
 
   if(zamanfark>857 && zamanfark<860){
     zamanfark=861;
-    programrun();
+    //programrun();
     updatesayac();
     vrkontrol();
     }
@@ -1743,7 +1753,7 @@ aut=1; // silinecek
   {
     say+=1;
   }
-
+  yield();
 }
 
 
@@ -1771,7 +1781,6 @@ for(int vr=0;vr<6;vr++)
         String gonderilecek=htpServerip.substring(htpServerip.indexOf(">")+1,htpServerip.length());
       sendserver(htpServerip, gonderilecek);
     }
-
 
   }
 }
