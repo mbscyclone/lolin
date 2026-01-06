@@ -5,7 +5,7 @@ void fbsayacoku()
   if(bestursay>0)
   {
     bestursay+=1;
-    if(bestursay>4)bestursay=0;
+    if(bestursay>2)bestursay=0;
   }
 if(fbpinayaryaz==true){fbpinayaryaz=false;fbpinayarlariyaz();}
 
@@ -40,9 +40,24 @@ Serial.println("Get str." + resul);
 void fbsayacyanioku(String rsltt)
 { if(esayacyani!=rsltt){bestursay=1;esayacyani=rsltt;}
 
-                                  String pnm=rsltt.substring(0,rsltt.indexOf(":"));
-                                  String pns=rsltt.substring(rsltt.indexOf(":")+1,rsltt.indexOf(","));
-                                  rsltt = rsltt.substring(rsltt.indexOf(",")+1,rsltt.length());
+String rslttmp = rsltt;
+Serial.println(rslttmp);
+                            for(int k=0;k<5;k++){
+                              String pnm;
+                              String pns;
+                                  if(rslttmp.indexOf(":")>-1)pnm=rslttmp.substring(0,rslttmp.indexOf(":"));
+                                  if(rslttmp.indexOf(",")>-1){
+                                    pns=rslttmp.substring(rslttmp.indexOf(":")+1,rslttmp.indexOf(","));
+                                    rslttmp = rslttmp.substring(rslttmp.indexOf(",")+1,rslttmp.length());
+                                  }
+                                  else
+                                  {
+                                    pns=rslttmp.substring(rslttmp.indexOf(":")+1,rslttmp.length());
+                                    rslttmp = "";
+                                  }
+                                  
+
+Serial.print("pnm:");Serial.print(pnm);Serial.print(" pns:");Serial.print(pns);
 
                                 if(pnm.indexOf("VR")==0)
                                 {
@@ -67,11 +82,14 @@ void fbsayacyanioku(String rsltt)
                                         break;
                                       }
                                 }
+                                if(rslttmp.length()<2)break;
+                            }
 }
 
 
 void fbbaskacihazagonder(String yol2,String fbdt,int fbg)
 {
+
                       //Serial.print("yol2: ");Serial.println(yol2);
                       //Serial.print("fbdt: ");Serial.println(fbdt);
                       Serial.print("fbg: ");Serial.println(fbg);

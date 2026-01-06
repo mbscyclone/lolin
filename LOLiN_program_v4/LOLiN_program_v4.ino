@@ -290,19 +290,19 @@ String serip = server.uri();
 
 
 
-String macadr1="8c"; // SALON
-//String macadr1="50"; // BAHCE
+//String macadr1="8"; // SALON
+String macadr1="5"; // BAHCE
 
 bool pinlerdagitildi=false;
 String Pinler;
 String Pinlertpm;
 String macadr;
-String macadr2=":ce:4e:ca:0e:56"; // SALON
-//String macadr2=":02:91:E0:43:9E"; //BAHCE
+//String macadr2="c:ce:4e:ca:0e:56"; // SALON
+String macadr2="0:02:91:E0:43:9E"; //BAHCE
 
 void dosyaOkupinayar(){
 Serial.println("dosyaokupinayar.");
-delay(1000);
+yield();
   dosya.close();
     //LittleFS.remove("/pinayar.txt");
   dosya = LittleFS.open("/pinayar.txt", "r");
@@ -334,7 +334,7 @@ if(Pinlertpm.length()>0){
 
           erlog="";
 
-
+yield();
 
           for (int x=0;x<1000;x++){
               if(Pinlertpm.length()<3) break;
@@ -836,7 +836,7 @@ void cleareprom() {
   }
   Serial.println("Factory default... D8 unplug HIGH jumper");
   while (digitalRead(FactoryDefault) == HIGH) {
-    delay(1000);
+    delay(999);
     Serial.println("3.3v ile D8 bağlantısını çıkart.");
   }
 }
@@ -1073,7 +1073,7 @@ void connectWifi(void) {
   WiFi.begin(ssid, pass);
   //Serial.println(ssid);
   //Serial.println(pass);
-  //delay(1000);
+  //delay(999);
   
   if (testWifi()) {
     Serial.println("Connected!!!");
@@ -1296,10 +1296,6 @@ erlog="";
   programrun();
   setup2();
   //ESP.reset();
-
-
-
-
 }
 
 
@@ -1310,93 +1306,10 @@ erlog="";
 
 
 void Karakterduzelt(){
-
-int yakinOlaninkoordinati=0;
-int yazilacakkarakterno;
-String yakinOlan="";
-
-String karakter[38];
-String yerinegec[38];
-
-
-   karakter[0] ="%20"; //  :boşluk actionadresi icinde iken
-   yerinegec[0] = " ";
- karakter[1] ="+";   //    :boşluk databloğu içinde iken
-   yerinegec[1] = " ";
- karakter[2] ="%25"; //  :%
-   yerinegec[2] = "%";
- karakter[3] ="%26"; //  :&
-   yerinegec[3] = "&";
- karakter[4] ="%28"; //  :(
-   yerinegec[4] = "(";
- karakter[5] ="%29"; //  :)
-   yerinegec[5] = ")";
- karakter[6] ="%7C"; //  :|
-   yerinegec[6] = "|";
- karakter[7] ="%2F"; //  :/
-   yerinegec[7] = "/";
- karakter[8] ="%3B"; //  :;
-   yerinegec[8] = ";";
- karakter[9] ="%3D"; //  :=
-   yerinegec[9] = "=";
- karakter[10] ="%3F"; //  :?
-   yerinegec[10] = "?";
- karakter[11] ="%0D%0A"; //: \r\n  (enter ve satır sonu) karakterleri
-   yerinegec[11] = "\n";
- karakter[12] ="%3E"; //  :>
-   yerinegec[12] = ">";
- karakter[13] ="%3C"; //  :<
-   yerinegec[13] = "<";
- karakter[14] ="%7B"; //  :{
-   yerinegec[14] = "{";
- karakter[15] ="%7D"; //  :}
-   yerinegec[15] = "}";
- karakter[16] ="%5B"; //  :[
-   yerinegec[16] = "[";
- karakter[17] ="%5D"; //  :]
-   yerinegec[17] = "]";
- karakter[18] ="%2B"; //  :+
-   yerinegec[18] = "+";
-//         - * /  aynı
- karakter[19] ="%21"; //  :!
-   yerinegec[19] = "!";
- karakter[20] ="%3A"; //  :!
-   yerinegec[20] = ":";
- 
-
 String progtmp = programdata;
-String Yazilacakprogramdata;
-
-
-      yakinOlaninkoordinati=10000;
-  for(int y=0;y<1100;y++){
-    if(progtmp.length()<1)break;
-    for(int x=0;x<21;x++){
-    if(progtmp.indexOf(karakter[x])>-1){
-        if(yakinOlaninkoordinati > progtmp.indexOf(karakter[x])){
-          yakinOlaninkoordinati = progtmp.indexOf(karakter[x]);
-          yakinOlan=karakter[x];
-          yazilacakkarakterno=x;
-        }
-      }
-    }
-
-
-      Yazilacakprogramdata += progtmp.substring(0,yakinOlaninkoordinati);
-      progtmp = progtmp.substring(yakinOlaninkoordinati+yakinOlan.length() , progtmp.length());
-      Yazilacakprogramdata += yerinegec[yazilacakkarakterno]; 
-
-
-      //Serial.print("Yazilacakprogramdata:");
-      //Serial.println(Yazilacakprogramdata);
-      yakinOlaninkoordinati=10000;
-      yakinOlan="";
-  }
-
-    //Yazilacakprogramdata.toUpperCase();
-    programdata=Yazilacakprogramdata.substring(0,Yazilacakprogramdata.length()-2);
-    if(programdata.indexOf(" HTTP/1.1")>-1)programdata = programdata.substring(0,programdata.indexOf(" HTTP/1.1")+1);
-
+    if(progtmp.indexOf(" HTTP/1.1")>-1)progtmp = progtmp.substring(0,progtmp.indexOf(" HTTP/1.1")+1);
+  programdata = Karakterduzeltfunc(progtmp);
+  
 }
 
 int sayPtakipicin = 0;
@@ -1600,10 +1513,12 @@ if(webstart>2){
     }
   // put your main code here, to run repeatedly:
   otaloop();
+  yield();
   if(zamanfark<2070)htpcl();
+  yield();
   app.loop();
 
-
+yield();
 server.handleClient();
 MDNS.update();
 
@@ -1612,8 +1527,8 @@ if(pinayarchg==true)
   dosyaYazpinayar();
 }
 
-// geciktirmee
-if(macadr!=WiFi.macAddress()){delay(1000);}
+//geciktirmee //yavaşlatma
+//if(macadr!=WiFi.macAddress()){delay(1000);}
 
 
   if (rescanwifi == 1) {
@@ -1662,18 +1577,20 @@ if(authdebug!=10 && WiFi.status()==WL_CONNECTED && fben==1){
 if(Menu==0){
      zamanfark +=1;
   
-  if (zamanfark > 2100) zamanfark= 1;
+  if (zamanfark > 1800) zamanfark= 1;
 
+/*
   if(zamanfark>857 && zamanfark<860){
     zamanfark=861;
-    //programrun();
+    programrun();
     updatesayac();
     vrkontrol();
     }
+*/
 
   //if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
   if(zamanfark>1057 && zamanfark<1060){
-    zamanfark=1061;
+    zamanfark=1761;
     programrun();
     updatesayac();
     vrkontrol();
@@ -1683,9 +1600,9 @@ if(Menu==0){
   //if(zamanfark>3960 && zamanfark<3965){zamanfark=3970;programrun();}
   
         if(authdebug==10){
-        if (zamanfark >= 2072 && zamanfark < 2080)
+        if (zamanfark >= 1772 && zamanfark < 1780)
         {
-                zamanfark= 2082;
+                zamanfark= 1782;
                 //Serial.print("auth debug code:");Serial.println(authdebug);
                 Serial.println(fben);
                 Serial.println(authdebug);
@@ -1695,10 +1612,8 @@ if(Menu==0){
                 }
           }
         }
-        else
-        {
-          if(zamanfark>1061)zamanfark=1;
-        }
+
+
 
 }else zamanfark=1;
 

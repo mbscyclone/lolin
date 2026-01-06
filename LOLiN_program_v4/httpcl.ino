@@ -60,7 +60,7 @@ void htpcl() {
           header=header.substring(0,header.indexOf("\n"));
             reConnectsayac=millis();
 
-        zamanfark=1050;
+        zamanfark=1055;
         Serial.println("httttt-----");
 
 IPAddress lip = WiFi.localIP();
@@ -167,13 +167,13 @@ if (Menu == 1) {
 
               httpheader(xilent);
 
-          if(header.indexOf(" /pnayar") > -1 || header.indexOf(" /programkayit") > -1)
+          if(header.indexOf("/pnayar") > -1 || header.indexOf("/programkayit") > -1)
           {
             if (header.indexOf("/programkayit?is=") > -1) {
               programdata = header.substring(header.indexOf("is=") + 3, header.length());
               dosyaYazprogram();
             }
-            if (header.indexOf(" /pnayar?is=") > -1) {
+            if (header.indexOf("/pnayar?is=") > -1) {
               pinayar = header.substring((header.indexOf("?is=") + 4), (header.indexOf(" HTTP/")));
               Serial.println(pinayar);
               pinayarchg=true;
