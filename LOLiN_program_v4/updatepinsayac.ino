@@ -1,67 +1,42 @@
 float t;
 int h;
 
-void updatesayac()
+void updatehcsr()
 {
-degisenler="";          
-//pindurumrecyap=false;
-
-        if(authdebug==10){
-                for (int fbg=0;fbg<11;fbg++)
-                {
-                  if(fbc[fbg].length()>0)
-                  {
-                    //Serial.println("fbcyol: " + fbcyol[fbg]);
-                    //Serial.println("fbtd[fbg] " + fbtd[fbg] + "     efbtd[fbg]" +efbtd[fbg] );
-                    if(fbtd[fbg]!=efbtd[fbg])
-                    {
-                      fbbaskacihazagonder(fbcyol[fbg], fbtd[fbg], fbg);
-                    }
-                  }
-                }
-        }
+          for(int x=0;x<pinsayisi;x++){
+            
+                        if(pinsignaltype[x]=="HCE"){
+                          hcsr04loop(x);
+                        }
+          }
+}
 
 
-
+void updateinput()
+{
         for(int x=0;x<pinsayisi;x++){
 
-                        if(pinmode[x]=="OUT" & pinsignaltype[x]=="DIG"){
-                                    if(PinState[x]=="0.00" || PinState[x]=="0" || PinState[x] == "LOW" || PinState[x] =="OFF" || PinState[x]=="")  {
-                                      if(high_low_invert==false)digitalWrite(Pin[x], LOW ); else  digitalWrite(Pin[x], HIGH);
-                                    }
-                                      else
-                                    if(PinState[x]=="1.00" || PinState[x]=="1" || PinState[x] == "HIGH" || PinState[x] =="ON")  
-                                    {
-                                      if(high_low_invert==false)digitalWrite(Pin[x], HIGH); else  digitalWrite(Pin[x], LOW);
-                                    }
-                        }
-
-
-                        if(pinmode[x]=="OUT" && pinsignaltype[x]=="PWM"){
-                          int PWMdegerint=PinState[x].toInt();
-                          Outpwm(pinname[x], PWMdegerint);
-                        }
-
-                        if(pinmode[x]=="INP" && pinsignaltype[x]=="ANG"){
+                       if(pinmode[x]=="INP")
+                       {
+                        if(pinsignaltype[x]=="ANG"){
                         pinMode(Pin[x], INPUT);
                         //delay(5);
                         PinState[x] = analogRead(Pin[x]);
 
                         }
 
-                        if(pinmode[x]=="INP" && pinsignaltype[x]=="DIG"){
+                        if(pinsignaltype[x]=="DIG"){
                         pinMode(Pin[x], INPUT);
                         //delay(5);
                         PinState[x] = digitalRead(Pin[x]);
 
                         }
 
-                        if(pinmode[x]=="INP" && pinsignaltype[x]=="HCE"){
+                        if(pinsignaltype[x]=="HCE"){
                           hcsr04loop(x);
                         }
-
-
-                      if(pinmode[x]=="INP" && pinsignaltype[x].indexOf("DHT")==0)
+                        
+                      if(pinsignaltype[x].indexOf("DHT")==0)
                       { dhtsayac+=1; 
                          if(dhtsayac>5){
 
@@ -120,14 +95,8 @@ degisenler="";
 
                       }
 
-
-
-
           if(ePinState[x]!=PinState[x])
           {
-              //Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
-            
-
              if (pinsignaltype[x].indexOf("DH")>-1)
                       {
                           psci=true;
@@ -135,17 +104,9 @@ degisenler="";
                           ePinState[x] = PinState[x];
                 degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
                       }
-            else{
-                       if(pinmode[x]=="OUT")
-                       {
-                         psco=true;
-                         //pindurumrecyap=true;
-                         ePinState[x] = PinState[x];
-                         degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
-                       }
 
-                       if(pinmode[x]=="INP")
-                       {
+
+
                          if(pinsignaltype[x]=="HCE" && PinState[x].toInt()>2)
                          {
                           psci=true;
@@ -172,8 +133,75 @@ degisenler="";
                               ePinState[x] = PinState[x];
                               degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
                               }
+
+
+
+
+
+          }
+
                        }
+        }
+}
+
+
+void updatefbvirtual()
+{
+          if(authdebug==10){
+                for (int fbg=0;fbg<11;fbg++)
+                {
+                  if(fbc[fbg].length()>0)
+                  {
+                    //Serial.println("fbcyol: " + fbcyol[fbg]);
+                    //Serial.println("fbtd[fbg] " + fbtd[fbg] + "     efbtd[fbg]" +efbtd[fbg] );
+                    if(fbtd[fbg]!=efbtd[fbg])
+                    {
+                      fbbaskacihazagonder(fbcyol[fbg], fbtd[fbg], fbg);
+                    }
+                  }
                 }
+        }
+}
+
+
+void updateoutput()
+{
+       
+
+
+        for(int x=0;x<pinsayisi;x++){
+                  if(pinmode[x]=="OUT"){
+                        if(pinsignaltype[x]=="PWM"){
+                          int PWMdegerint=PinState[x].toInt();
+                          Outpwm(pinname[x], PWMdegerint);
+                        }
+                        if(pinsignaltype[x]=="DIG"){
+                                    if(PinState[x]=="0.00" || PinState[x]=="0" || PinState[x] == "LOW" || PinState[x] =="OFF" || PinState[x]=="")  {
+                                      if(high_low_invert==false)digitalWrite(Pin[x], LOW ); else  digitalWrite(Pin[x], HIGH);
+                                    }
+                                      else
+                                    if(PinState[x]=="1.00" || PinState[x]=="1" || PinState[x] == "HIGH" || PinState[x] =="ON")  
+                                    {
+                                      if(high_low_invert==false)digitalWrite(Pin[x], HIGH); else  digitalWrite(Pin[x], LOW);
+                                    }
+                        }
+
+
+
+          if(ePinState[x]!=PinState[x])
+          {
+              //Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
+
+                       if(pinmode[x]=="OUT")
+                       {
+                         psco=true;
+                         //pindurumrecyap=true;
+                         ePinState[x] = PinState[x];
+                         degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
+                       }
+
+
+                
 
 
           }
@@ -185,9 +213,10 @@ degisenler="";
                 dosyayazpindurum();
               }
 */
+        }
       if(degisenler!= edegisenler && htServerip.length()>0){
       sendserver(htServerip, degisenler);
       }
         yield();
-}
 
+}

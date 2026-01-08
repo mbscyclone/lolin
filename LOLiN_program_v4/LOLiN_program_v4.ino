@@ -123,6 +123,10 @@ String VRP[5];
 int pinsayisi=10;
 // pin Adı|pinmode|pin baslangic degeri|pin değeri|pin degerleri|Pin label"
 
+String usrnam[3];
+String usrpass[3];
+
+
 //String pinsatir[10];
 String pinname[10];
 String pinmode[10];
@@ -143,7 +147,7 @@ int dhtsayac = 0;
 int hcsrT[10];
 int hcsrE[10];
 int bestursay=0;
-
+bool hcsrloopvar;
 String tempstr="";
 String humstr="";
 
@@ -333,7 +337,7 @@ if(Pinlertpm.length()>0){
           }
 
           erlog="";
-
+          hcsrloopvar=false;
 yield();
 
           for (int x=0;x<1000;x++){
@@ -388,7 +392,7 @@ yield();
                   if(pinsignaltype[x]=="HCE")
                   {
                     hcsrE[x] = Pin[x];
-
+                    hcsrloopvar=true;
                     if(pinminvalue[x]=="D0")hcsrT[x]=Pin[0];
                     if(pinminvalue[x]=="D1")hcsrT[x]=Pin[1];
                     if(pinminvalue[x]=="D2")hcsrT[x]=Pin[2];
@@ -1588,11 +1592,19 @@ if(Menu==0){
     }
 */
 
+if(hcsrloopvar==true)
+{
+  if(zamanfark % 100 == 0)updatehcsr();
+}
+
+
+
   //if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
   if(zamanfark>1057 && zamanfark<1060){
     zamanfark=1761;
+    updateinput();
     programrun();
-    updatesayac();
+    updateoutput();
     vrkontrol();
     }
 
@@ -1608,6 +1620,7 @@ if(Menu==0){
                 Serial.println(authdebug);
                 if(authdebug==10)
                 {
+                  updatefbvirtual();
                   fbsayacoku();
                 }
           }
@@ -1700,30 +1713,6 @@ for(int vr=0;vr<6;vr++)
   }
 }
 }
-
-
-
-
-void dosyayazssidpass()
-{
-                  reConnectsayac=millis();
-                dosya.close();
-                LittleFS.remove("/ssidpass.txt");
-                dosya = LittleFS.open("/ssidpass.txt", "w+");
-                if (dosya) {
-                  dosya.println(ssid);
-                  dosya.println(pass);
-                  dosya.close();
-                  Serial.println("Write bitti");
-                }
-                dosya.close();
-
-}
-
-
-
-
-
 
 
 

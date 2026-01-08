@@ -25,14 +25,23 @@ void htserverkaydet(String hServerip)
 
 
 
+void dosyayazssidpass()
+{
+                  reConnectsayac=millis();
+                dosya.close();
+                LittleFS.remove("/ssidpass.txt");
+                dosya = LittleFS.open("/ssidpass.txt", "w+");
+                if (dosya) {
+                  dosya.println(ssid);
+                  dosya.println(pass);
+                  dosya.close();
+                  Serial.println("Write bitti");
+                }
+                dosya.close();
+
+}
 
 void dosyaokussidpass() {
-
-
-  //if (digitalRead(FactoryDefault) == HIGH) {
-    // cleareprom();
-  //}
-
 
   dosya = LittleFS.open("/ssidpass.txt", "r");
   if (dosya) {
@@ -67,6 +76,43 @@ Serial.println(myssidyazilimi);
 }
 
 
+void dosyayazusrvepass(int usrno)
+{
+                  reConnectsayac=millis();
+                dosya.close();
+                LittleFS.remove("/usrpass.txt");
+                dosya = LittleFS.open("/usrpass.txt", "w+");
+                if (dosya) {
+                  dosya.println(usrnam[usrno]);
+                  dosya.println(usrpass[usrno]);
+                  dosya.close();
+                  Serial.println("Write bitti");
+                }
+                dosya.close();
+
+}
+
+void dosyaokuusrvepass(int usrno) {
+
+  dosya = LittleFS.open("/usrpass.txt", "r");
+  if (dosya) {
+    // dosya başarı ile açıldı;
+    String ssidoc = dosya.readStringUntil('\n');
+    usrnam[usrno] = ssidoc.substring(0, ssidoc.length() - 1);
+    //Serial.println(ssid);
+
+    String passoc = dosya.readStringUntil('\n');
+    usrpass[usrno] = passoc.substring(0, passoc.length() - 1);
+    //Serial.println(pass);
+    dosya.close();
+    //Serial.println("read bitti");
+  }else
+  {
+    usrnam[usrno] = "admin";
+    usrpass[usrno] = "1234";
+  }
+  dosya.close();
+}
 
 void dosyaokumyssidname() {
   //   я
