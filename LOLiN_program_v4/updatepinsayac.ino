@@ -13,7 +13,7 @@ void updatehcsr()
 
 
 void updateinput()
-{
+{ degisenler="";
         for(int x=0;x<pinsayisi;x++){
 
                        if(pinmode[x]=="INP")
@@ -199,11 +199,6 @@ void updateoutput()
                          ePinState[x] = PinState[x];
                          degisenler += pinname[x] + ":" + PinState[x]+">" + pinlabel[x] + ",";
                        }
-
-
-                
-
-
           }
 
         }
@@ -214,7 +209,8 @@ void updateoutput()
               }
 */
         }
-      if(degisenler!= edegisenler && htServerip.length()>0){
+      if(degisenler!="" && degisenler!= edegisenler && htServerip.length()>0){
+
       sendserver(htServerip, degisenler);
       }
         yield();

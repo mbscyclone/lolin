@@ -466,7 +466,7 @@ void yap(String yapilacakn, int islemno) {
           //efbtd[indis] = dsag;
           progmsg += (String)satirsayisip + " satır>" + yapilacakn + " degisti.<br>";
           //  Serial.print(fbcyol[indis] + " ------> ");Serial.println(fbtd[indis]);
-          zamanfark = 1773;
+          zamanfark = 1770;
         }
       }
 

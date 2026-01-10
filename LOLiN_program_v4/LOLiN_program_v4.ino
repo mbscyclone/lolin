@@ -139,13 +139,15 @@ String fbPinState[10];
 String pinmaxvalue[10];
 String pinlabel[10];
 
-
-
+String Acilservis;
+String Acilhasta;
+String Abonelik;
 //String pindurumrec;
 //bool pindurumrecyap;
 int dhtsayac = 0;
 int hcsrT[10];
 int hcsrE[10];
+int edistance[10];
 int bestursay=0;
 bool hcsrloopvar;
 String tempstr="";
@@ -1594,13 +1596,13 @@ if(Menu==0){
 
 if(hcsrloopvar==true)
 {
-  if(zamanfark % 100 == 0)updatehcsr();
+  if(zamanfark % 800 == 0)updatehcsr();
 }
 
 
 
   //if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
-  if(zamanfark>1057 && zamanfark<1060){
+  if(zamanfark>1557 && zamanfark<1560){
     zamanfark=1761;
     updateinput();
     programrun();

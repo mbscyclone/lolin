@@ -60,7 +60,7 @@ void htpcl() {
           header=header.substring(0,header.indexOf("\n"));
             reConnectsayac=millis();
 
-        zamanfark=1055;
+        zamanfark=1555;
 
 IPAddress lip = WiFi.localIP();
 String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);

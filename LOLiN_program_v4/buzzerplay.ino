@@ -44,6 +44,8 @@ unsigned long duration = 200;
 double frequency;
 
 void play(String melody) {
+if(melody.length()<1)return;
+    duration=(3000/(melody.length()));
     for (int ml = 0; ml < melody.length(); ml++) {
         char nota = melody.charAt(ml);  // Tek karakter al
 
