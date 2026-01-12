@@ -1,9 +1,8 @@
-// ESP8266 LOLİN
+// ARZALI ESPLOLİN İÇİN İŞE YARADI.
+// ESP8266 LOLİN MQTT SERVER İÇİN
 // Flash size 4M(FS:1MB OTA:~1019KB)
 // MMU 32KBCHACE, ^'KB IRAM(balanced)
 
-#define ENABLE_USER_AUTH
-#define ENABLE_DATABASE
 
 #include <Arduino.h>
 
@@ -20,35 +19,8 @@
 
 //#include <WebSocketsServer.h>
 //#include <ESP8266WebServer.h>
-#include <FirebaseClient.h>
-#include "ExampleFunctions.h" // Provides the functions used in the examples.
 
 
-
-SSL_CLIENT ssl_client;
-using AsyncClient = AsyncClientClass;
-AsyncClient aClient(ssl_client);
-FirebaseApp app;
-RealtimeDatabase Database;
-AsyncResult databaseResult;
-bool taskComplete = false;
-bool Firebase_ready=false;
-
-
-String USER_EMAIL1 = ""; // "asd"     @ işareti sonradan eklenecek
-String USER_EMAIL2 = ""; //"gmail.com"
-
-/* 2. Define the API Key */
-String API_KEY = ""; // "AIzaSyDTMhGs_ISD4WKmJrCxw35rqv-bo34ZdYI";
-
-/* 3. Define the RTDB URL */
-String DATABASE_URL =""; // "https://esp-v4-default-rtdb.firebaseio.com"; //<databaseName>.firebaseio.com or <databaseName>.<region>.firebasedatabase.app
-String YOL="";
-/* 4. Define the user Email and password that alreadey registerd or added in your project */
-String USER_EMAIL = ""; // "asadafag@gmail.com";
-String  USER_PASSWORD = ""; // "bebedede14";
-
-String authdebug;
 
 
 
@@ -62,10 +34,8 @@ bool psco;
 bool psci;
 
 unsigned long reConnectsayac=millis();
-unsigned long fbreConnetsayac=millis();
 
 #include"sMQTTBroker.h"
-
 sMQTTBroker broker;
 
 // YAZ-GÖNDER için
@@ -149,7 +119,7 @@ String pinayar;
 String Program;
 
 // PROGRAM İÇİN ////////////////////////
-String satirp;
+String satirp[100];
 String degis[80];
 String degdeg[80];
 String fbc[10]; 
@@ -170,7 +140,7 @@ String yazi;
 
 File dosya;
 
-bool pinayarchg = false;
+
 
 
 String erlog="";
@@ -201,57 +171,16 @@ int kimdirsonyeri=-1;
 
 
 
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
-ESP8266WebServer server(8080);
-
-unsigned long tarazamani=millis();
-
-void handleRoot() {
-  if(kimdir>-1)return;
-            dosyaokumyssidname();
-            IPAddress lip = WiFi.localIP();
-            String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
-            String gd = YOL + "[" + esphostname + "]" + lipStr;  
-  server.send(200, "text/plain", gd);
-}
-
-void handleNotFound() {
-  if(kimdir>-1)return;
-  String message = "File Not Found\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-  for (uint8_t i = 0; i < server.args(); i++) { message += " " + server.argName(i) + ": " + server.arg(i) + "\n"; }
-  server.send(200, "text/plain", "ok");//server.send(404, "text/plain", "ok");//message);
-  String seruri=(String)server.uri();
-  String suri=seruri.substring(1,seruri.length());
-  Serial.println(suri);
-  SDyaz("/serverlog/",suri);
-}
-
-
-
-
 
 
 #include <SPI.h>
 #include <SD.h>
-#include <SdFat.h>
-SdFat sd;
-
-unsigned long sdsize;
-unsigned sdfree;
 
 bool SD_ok=false;
 int SDtestsayac=0;
 bool SD_ciktidugmesibasildi=false;
 File mySdFile;
-File dir;
+File root;
 
 String SERVERusers;
 String Kullaniciadi[5];
@@ -390,10 +319,8 @@ void dosyaYazpinayar(){
   //pinayarYuzdeliifadesil();
   dosya.print(pinayar);
   dosya.close();
-  dosyaokufbyol();
-  if(Firebase_ready) fbpinayarlariyaz();
 
-  setup2();
+  //setup2();
 
 }
 
@@ -1202,9 +1129,10 @@ void dosyaOkuprogram(){
 }
 
 
-void dosyaYazprogram(String programdatatm)
+void dosyaYazprogram()
 {
-  programdata = Karakterduzeltfunc(programdatatm);
+  Karakterduzelt();
+  String programdatatm=programdata;
   reConnectsayac=millis();
   for(int x=0 ; x < floatdegiskenismisayisi+1 ; x++){
   floatdegiskenismi[x]="";
@@ -1238,7 +1166,7 @@ erlog="";
   dosya.close();
   dosyaOkupinayar();
   programrun();
-  setup2();
+  //setup2();
   //ESP.reset();
 
 
@@ -1417,97 +1345,40 @@ void setup() {
 
 
 
+
+
+
   dosyaokumyssidname();
   //delay(2);
   dosyaokussidpass();
   //delay(2);
 // dosya setup kısmı bitti /////  
 
-  dosyaokufben();
+  //dosyaokufben();
+
+  if (WiFi.status() != WL_CONNECTED) {
+      connectWifi();
+  }
+
 
 httpserver.setNoDelay(true);
 
 
 
-  if (WiFi.status() != WL_CONNECTED) connectWifi();
-  if(webstart==0){
-    webstart=3;
-      httpserver.begin();
-      Serial.println("Web server Lunched.");
-  }
 
-
-  if (MDNS.begin("esp8266")) { Serial.println("MDNS responder started"); }
-  server.on("/", handleRoot);
-  server.onNotFound(handleNotFound);
-    server.begin();
-  Serial.println("8080 server started");
 
 //delay(10);
 
 //Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
 
-    connectfb();
+//    connectfb();
 
-    setup2();
+   // setup2();
     otasetup();
 
-  Serial.print(F("SD Card"));
-  if (sd.begin(D8, SPI_HALF_SPEED)) {
-    Serial.println("sd.card size byte:");Serial.println(sd.card()->sectorCount() * 512);
-    sdsize=sd.card()->sectorCount() * 512;
-    Serial.println("sd.card free  byte:");Serial.println(sd.vol()->freeClusterCount() * sd.vol()->sectorsPerCluster() * 512);
-    sdfree=sd.vol()->freeClusterCount() * sd.vol()->sectorsPerCluster() * 512;
-    //sd.ls(LS_SIZE);
-  }
 
-
-  Serial.print("Initializing SD card...");
-
-  if (SD.begin(SS)) {
-    SD_ok=true;
-  //  SDoku("/serverlog.txt");
-  }else{
-    Serial.println("initialization failed!");
-  }
-
-if(SD_ok==true){
-  Serial.println("initialization done.");
-
-  if (SD.exists("example.txt")) {
-    Serial.println("example.txt exists.");
-  } else {
-    Serial.println("example.txt doesn't exist.");
-  }
-
-  dir = SD.open("/");
-
-  printDirectory(dir, 0);
-
-  Serial.println("done!");
-}
-
-
-
-if(WiFi.status()==WL_CONNECTED)
-{
-  //  SDoku("/serverlog.txt");
-    configtimeonline();
-
-  time_t tnow = time(nullptr);
-  struct tm *timeinfo;
-  char buffer [80];
-
-
-  timeinfo = localtime (&tnow);
-  strftime (buffer,80,"Local time: %a %y/%m/%d %H:%M:%S",timeinfo);
-  Serial.println(buffer);
-
-
-}
-
-
-
+      httpserver.begin();
+      Serial.println("Web server Lunched.");
 
     const unsigned short mqttPort=1883;
     broker.init(mqttPort);
@@ -1518,37 +1389,6 @@ if(WiFi.status()==WL_CONNECTED)
 
 
 
-void connectfb()
-{
-//dosyaokufben();
-
-fben=0;
-  if(fben==1){
-  dosyaokufburl();
-  dosyaokufbapi();
-  dosyaokufbyol();
-  dosyaokufbusername();
-  dosyaokufbuserpass();
-  
-            IPAddress lip = WiFi.localIP();
-if (WiFi.status()==WL_CONNECTED)
-  {
-    UserAuth user_auth(API_KEY, USER_EMAIL, USER_PASSWORD, 3000 /* expire period in seconds (<3600) */);
-    Firebase.printf("Firebase Client v%s\n", FIREBASE_CLIENT_VERSION);
-
-    set_ssl_client_insecure_and_buffer(ssl_client);
-
-    Serial.println("Initializing app...");
-  //initializeApp(aClient, app, getAuth(user_auth), auth_debug_print, "🔐 authTask");
-    initializeApp(aClient, app, getAuth(user_auth), auth_debug , "🔐 authTask");
-    // Or intialize the app and wait.
-    // initializeApp(aClient, app, getAuth(user_auth), 120 * 1000, auth_debug_print);
-    app.getApp<RealtimeDatabase>(Database);
-    Database.url(DATABASE_URL);
-  }
-
-  }
-}
 
 
 
@@ -1561,125 +1401,16 @@ uint8_t serstat;
 int dhtokusayac=0;
 void loop() {
 
-broker.update();
+  broker.update();
 
-if(WiFi.status()==WL_CONNECTED)
-{
-  if(kimdir>-1)
-  {
-      if(millis()-tarazamani > 800)
-      {
-        tarazamani=millis();
-        httptara();
-      }
-  }
-}
-//Serial.println(httpserver.status());
-if(webstart>2){
-  webstart+=1;
-  zamanfark=1;
-  if(webstart>6000)
-  {
-    if(Firebase_ready)
-    {
-      webstart=1;
-      fbpinayarlarioku();
-    }else webstart=2;
-  }
-}
-
-    if(Firebase_ready && webstart==2)
-    {
-      fbpinstatelerioku();
-      webstart=1;
-    }
-  // put your main code here, to run repeatedly:
-  otaloop();
   htpcl();
-  app.loop();
-
-
-
-
-
+  //serin();
 
   if (rescanwifi == 1) {
     wifiscan();
     rescanwifi = 0;
   }
 
-/* MQTT LOOP KISMI
-  if(mqttmesajzamansayac>0){
-    mqttmesajzamansayac+=1;
-  if(mqttmesajzamansayac>20)mqttmesajzamansayac=0;
-  }
-  //mqttclient.onMessage(messageReceived);
-
-
-  mqttclient.loop();
-
-  if (!mqttclient.connected()) {
-    MQTTConnect();
-  }else{mqttconnectsayac=0;}
-
-
-  // publish a message roughly every second.
-  if (millis() - lastMillis > 50000) {
-    lastMillis = millis();
-    mqttclient.publish("/hello", "world");
-  }
-
-*/
-
-
-
-
-
-
-if(authdebug=="10")Firebase_ready=true; else Firebase_ready=false;
-if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben==1){
-
-  fbresulsay+=1;
-  if(fbresulsay>100000)
-  {
-    fbresulsay=0;
-    connectfb();
-  }
-}
-
-     zamanfark +=1;
-  
-  if (zamanfark > 7100) zamanfark= 1;
-
-  if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
-  if(zamanfark>5057 && zamanfark<5060){zamanfark=5061;updatesayac();}
-
-  //if(zamanfark>3950 && zamanfark<3955){zamanfark=3960;updatesayac();}
-  //if(zamanfark>3960 && zamanfark<3965){zamanfark=3970;programrun();}
-  
-
-        if (zamanfark >= 7072 && zamanfark < 7080)
-        {  zamanfark= 7082;
-          if(fben==1)
-          {
-            Serial.print("auth debug code:");Serial.println(authdebug);
-            if(authdebug.toInt()==10)Firebase_ready=true; else Firebase_ready=false;
-            Serial.println(fben);
-            Serial.println(Firebase_ready);
-            if(Firebase_ready==true)
-            {
-              fbsayacoku();
-            }
-          }
-        }
-
-
-
-
-
-
-
-serin();
 
 
 if(WiFi.status() != WL_CONNECTED)
@@ -1691,83 +1422,16 @@ if(WiFi.status() != WL_CONNECTED)
   }
 }
 
-/*
-  if(aut==1 & logintimeout>0){
-    // delay 4 ve 60 saniye için 60000 / a;
-    logintimeout-= 4;
-  }
-  if(logintimeout<=0)aut=0;
 
-aut=1; // silinecek
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  if(say>880){
-    if(say==881){
+  if(say>1880){
+    if(say==1881){
       digitalWrite(LED_BUILTIN, LOW);
+      otaloop();
     }  
   say+=1;
-        if(say>1000){say=0;
-        digitalWrite(LED_BUILTIN, HIGH);
-        
-        
-       // int chk = DHTA.read();
-
-
-// pin işlemleri rutini bitiş ////////////////////////////
-
-
-//dosya boyutuna bakmak için git büyükse parçala kaydet yapılacak
-
-
-// SD kart takılı mı testi
-if(esphostname=="SERVER"){
-                      if(SD_ok==false)
-                      {
-                      
-                      if(Menu!=3)
-                      {
-                        Serial.println("SDtestsayac:");Serial.println(SDtestsayac);
-                          if(SDtestsayac>5)
-                          {
-                                if (SD.begin(SS)) 
-                                {
-                                  SD_ok=true;
-                                }
-                            SDtestsayac=0;
-                          }
-                          else
-                          {
-                            SDtestsayac+=1;
-                          }
-                        }
-                      }
-
-   // yazmayı gerektirecek bişey varsa yaz
-}
-
-
-
-
+        if(say>2000){
+          say=0;
+          digitalWrite(LED_BUILTIN, HIGH);
 
          }
 
@@ -1779,50 +1443,6 @@ if(esphostname=="SERVER"){
 
 
 
-  if(kimdir>-1)return;
-  server.handleClient();
-  MDNS.update();
-   if (kimdir<1 && millis() - urltestsayac > 2000) {
-    urltestsayac = millis();
-    /*
-    // Set time via NTP, as required for x.509 validation
-     configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
-       time_t now = time(nullptr);
-        while (now < 8 * 3600 * 2) {
-          delay(500);
-          Serial.print(".");
-          now = time(nullptr);
-        }
-        Serial.println("");
-        struct tm timeinfo;
-        gmtime_r(&now, &timeinfo);
-        Serial.print("Current time: ");
-        Serial.print(asctime(&timeinfo));
-        */
-  configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
-/*
-  Serial.print("Waiting for NTP time sync: ");
-  time_t now = time(nullptr);
-  while (now < 8 * 3600 * 2) {
-    delay(500);
-    Serial.println(".");
-    now = time(nullptr);
-  }
-*/
-  time_t tnow = time(nullptr);
-  struct tm *timeinfo;
-  char buffer [80];
-
-
-  timeinfo = localtime (&tnow);
-  strftime (buffer,80,"Local time:%y%m%d%H%M%S",timeinfo);
-  //Serial.println(buffer);
-   zaman="";
-    for (int tarihsaat=11;tarihsaat<23;tarihsaat++){
-        zaman += buffer[tarihsaat];
-    }
-    Serial.print("zaman: "); Serial.println(zaman);
-}
 
 
 
@@ -2019,46 +1639,204 @@ Serial.print("pingirdiartisilici:  >>>  "); Serial.println(pingirdi);
 
 
 
-String Karakterduzeltfunc(String gelent) {
-  Serial.println("Karakterduzelte girdim");
-  Serial.println(gelent);
-  gelent.replace("+", " ");
-  gelent.replace("%20", " ");
-  gelent.replace("%26", "&");
-  gelent.replace("%28", "(");
-  gelent.replace("%29", ")");
-  gelent.replace("%7C", "|");
-  gelent.replace("%3B", ";");
-  gelent.replace("%3D", "=");
-  gelent.replace("%3F", "?");
-  gelent.replace("%3E", ">");
-  gelent.replace("%3C", "<");
-  gelent.replace("%7B", "{");
-  gelent.replace("%7D", "}");
-  gelent.replace("%5B", "[");
-  gelent.replace("%5D", "]");
-  gelent.replace("%2B", "+");
-  gelent.replace("%21", "!");
-  gelent.replace("%0D%0A", "\n");
-  gelent.replace("%22", "\"");
-  gelent.replace("%3A", ":");
-  gelent.replace("%3B", "\"");
-  gelent.replace("%23", "#");
-  gelent.replace("%27", "'");
-  gelent.replace("%2C", ",");
-  gelent.replace("%C5%9E", "Ş");
-  gelent.replace("%C5%9F", "ş");
-  gelent.replace("%C3%87", "Ç");
-  gelent.replace("%C3%A7", "ç");
-  gelent.replace("%C3%96", "Ö");
-  gelent.replace("%C3%B6", "ö");
-  gelent.replace("%C3%9C", "Ü");
-  gelent.replace("%C3%BC", "ü");
-  gelent.replace("%C4%9E", "Ğ");
-  gelent.replace("%C4%9F", "ğ");
-  gelent.replace("%C4%B1", "ı");
-  gelent.replace("%C4%B0", "İ");
-  gelent.replace("%2F", "/");
-  gelent.replace("%25", "%");
-  return gelent;
-}
+String Karakterduzeltfunc(String gelent){
+
+String gelentt;
+String gidens;
+String gidentt;
+String sdf;
+String sdf2;
+int yuzdemi;
+int artimi;
+
+String karakter[38];
+String yerinegec[38];
+
+ karakter[0] ="+";   //    :boşluk databloğu içinde iken
+          yerinegec[0] = " ";
+ karakter[1] ="%20"; //  :boşluk actionadresi icinde iken
+          yerinegec[1] = " ";
+ karakter[2] ="%25"; //  :%
+          yerinegec[2] = "%";
+ karakter[3] ="%26"; //  :&
+          yerinegec[3] = "&";
+ karakter[4] ="%28"; //  :(
+          yerinegec[4] = "(";
+ karakter[5] ="%29"; //  :)
+          yerinegec[5] = ")";
+ karakter[6] ="%7C"; //  :|
+          yerinegec[6] = "|";
+ karakter[7] ="%2F"; //  :/
+          yerinegec[7] = "/";
+ karakter[8] ="%3B"; //  :;
+          yerinegec[8] = ";";
+ karakter[9] ="%3D"; //  :=
+          yerinegec[9] = "=";
+ karakter[10] ="%3F"; //  :?
+          yerinegec[10] = "?";
+ karakter[11] ="%3E"; //  :>
+          yerinegec[11] = ">";
+ karakter[12] ="%3C"; //  :<
+          yerinegec[12] = "<";
+ karakter[13] ="%7B"; //  :{
+          yerinegec[13] = "{";
+ karakter[14] ="%7D"; //  :}
+          yerinegec[14] = "}";
+ karakter[15] ="%5B"; //  :[
+          yerinegec[15] = "[";
+ karakter[16] ="%5D"; //  :]
+          yerinegec[16] = "]";
+ karakter[17] ="%2B"; //  :+
+          yerinegec[17] = "+";
+//         - * /  aynı
+ karakter[18] ="%21"; //  :!
+          yerinegec[18] = "!";
+
+  karakter[19] ="%0D%0A"; //: \r\n  (enter ve satır sonu) karakterleri
+        yerinegec[19] = "\n";
+
+  karakter[20] ="%22"; 
+        yerinegec[20] = "\"";
+
+  karakter[21] ="%3A";  
+        yerinegec[21] = ":";
+
+  karakter[22] ="%3B";  
+        yerinegec[22] = "\"";
+
+  karakter[23] ="%23";  
+        yerinegec[23] = "#";
+
+  karakter[24] ="%27";  
+        yerinegec[24] = ",";
+
+  karakter[25] ="%2C";  
+        yerinegec[25] = ",";
+
+  karakter[26] ="%C5%9E";  
+        yerinegec[26] = "Ş";
+
+  karakter[27] ="%C5%9F";  
+        yerinegec[27] = "ş";
+
+  karakter[28] ="%C3%87";  
+        yerinegec[28] = "Ç";
+        
+  karakter[29] ="%C3%A7";  
+        yerinegec[29] = "ç";
+
+  karakter[30] ="%C3%96";  
+        yerinegec[30] = "Ö";
+        
+  karakter[31] ="%C3%B6";  
+        yerinegec[31] = "ö";
+
+  karakter[32] ="%C3%9C";
+        yerinegec[32] = "Ü";
+        
+  karakter[33] ="%C3%BC"; 
+        yerinegec[33] = "ü";
+
+  karakter[34] ="%C4%9E";  
+        yerinegec[34] = "Ğ";
+        
+  karakter[35] ="%C4%9F";  
+        yerinegec[35] = "ğ";
+
+  karakter[36] ="%C4%B1";  
+        yerinegec[36] = "ı";
+        
+  karakter[37] ="%C4%B0";  
+        yerinegec[37] = "İ";
+
+
+
+gelentt = gelent;
+gidens="";
+  for(int y=0;y<gelentt.length()+1;y++){
+    if(gelentt.length()<1)break;
+     yuzdemi=10000;
+     artimi=10000;
+
+     if(gelentt.indexOf("%")>-1){yuzdemi=gelentt.indexOf("%");}
+     if(gelentt.indexOf("+")>-1){artimi=gelentt.indexOf("+");}
+     if(yuzdemi<artimi)
+     {
+           sdf="";
+           sdf2="";
+          gidentt += gelentt.substring(0,yuzdemi);
+          sdf = gelentt.substring(yuzdemi,yuzdemi+3);
+          sdf2 = gelentt.substring(yuzdemi,yuzdemi+6);
+          
+          if(sdf2=="%0D0A")sdf="%0D%0A";
+          if(sdf2=="%C5%9E")sdf="%C5%9E";
+          if(sdf2=="%C5%9F")sdf="%C5%9F";  
+          if(sdf2=="%C3%87")sdf="%C3%87";  
+          if(sdf2=="%C3%A7")sdf="%C3%A7";  
+          if(sdf2=="%C3%96")sdf="%C3%96";  
+          if(sdf2=="%C3%B6")sdf="%C3%B6";  
+          if(sdf2=="%C3%9C")sdf="%C3%9C";  
+          if(sdf2=="%C3%BC")sdf="%C3%BC";  
+          if(sdf2=="%C4%9E")sdf="%C4%9E";  
+          if(sdf2=="%C4%9F")sdf="%C4%9F";  
+          if(sdf2=="%C4%B1")sdf="%C4%B1";  
+          if(sdf2=="%C4%B0")sdf="%C4%B0";  
+
+
+          for (int c=1;c<38;c++)
+          {
+              if(karakter[c].indexOf(sdf)>-1)
+              {
+              gidentt += yerinegec[c];
+              gelentt = gelentt.substring(yuzdemi+sdf.length(),gelentt.length());
+              y=yuzdemi+sdf.length();
+              break; 
+              }
+          }
+     }
+
+     if(artimi<yuzdemi)
+          {
+            gidentt += gelentt.substring(0,artimi);
+
+              gidentt += yerinegec[0];
+              gelentt = gelentt.substring(artimi+1,gelentt.length());
+              y=artimi;
+          }
+     
+
+     if(artimi==yuzdemi)
+          {
+            gidentt += gelentt;
+            break;
+          }
+          //Serial.println(gelentt);
+     }
+
+      gelentt="";
+      sdf="";
+
+      String gidenrn=gidentt;
+      gidentt="";
+      //Serial.println(gidens);
+      gidens="";
+      Serial.println(gidenrn);
+
+    for(int x=0;x<gidenrn.length()+1;x++)
+    {
+      if(gidenrn.indexOf("\n\n")>-1)
+      {
+        gidens += gidenrn.substring(0, (gidenrn.indexOf("\n\n"))) + "\n";
+            gidenrn=gidenrn.substring(gidenrn.indexOf("\n\n")+2,gidenrn.length());
+      } else 
+      {
+        gidens += gidenrn.substring(0, gidenrn.length());
+        break;
+      }
+    }
+      String gidenstm=gidens;
+      Serial.println(gidens);
+      return gidens;
+      
+
+  }

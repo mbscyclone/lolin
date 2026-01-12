@@ -37,14 +37,11 @@ void printDirectory(File dir, int numTabs) {
 
 void SDyaz(String filepath,String sdyeyazilacak){
 
-  if (sd.begin(D8, SPI_HALF_SPEED)) {
-    Serial.println("sd.card size byte:");Serial.println(sd.card()->sectorCount() * 512);
-    sdsize=sd.card()->sectorCount() * 512;
-    Serial.println("sd.card free byte:");Serial.println(sd.vol()->freeClusterCount() * sd.vol()->sectorsPerCluster() * 512);
-    sdfree=sd.vol()->freeClusterCount() * sd.vol()->sectorsPerCluster() * 512;
-    //sd.ls(LS_SIZE);
-  }
-  if (sdfree >0 && sdfree < 10000000) {
+  SdFat sdf; 
+  long lFreeKB = sdf.vol()->freeClusterCount();
+
+Serial.print("Free space kb :");Serial.println(lFreeKB);
+if (lFreeKB < 1000000) {
   deleteOldestLog();
 }
 
