@@ -1,5 +1,7 @@
+
 //
 // printdirectory files başı
+  #include <SdFat.h>
 
 void printDirectory(File dir, int numTabs) {
   while (true) {
@@ -35,6 +37,15 @@ void printDirectory(File dir, int numTabs) {
 
 void SDyaz(String filepath,String sdyeyazilacak){
 
+  SdFat sdf; 
+  long lFreeKB = sdf.vol()->freeClusterCount();
+
+Serial.print("Free space kb :");Serial.println(lFreeKB);
+if (lFreeKB < 1000000) {
+  deleteOldestLog();
+}
+
+
 String dd;
 String filename=filepath+zaman.substring(0,6)+"/"+zaman.substring(6,8)+".txt";
   mySdFile = SD.open(filename, FILE_WRITE);
@@ -65,6 +76,42 @@ String filename=filepath+zaman.substring(0,6)+"/"+zaman.substring(6,8)+".txt";
 }
 
 
+
+void deleteOldestLog() {
+  File root = SD.open("/serverlog/");   // root dizini aç
+  String oldestFolder = "";
+  
+  // Root içindeki klasörleri tara
+  while (true) {
+    File entry = root.openNextFile();
+    if (!entry) break; // klasör kalmadı
+    
+    if (entry.isDirectory()) {
+      String folderName = entry.name();
+      // İlk klasörü al veya daha küçük tarihli olanı seç
+      if (oldestFolder == "" || folderName < oldestFolder) {
+        oldestFolder = folderName;
+      }
+    }
+    entry.close();
+  }
+  root.close();
+
+  if (oldestFolder != "") {
+    // En eski klasörü aç
+    File oldDir = SD.open("/serverlog/" + oldestFolder);
+    while (true) {
+      File file = oldDir.openNextFile();
+      if (!file) break;
+      String fileName = file.name();
+      file.close();
+      SD.remove("/serverlog/" + oldestFolder + "/" + fileName); // dosyaları sil
+    }
+    oldDir.close();
+    SD.rmdir("/serverlog/" + oldestFolder); // klasörü sil
+    Serial.println("Silindi: " + oldestFolder);
+  }
+}
 /*
 void SDoku(String filename){
   String dosyaicerigi;

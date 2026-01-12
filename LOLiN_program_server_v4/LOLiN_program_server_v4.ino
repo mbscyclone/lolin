@@ -64,7 +64,9 @@ bool psci;
 unsigned long reConnectsayac=millis();
 unsigned long fbreConnetsayac=millis();
 
+#include"sMQTTBroker.h"
 
+sMQTTBroker broker;
 
 // YAZ-GÖNDER için
 // chg=0 değişiklik yok bende
@@ -1499,7 +1501,8 @@ if(WiFi.status()==WL_CONNECTED)
 }
 
 
-
+    const unsigned short mqttPort=1883;
+    broker.init(mqttPort);
 
 
 }
@@ -1549,6 +1552,9 @@ uint8_t serstat;
 
 int dhtokusayac=0;
 void loop() {
+
+broker.update();
+
 if(WiFi.status()==WL_CONNECTED)
 {
   if(kimdir>-1)

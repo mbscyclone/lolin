@@ -13,9 +13,11 @@ void httpheader(WiFiClient xilent) {
   xilent.println("</head>");
   xilent.println("<body>");
   xilent.println("<font size=\"3\" color=\"#FF0000\">" + esphostname + "</font>");
-  xilent.println("<br>");
-  xilent.println("<table style=\"border:5px solid black;width:500px\"><tr><td style=\"border:1px solid black;width:250p; align:center; \">");
-  xilent.println("<p><form action=\"/Menu0\" method=\"POST\"><input type=\"submit\" value=\"Home\"></form></p></td>");
+  xilent.println("<br><table style=\"border:5px solid black;width:500px\"><tr>");
+  xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
+  xilent.println("<p><form action=\"/Menu0\" method=\"POST\"><input type=\"submit\" value=\"Anasayfa\"></form></p></td>");
+  xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
+  xilent.println("<p><form action=\"/\" method=\"POST\"><input type=\"submit\" value=\"Durum\"></form></p></td>");
   xilent.println("<td style=\"border:1px solid black;width:250px\">");
   xilent.println("<p><form action=\"/pnayar\" method=\"POST\"><input type=\"submit\" value=\"Pin ayar\"></form></p></td>");
   xilent.println("<td style=\"border:1px solid black;width:250px;\">");
@@ -211,7 +213,7 @@ if (Menu == 1) {
             }
 
 
-            xilent.println("<table>  <caption>PIN AYARLARI</caption> <tr> <td scope=\"col\">pin ayarları:</td><td scope=\"col\">Pin Hata</td></tr>");
+            xilent.println("Pin ayar sayfası <table> <caption>PIN AYARLARI</caption> <tr> <td scope=\"col\">pin ayarları:</td><td scope=\"col\">Pin Hata</td></tr>");
             xilent.println("<td><form method='get' action='pnayar'>");
             xilent.println("<textarea name='is' id='id' cols='40' rows='10' >");
             xilent.println(pinayar);
@@ -286,7 +288,7 @@ if (Menu == 1) {
               IPAddress ip = WiFi.softAPIP();
               String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
               
-              xilent.println("<table style=\"border:2px solid green;width:500px\"><tr><td style=\"border:1px solid black;width:250px\">");
+              xilent.println("Bağlantı ayar sayfası<table style=\"border:2px solid green;width:500px\"><tr><td style=\"border:1px solid black;width:250px\">");
               xilent.println("Bilgiler");
               xilent.println("<br>");
               xilent.println("<br>");
@@ -343,7 +345,7 @@ Serial.println("baradan geçtim)");
             }
 
 
-              xilent.println("<form method='get' action='myssidnameayar'><label>Benim wifi ismim (SSID) : </label><input name='is' length=32 value=");
+              xilent.println("Cihaz adı ayar sayfası<form method='get' action='myssidnameayar'><label>Benim wifi ismim (SSID) : </label><input name='is' length=32 value=");
               xilent.println(myssidyazilimi);
               //xilent.println("><br>");
               //xilent.println("<label>Baglanilacak SERVER adressi: </label><input name='mq' length=32 value=");
@@ -367,7 +369,7 @@ Serial.println("baradan geçtim)");
             }
 
 
-              xilent.println("<form method='get' action='serveripayar'><label>Haberleşilecek cihaz ip no (Boş ise işlem yapılmaz.): </label><input name='is' length=64 value=");
+              xilent.println("Server ip ayar sayfası<form method='get' action='serveripayar'><label>Haberleşilecek cihaz ip no (Boş ise işlem yapılmaz.): </label><input name='is' length=64 value=");
               xilent.println(htServerip);
               //xilent.println("><br>");
               //xilent.println("<label>Baglanilacak SERVER adressi: </label><input name='mq' length=32 value=");
@@ -391,7 +393,7 @@ Serial.println("baradan geçtim)");
             }
 
 
-              xilent.println("<form method='get' action='mqttipayar'><label>Haberleşilecek MQTT server ip: </label><input name='is' length=64 value=");
+              xilent.println("MQTT ayar sayfası<form method='get' action='mqttipayar'><label>Bağlanılacak MQTT server ip: </label><input name='is' length=64 value=");
               xilent.println(MQTTip);
               //xilent.println("><br>");
               //xilent.println("<label>Baglanilacak SERVER adressi: </label><input name='mq' length=32 value=");
@@ -511,7 +513,7 @@ Serial.println("baradan geçtim)");
 
 
 
-              xilent.println("<br>Realtime Database Ayarlari<br><br>");
+              xilent.println("Firebase ayar sayfası<br>Realtime Database Ayarlari<br><br>");
 
 
 String errstring="";
@@ -716,7 +718,7 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
 
 
               //xilent.println("<p>");
-              xilent.println("<br>");
+              xilent.println("<br> Durum sayfası");
               //if(Firebase.ready()) xilent.println("<font size=\"3\" color=\"#FF0000\">Dikkat Firebase çalışıyor. <br> Ayarlar yapılıp kaydedilirken ESP ye bağlı tüm cihazların gücünü kapatın.<br> Kayıttan sonra Reset anında pinlere İstek dışında enerji yollanabilir.<br> cihazlar istek dışı çalışabilir.<br></font>");
               xilent.println("<br>");
               xilent.println("Local IP : ");
@@ -736,6 +738,7 @@ xilent.println("<input name='fbeml2' id='fbeml2' style=\"width:150px;\" value='"
               else xilent.println("<br>Kayıtlı Wifi  :" + ssid + "  bağlanılamadı.");
               if(pinayar.length()<2) xilent.println("<br>Pin ayarları yapılmamış!");
               else xilent.println("<br>Pin ayarları tamam");
+              xilent.println("<br>Bağlanılacak MQTT server ip:" + MQTTip);
               xilent.println("<br>Firebase data yolu:" + YOL);
               xilent.println("<br>Firebase url     :" + DATABASE_URL);
               xilent.println("<br>FB RTD kullanıcısı:"+ USER_EMAIL);
@@ -1184,11 +1187,50 @@ if (Menu == 0) {
               }
 
             xilent.println("<br>");
-            if(fben==0)xilent.println("Firebase Kapalı");
-            if(fben==1)xilent.println("Firebase Açık");
-            
-            if(fben==1)xilent.println("<form action=\"/firebaseset?fireb=Off\" method=\"POST\"><input type=\"submit\" value=\"FB Kapat\"> ! Reset çekilir ! </form>");
-            if(fben==0)xilent.println("<form action=\"/firebaseset?fireb=On\" method=\"POST\"><input type=\"submit\" value=\"FB Aç\"> ! Reset çekilir ! </form>");
+            xilent.println("<label style='font-size: 12px;'>");
+            if(fben==1)xilent.println("<form action=\"/firebaseset?fireb=Off\" method=\"POST\">Firebase Açık<input type=\"submit\" value=\"FB Kapat\">! Reset çekilir !</form></label>");
+            if(fben==0)xilent.println("<form action=\"/firebaseset?fireb=On\" method=\"POST\">Firebase Kapalı<input type=\"submit\" value=\"FB Aç\">! Reset çekilir !</form></label>");
+
+
+
+
+              xilent.println("<br><form action=\"/habp\"><label style='font-size: 12px;' for=\"option\">Haberleşme protokolü:<select id=\"habp\" name=\"habp\" ");
+              xilent.println(">");
+
+
+                    if(habp == 0)
+                    {
+                      xilent.println("<option value=\"off\" selected");
+                    }else
+                    {
+                      xilent.println("<option value=\"off\"");
+                    }
+
+              xilent.println(">Kapali</option>");
+
+                    if(habp == 1)
+                    {
+                      xilent.println("<option value=\"mqt\" selected");
+                    }else
+                    {
+                      xilent.println("<option value=\"mqt\"");
+                    }
+
+              xilent.println(">MQTT</option>");
+
+                    if(habp == 2)
+                    {
+                      xilent.println("<option value=\"fir\" selected");
+                    }else
+                    {
+                      xilent.println("<option value=\"fir\"");
+                    }
+              xilent.println(">Firebase</option>");
+              xilent.println("</select><input type=\"submit\" value=\"Değistir\">ildiğinde ! Reset çekilir !</form></label>");
+          
+
+
+
 
             int pindolusay = -1;
             for (int m = 9; m > 0; m--) {
