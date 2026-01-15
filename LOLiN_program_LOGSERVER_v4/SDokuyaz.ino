@@ -148,7 +148,7 @@ dosyaicerigi="";
 
 
 
-/*
+
 void SDoku(String filename){
   String okusatir;
   String biriktir_okusatir;
@@ -162,29 +162,24 @@ void SDoku(String filename){
     // read from the file until there's nothing else in it:
     while (mySdFile.available()) 
     {
-      for(int sdfs=1;sdfs<1000;sdfs++)
-      {
         okusatir=mySdFile.readStringUntil('\n');
         Serial.println(okusatir);
-        if(biriktir_okusatir.length()<=100000){biriktir_okusatir+=okusatir;}
-        if(biriktir_okusatir.length()>100000){eskidosyadakalsin=true}
-        if(okusatir.length()<1) satirsayisi = sdfs;
-      }
     }
 
+/*
 if(eskidosyadakalsin==true){
     String eskidosya_filename=("/"+zaman.substring(0,zaman.length()-2)+"_mqserlog.txt";
     SDyaz(eskidosya_filename, String biriktir_okusatir);
     mySdFile.close();
     SD.remove(mySdFile);
 }
-
+*/
 
     // close the file:
     mySdFile.close();
   } else {
     // if the file didn't open, print an error:
-    Serial.println("error opening test.txt");
+    Serial.println(filename + "  error opening..");
   }
 }
-*/
+

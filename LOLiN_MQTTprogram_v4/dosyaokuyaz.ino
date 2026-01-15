@@ -439,3 +439,102 @@ void dosyayazfbuserpass()
                 }
 }
 
+
+String butonactcol = "d1ca03";
+String butonpascol = "A3A3A3";
+String butonayrcol = "20d3c8";
+String butonpbgcol = "ffb12a";
+
+
+void butonactcoloku() {
+  dosya.close();
+  dosya = LittleFS.open("/butonactcol.txt", "r");
+  if (dosya) {
+    String butonactcol1 = dosya.readStringUntil('\n');
+    butonactcol = butonactcol1.substring(0, butonactcol1.length() - 1);
+    //Serial.println(butonactcol);
+    dosya.close();
+  } else {
+    butonactcol = "d1ca03";
+  }
+}
+
+void butonactcolyaz() {
+  dosya.close();
+  LittleFS.remove("/butonactcol.txt");
+  //Serial.println(butonactcol);
+  dosya = LittleFS.open("/butonactcol.txt", "w+");
+  dosya.println(butonactcol);
+  dosya.close();
+  butonactcoloku();
+}
+
+void butonpascoloku() {
+  dosya.close();
+  dosya = LittleFS.open("/butonpascol.txt", "r");
+  if (dosya) {
+    String butonpascol1 = dosya.readStringUntil('\n');
+    butonpascol = butonpascol1.substring(0, butonpascol1.length() - 1);
+    //Serial.println(butonpascol);
+    dosya.close();
+  } else {
+    butonpascol = "A3A3A3";
+  }
+}
+
+void butonpascolyaz() {
+  dosya.close();
+  LittleFS.remove("/butonpascol.txt");
+  //Serial.println(butonpascol);
+  dosya = LittleFS.open("/butonpascol.txt", "w+");
+  dosya.println(butonpascol);
+  dosya.close();
+  butonpascoloku();
+}
+
+void butonayrcoloku() {
+  dosya.close();
+  dosya = LittleFS.open("/butonayrcol.txt", "r");
+  if (dosya) {
+    String butonayrcol1 = dosya.readStringUntil('\n');
+    butonayrcol = butonayrcol1.substring(0, butonayrcol1.length() - 1);
+    //Serial.println(butonayrcol);
+    dosya.close();
+  } else {
+    butonayrcol = "20d3c8";
+  }
+}
+
+void butonayrcolyaz() {
+  dosya.close();
+  LittleFS.remove("/butonayrcol.txt");
+  //Serial.println(butonayrcol);
+  dosya = LittleFS.open("/butonayrcol.txt", "w+");
+  dosya.println(butonayrcol);
+  dosya.close();
+  butonayrcoloku();
+}
+
+void butonpbgcoloku() {
+  dosya.close();
+  dosya = LittleFS.open("/butonpbgcol.txt", "r");
+  if (dosya) {
+    String butonpbgcol1 = dosya.readStringUntil('\n');
+    butonpbgcol = butonpbgcol1.substring(0, butonpbgcol1.length() - 1);
+    //Serial.print("butonpbgcol:"); Serial.println(butonpbgcol);
+    dosya.close();
+  } else {
+    butonpbgcol = "ffb12a";
+  }
+}
+
+void butonpbgcolyaz() {
+  dosya.close();
+  LittleFS.remove("/butonpbgcol.txt");
+  //Serial.println(butonpbgcol);
+  dosya = LittleFS.open("/butonpbgcol.txt", "w+");
+  dosya.println(butonpbgcol);
+  dosya.close();
+  butonpbgcoloku();
+}
+

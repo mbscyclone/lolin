@@ -1,6 +1,12 @@
 // ESP8266 LOLİN
 // Flash size 4M(FS:1MB OTA:~1019KB)
-// MMU 32KBCHACE, ^'KB IRAM(balanced)
+// MMU 16KBCHACE, 48^'KB IRAM(balanced)
+
+
+//1 SD çıkart olayı ekle
+//2 httptarama yaparken httpcl ye sınırlama getir zamanfark 
+
+
 
 #define ENABLE_USER_AUTH
 #define ENABLE_DATABASE

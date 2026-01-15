@@ -140,6 +140,20 @@ void serin()
       }
 // DİRECTORY LİST BİTTİ /////////////////////////////
 
+//  SDoku(String filename) başı //////////////
+       if(sergel.indexOf("shw")==0)
+      {
+        Serial.println("--shw--");
+        String klasor;
+        if(sergel.length()>4)
+        {
+          klasor=sergel.substring(5,sergel.length());
+          if(klasor.indexOf("/")!=0)klasor="/"+klasor;
+        }
+        SDoku(klasor);
+      }
+
+// SDoku(String filename) bitişi ////////////
 
 // size /////////
       if(sergel.indexOf("size")==0)
@@ -162,6 +176,11 @@ void serin()
             Serial.println("fben=    - Firebase açmak için. fben=1, kapatmak için fben=0");
             Serial.println("durum=   - durumları listeler");
             Serial.println("reset  - Cihazı resetler. ");
+            Serial.println("-------- dosya işleri --------- ");
+            Serial.println("dir  - SD dosyaları göster. ");
+            Serial.println("size - SD kapasite ve boş alanı gösterir. ");
+            Serial.println("shw  - Dosya içini gösterir. (shw /serverlog/260113/03.txt)");
+
       }
   
 
