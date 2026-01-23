@@ -165,9 +165,74 @@ String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '
           if (header.indexOf("/Menu0") > -1) Menu = 0;
           if (header.indexOf("/Menu1") > -1) Menu = 1;
 
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+String seriptm = header;
+String serip = Karakterduzeltfunc(seriptm);
+if (serip.indexOf("/SEND>") > -1) {
+
+    if (serip.indexOf("http://") > -1) {}
+
+    serip = serip.substring(serip.indexOf("data:") + 5, serip.length());
+    Serial.print ("serip: ");
+     Serial.println(serip);
+    for (int z = 0; z < 11; z++) {
+      if (serip.length() < 1) break;
+      String pnm;
+      String pns;
+
+      if (serip.indexOf(":") > -1) {
+        pnm = serip.substring(0, serip.indexOf(":"));
+        if (serip.indexOf(",") > -1) {
+          pns = serip.substring(serip.indexOf(":") + 1, serip.indexOf(","));
+          serip = serip.substring(serip.indexOf(",") + 1, serip.length());
+        } else {
+          pns = serip.substring(serip.indexOf(":") + 1, serip.indexOf(" HTTP/1.1"));
+          serip = "";
+        }
+                  Serial.println(pnm + " pnm1  ---  1pns " + pns);
+        if (pnm.indexOf("VR") == 0) {
+          Serial.println(pnm + " pnm2  ---  2pns " + pns);
+          for (int vrr = 0; vrr < 6; vrr++) {
+            if (pnm.indexOf("VR" + (String)vrr) == 0)
+            {
+               VRP[vrr] = pns;
+            }
+          }
+        } else
+          for (int hh = 0; hh < 11; hh++) {
+            Serial.print("pnm=");Serial.print(pnm);Serial.print("pinname[hh]=");Serial.println(pinname[hh]);
+            if (pnm == pinname[hh]) {
+               Serial.println(pnm + " pnm3  ---  3pns " + pns);
+                PinState[hh] = pns;
+                updateoutput();
+                break;
+            }
+          }
+      }
+    }
+}
+
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 if (Menu == 1) {
-
-
 
               if (header.indexOf("habp=Off") > -1) {
                 habp = 0;
@@ -913,7 +978,7 @@ if (Menu == 0) {
                 //Serial.println("pwmdeger:::::::::::::::::::::: " + PWMdeger);
                 PinState[pinismiint] = PWMdeger;
               } else {
-                Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/") + 1, Headerparcala.length());
+                Headerparcala = Headerparcala.substring(Headerparcala.indexOf(":") + 1, Headerparcala.length());
                 pinkomut = Headerparcala.substring(0, Headerparcala.indexOf(" HTTP"));
               }
 
@@ -1264,12 +1329,12 @@ if (Menu == 0) {
                   if (PinState[x] == "") PinState[x] = "0";  //                    v--- " + pinlabel[x] + " [" +  pinname[x] + "]= " + PinState[x] + "
 
                   if (PinState[x] == "0") {  //                    v--- " + pinlabel[x] + " [" +  pinname[x] + "]= " + PinState[x] + "
-                    xilent.println("<a href=\"/" + pinname[x] + "/on\"><button class=\"button butoff\">-0-</button></a>");
+                    xilent.println("<a href=\"/" + pinname[x] + ":1\"><button class=\"button butoff\">-0-</button></a>");
                     if(high_low_invert==true) xilent.println( " Çıkış [1]");
                   }
 
                   if (PinState[x] == "1") {
-                    xilent.println("<a href=\"/" + pinname[x] + "/off\"><button class=\"button button\">-1-</button></a>");
+                    xilent.println("<a href=\"/" + pinname[x] + ":0\"><button class=\"button button\">-1-</button></a>");
                     if(high_low_invert==true) xilent.println( " Çıkış [0]");
                   }
                 }

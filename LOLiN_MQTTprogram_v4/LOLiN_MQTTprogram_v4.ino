@@ -6,7 +6,6 @@
 #define ENABLE_DATABASE
 
 #include <Arduino.h>
-
 #include <ESP8266HTTPClient.h>
 //#include <FirebaseRealtime.h>
 //#include <WiFiClient.h>
@@ -98,7 +97,7 @@ bool WiFiAP = true;  // Do yo want the ESP as AP?
 WiFiServer httpserver(80);
 String header;
 String creator;
-
+String htyolla;
 String esphostnameOnek = "";
 String esphostname = "esp-bos";
 bool high_low_invert = false;
@@ -240,9 +239,10 @@ void handleNotFound() {
   message += "\n";
   for (uint8_t i = 0; i < server.args(); i++) { message += " " + server.argName(i) + ": " + server.arg(i) + "\n"; }
 
-  String serip = server.uri();
-  if (serip.indexOf("/ser") > -1) {
-
+  Serial.println(message);
+  String seriptm = server.uri();
+  String serip = Karakterduzeltfunc(seriptm);
+  if (serip.indexOf("/ser:") > -1) {
     dosyaokumyssidname();
     IPAddress lip = WiFi.localIP();
     String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
@@ -253,39 +253,7 @@ void handleNotFound() {
     Serial.println("Server geldi          ");
     Serial.println(serip);
     htserverkaydet(serip);
-  } else if (serip.indexOf("/data:") > -1) {
-    serip = serip.substring(serip.indexOf("data:") + 5, serip.length());
-
-    for (int z = 0; z < 11; z++) {
-      if (serip.length() < 1) break;
-      String pnm;
-      String pns;
-      if (serip.indexOf(":") > -1) {
-        pnm = serip.substring(0, serip.indexOf(":"));
-        if (serip.indexOf(",") > -1) {
-          pns = serip.substring(serip.indexOf(":") + 1, serip.indexOf(","));
-          serip = serip.substring(serip.indexOf(",") + 1, serip.length());
-        } else {
-          pns = serip.substring(serip.indexOf(":") + 1, serip.length());
-          serip = "";
-        }
-        if (pnm.indexOf("VR") == 0) {
-          Serial.println(pnm + " " + pns);
-          for (int vrr = 0; vrr < 6; vrr++) {
-            if (pnm.indexOf("VR" + (String)vrr) == 0) VRP[vrr] = pns;
-          }
-        } else
-          for (int hh = 0; hh < 11; hh++) {
-            if (pnm == pinname[hh]) {
-              if (psco == false && pns != fbPinState[hh]) {
-                PinState[hh] = pns;
-              }
-              break;
-            }
-          }
-      }
-    }
-  } else server.send(404, "text/plain", message);
+  }  else server.send(404, "text/plain", message);
 }
 
 
@@ -1261,7 +1229,7 @@ if( habp == 1){
 
 
 
-
+  //if(htyolla != "")httpgonder();
 
 
 
@@ -1282,8 +1250,8 @@ if( habp == 1){
 */
 
     int upd;
-    if (habp == 0) upd = 1;
-    if (habp == 1) upd = 10;
+    if (habp == 0) upd = 20;
+    if (habp == 1) upd = 20;
     if (habp == 2) upd = 400;
 
     if (hcsrloopvar == true) {
@@ -1385,10 +1353,11 @@ void vrkontrol() {
       }
 
 
-      if (VRP[vr].indexOf("SEND>") == 0) {
-        String htpServerip = VRP[vr].substring(VRP[vr].indexOf(":") + 1, VRP[vr].length());
-        htpServerip = htpServerip.substring(htpServerip.indexOf("SEND>") + 5, htpServerip.indexOf(">"));
-        String gonderilecek = htpServerip.substring(htpServerip.indexOf(">") + 1, htpServerip.length());
+      if (VRP[vr].indexOf("SEND%3E") == 0) {
+        String htpServerip = VRP[vr].substring(VRP[vr].indexOf("%3E") + 3, VRP[vr].length());
+        htpServerip = htpServerip.substring(0, htpServerip.indexOf(","));
+        String gonderilecek = htpServerip.substring(htpServerip.indexOf(",") + 1, htpServerip.length());
+        gonderilecek = htpServerip.substring(0, htpServerip.length());
         sendserver(htpServerip, gonderilecek);
       }
     }
@@ -1493,6 +1462,10 @@ String Karakterduzeltfunc(String gelent) {
   gelent.replace("%C4%B0", "İ");
   gelent.replace("%2F", "/");
   gelent.replace("%25", "%");
+  gelent.replace("%3E", ">");
+  gelent.replace("%3C", "<");
+  Serial.print("Düzeltme sonucu: ");
+  Serial.println(gelent);
   return gelent;
 }
 

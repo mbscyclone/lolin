@@ -128,8 +128,8 @@ bool paranteziciislem(String parantezi) {
   bool ifsonucu = false;
 
 
-  Serial.print("parantezi ");
-  Serial.println(parantezi);
+  //Serial.print("parantezi ");
+  //Serial.println(parantezi);
 
   uint8_t op;
   if (parantezi.indexOf("==") > -1) {
@@ -193,7 +193,7 @@ bool paranteziciislem(String parantezi) {
 
   if (perlog != "") return false;
 
-
+/*
   Serial.println("PARANTEZ İÇİ");
   Serial.print("sol ");
   Serial.print(sol);
@@ -206,6 +206,7 @@ bool paranteziciislem(String parantezi) {
 
   Serial.print("op ");
   Serial.println(op);
+*/
 
   if (op == 1) {
     if (solstate.toFloat() == sag.toFloat()) ifsonucu = true;
@@ -216,16 +217,18 @@ bool paranteziciislem(String parantezi) {
   } else if (op == 3) {
     if (solstate.toFloat() > sag.toFloat()) {
       ifsonucu = true;
-      Serial.print("solstate ");
+      /*Serial.print("solstate ");
       Serial.print(solstate.toFloat());
       Serial.print("   sagfloat true çıktı");
       Serial.println(sag.toFloat());
+      */
     } else {
       ifsonucu = false;
-      Serial.print("solfloat ");
+      /*Serial.print("solfloat ");
       Serial.print(solstate.toFloat());
       Serial.print("   sagfloat false çıktı");
       Serial.println(sag.toFloat());
+      */
     }
   } else if (op == 4) {
     if (solstate.toFloat() <= sag.toFloat()) ifsonucu = true;
@@ -233,16 +236,18 @@ bool paranteziciislem(String parantezi) {
   } else if (op == 5) {
     if (solstate.toFloat() < sag.toFloat()) {
       ifsonucu = true;
-      Serial.print("solfloat ");
+      /*Serial.print("solfloat ");
       Serial.print(solstate.toFloat());
       Serial.print("   sagfloat true çıktı");
       Serial.println(sag.toFloat());
+      */
     } else {
       ifsonucu = false;
-      Serial.print("solfloat ");
+      /*Serial.print("solfloat ");
       Serial.print(solstate.toFloat());
       Serial.print("   sagfloat false çıktı");
       Serial.println(sag.toFloat());
+      */
     }
   } else if (op == 6) {
     if (solstate.toFloat() != sag.toFloat()) ifsonucu = true;
@@ -326,28 +331,28 @@ void gotoif() {
         isyap = parantezici;
         sonis = true;
       }
-      Serial.print("isyap >>>>: ");
-      Serial.println(isyap);
+      //("isyap >>>>: ");
+      //Serial.println(isyap);
       ifkiyas[j] = paranteziciislem(isyap);
-      Serial.print(j);
-      Serial.print("<j ifkiyas[j] = ");
-      Serial.print(ifkiyas[j]);
-      Serial.print(" sonrasında vevarmı: ");
-      Serial.println(vevar[j]);
+      //Serial.print(j);
+      //Serial.print("<j ifkiyas[j] = ");
+      //Serial.print(ifkiyas[j]);
+      //Serial.print(" sonrasında vevarmı: ");
+      //Serial.println(vevar[j]);
       kiyassayisi = j;
       if (sonis == true) break;
     }
 
 
-    Serial.println(" döngü ki döngüsü aşağıdaki ");
+    //Serial.println(" döngü ki döngüsü aşağıdaki ");
     for (int ki = 1; ki < kiyassayisi; ki++) {
 
-      Serial.print(ki);
-      Serial.print("<ki ifkiyas[ki+1] = ifkiyas[ki]");
-      Serial.print(ifkiyas[ki]);
-      Serial.println(ifkiyas[ki + 1]);
-      Serial.print("  vevar[ki]    ");
-      Serial.println(vevar[ki]);
+      //Serial.print(ki);
+      //Serial.print("<ki ifkiyas[ki+1] = ifkiyas[ki]");
+      //Serial.print(ifkiyas[ki]);
+      //Serial.println(ifkiyas[ki + 1]);
+      //Serial.print("  vevar[ki]    ");
+      //Serial.println(vevar[ki]);
 
       if (vevar[ki] == true) {
         if (ifkiyas[ki + 1] == true && ifkiyas[ki] == true) ifkiyas[ki + 1] = true;
@@ -409,8 +414,8 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
 
   //Serial.print("ptm:");
   //Serial.println(ptm);
-  Serial.print("yapilacaklar:");
-  Serial.println(yapilacaklar);
+  //Serial.print("yapilacaklar:");
+  //Serial.println(yapilacaklar);
   //sonsatir belli;
 
 
@@ -444,7 +449,15 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
         if(mqsenddataold != degisenmq ) mqsendbayrak=true;
         }
       }
-      else yap(yapilacakisn, yapilacaklarislemsayisi);
+      else 
+      if(yais.indexOf("HTTP:")==0)
+      { 
+        htyolla=yapilacakis.substring(0,yapilacakis.indexOf(";"));
+        //Serial.println(htyolla);
+        httpgonder();
+        delay(50);
+      } else
+      yap(yapilacakisn, yapilacaklarislemsayisi);
 
       yapilacaklar = yapilacaklar.substring(yapilacaklar.indexOf(";") + 1, yapilacaklar.length());
       yapilacaklarn = yapilacaklarn.substring(yapilacaklarn.indexOf(";") + 1, yapilacaklarn.length());

@@ -1,5 +1,5 @@
 void httpheader(WiFiClient xilent) {
-  xilent.println("<!DOCTYPE HTML>\r\n<html>");
+  xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>");
   xilent.println("<head><meta name=\"viewport\" xo=\"width=device-width, initial-scale=1\">");
   //xilent.println("<META charset=iso-8859-9\">";
   xilent.println("<meta charset=\"UTF-8\">");
@@ -35,7 +35,7 @@ void htpcl() {
   WiFiClient xilent = httpserver.available();
   header="";
   if (xilent) {
-
+    tarazamani=millis();
     // If a new xilent connects,
     Serial.println("New Client. fben:" + String(fben));  // print a message out in the serial port
     String currentLine = "";        // make a String to hold incoming data from the xilent
@@ -53,6 +53,7 @@ void htpcl() {
                 Serial.print(c);  // print it out the serial monitor
         header += c; 
       }
+      yield();
         if(header.indexOf("\n")>-1)
          {
           header=header.substring(0,header.indexOf("\n"));
@@ -72,7 +73,7 @@ String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '
           //////////////////
           // http://192.168.2.84/auth:?capt=2927&unme=admin&pwrd=1234
           // bilgi geldiyse aut = 1 yapmak için
-/*  
+
           String xo2;
           if (aut == 0) {
             if (header.indexOf("?capt=") > -1) {
@@ -145,7 +146,7 @@ String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '
               return;
             }
           }
-*/
+
 
           //////////////////
           //////////////////
@@ -159,6 +160,7 @@ String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '
 
           if (header.indexOf("/Menu0") > -1) Menu = 0;
           if (header.indexOf("/Menu1") > -1) Menu = 1;
+          if (header.indexOf("/Menu3") > -1) Menu = 3;
 
 if (Menu == 1) {
 
@@ -992,7 +994,7 @@ if (Menu == 0) {
             IPAddress lip = WiFi.localIP();
             String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
 
-            xilent.println("<!DOCTYPE html><html><head><title>" + esphostname + "  -> " + lipStr + " - ESP8266-Pro.v4</title>");
+            xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html><html><head><title>" + esphostname + "  -> " + lipStr + " - ESP8266-Pro.v4</title>");
 
             xilent.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
             xilent.println("<meta charset=\"UTF-8\">");
@@ -1023,46 +1025,42 @@ if (Menu == 0) {
 
 
 
-            xilent.println("</head>");
+            xilent.println("</head><body>");
 
             // Web Page Heading
             String sonek = esphostname.substring(esphostname.indexOf("-") + 1, esphostname.length());
 
-            xilent.println("<body><div align=\"center\">");
+if(kimdir<1)
+{
+            xilent.println("<div align=\"center\">");
             xilent.println("<label style='font-size: 10px;'>Sayfayı yenileme için alttaki düğmeyi kullanabilirsiniz</label><br>");
             xilent.println("<table style=\"border:5px solid black;width:00px\"><tr>");
             xilent.println("<td style=\"border:0px solid black;width:90p; align:center; \">");
-            
             xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
-            if(sayfayenile==120)
-            xilent.println("<form action=\"/rr120\" method=\"POST\"><input type=\"submit\" value=\"120s\" style='width:50px;background-color:yellow;'></form></td>");
-            else
+
             xilent.println("<form action=\"/rr120\" method=\"POST\"><input type=\"submit\" value=\"120s\" style='width:50px;'></form></td>");
 
             xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
-            if(sayfayenile==30)
-            xilent.println("<form action=\"/rr30\" method=\"POST\"><input type=\"submit\" value=\"30s\" style='width:50px;background-color:yellow;'></form></td>");
-            else
+
             xilent.println("<form action=\"/rr30\" method=\"POST\"><input type=\"submit\" value=\"30s\" style='width:50px;'></form></td>");
 
             xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
-            if(kimdir<1 && sayfayenile==10)
+           
             xilent.println("<form action=\"/rr10\" method=\"POST\"><input type=\"submit\" value=\"10s\" style='width:50px;background-color:yellow;'></form></td>");
-            else
-            if(kimdir<1)xilent.println("<form action=\"/rr10\" method=\"POST\"><input type=\"submit\" value=\"10s\" style='width:50px;'></form></td>");
-
+            
             xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
             
             xilent.println("<form action=\"/rr0\" method=\"POST\"><input type=\"submit\" value=\"Kapat\" style='width:50px;'></form></td>");
             
             xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
             
-            if(kimdir<1)xilent.println("<form action='/rr0' method=\"POST\"><input type=\"submit\" value=\" Yenile\" style='width:80px;'></form>");
+            xilent.println("<form action='/rr0' method=\"POST\"><input type=\"submit\" value=\" Yenile\" style='width:80px;'></form>");
             //xilent.println("<form action='/' method=\"POST\"><input type=\"submit\" value=\" Yenile\" style='width:80px;'></form>");
             xilent.println("</td></table></div>");
 
             if(sayfayenile>0) xilent.println("<label style='font-size: 10px;'>Sayfayı yenile Açık "+ String(sayfayenile) +" saniyede bir yenilenecek</label>");
             if(sayfayenile==0)xilent.println("<label style='font-size: 10px;'>Sayfayı yenile Kapalı</label>");
+      } else {xilent.println("<label style='font-size: 10px;'>Tarama yapılıyor 30 saniyide bir tazeleme yapılacak... lütfen bekleyin </label>");}
 
             xilent.println("<h2>" + sonek + "</h2>");
             //xilent.println("> Device_ident: ");
@@ -1282,8 +1280,7 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                           }
                           susluce+="]";
                           xilent.println(susluce);
-
-
+                          xilent.println("<div>");
                           xilent.println("<textarea name='is' id='id' cols='38' rows='19'  style='font-size:12px;vertical-align:top;'>");
                           for(int i=1;i<20;i++)
                           {
@@ -1292,7 +1289,10 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                               xilent.println(bulunanespv4[i]);
                             }else break;
                           }
+                          
                           xilent.println("</textarea>");
+                          xilent.println("</div>");
+                          
                           String testserv = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(kimdir);
                           xilent.println("<label style='font-size:10px;'>");
                           xilent.println(String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + "0");
@@ -1304,6 +1304,7 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                           xilent.println(" >····· "+ String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + "255");
                           xilent.println("</label></td>");
              }
+             Serial.print("kimdir : ");Serial.println(kimdir);
              if(kimdir<1){ 
                           xilent.println("<td width=\"300\" align=\"center\" style='vertical-align: top;border:2px solid black;'>");
                           xilent.println("<a href='/agtara'><label style='font-size: 12px;' type='submit'>Ağ taraması baştan</label></a>");
@@ -1334,9 +1335,23 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                             {
                               String urll = bulunanespv4[i].substring(bulunanespv4[i].indexOf("]")+1,bulunanespv4[i].length());
                               xilent.println("<a href='http://" + urll + "'  target='_blank'><label style='font-size: 12px;' type='submit'>" + bulunanespv4[i] + "</label></a><br>");
+                              String bulunanespv4name=bulunanespv4[i].substring(bulunanespv4[i].indexOf("[")+1,bulunanespv4[i].indexOf("]"));
+                              bulunanespurliframe[i] = "<a href='http://" + urll + "'  target='iframe_a'><label style='font-size: 12px;' type='submit'>" + bulunanespv4name + "</label></a><br>";
+                              bulunanespvar=true;
                             }else break;
                           }
+
+
+                          if(bulunanespvar==true){
+                            xilent.println("<br><td style=\"border:1px solid black;width:250p; align:center; \">");
+                            xilent.println("<p><form action=\"/Menu3\" method=\"POST\"><input type=\"submit\" value=\"Cihazlar\"></form></p></td>");
+                          }
+
                           xilent.println("</td>");
+
+
+
+
              }
   }
 }
@@ -1406,7 +1421,47 @@ if (uri.indexOf("?") > 0) {
 
           }
 
+if(Menu == 3)
+{
+  xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>");
+  xilent.println("<head><meta name=\"viewport\" xo=\"width=device-width, initial-scale=1\">");
+  //xilent.println("<META charset=iso-8859-9\">";
+  xilent.println("<meta charset=\"UTF-8\">");
+  xilent.println("<link rel=\"icon\" href=\"data:,\">");
+  xilent.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: left;}");
+  xilent.println(".button { background-color: #" + butonactcol + "; border: 5px solid yellow; border-radius: 10px 10px 10px 10px; color: white; padding: 10px 10px;text-decoration: none; font-size: 12px; margin: 1px; cursor: pointer;}");
+  xilent.println(".butoff {background-color: #" + butonpascol + "; border: 5px solid gray; border-radius: 10px 10px 10px 10px; color: white; padding: 10px 10px;text-decoration: none; font-size: 12px; margin: 1px; cursor: pointer;}");
+  xilent.println(".butayr {background-color: #" + butonayrcol + "; border: 5px solid gray; border-radius: 6px 6px 20px 15px; color: black; padding: 10px 10px;text-decoration: none; font-size: 12px; margin: 1px; cursor: pointer;}");
+  xilent.println("</style>");
+  xilent.println("<style>body {background-color: #" + butonpbgcol + ";} </style>");  //darkblue, lightblue, #b0b0b0 gibi
+  xilent.println("</head>");
+  xilent.println("<body>");
+  xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
+  xilent.println("<p><form action=\"/Menu0\" method=\"POST\"><input type=\"submit\" value=\"Home\"></form></p></td>");
+  xilent.println("<table style='border:1px solid black; width:100%; height:800px;'><tr>");
+  xilent.println("<td style='border:1px solid black; width:200px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + "; '>");
 
+
+
+                          for(int i=1;i<20;i++)
+                          {
+                            if(bulunanespv4[i]!="")
+                            {
+                              String urll = bulunanespv4[i].substring(bulunanespv4[i].indexOf("]")+1,bulunanespv4[i].length());
+                              xilent.println(bulunanespurliframe[i]);
+                            }else break;
+                          }
+String gdata = "</td>";
+gdata+= "<td style='border:1px solid black ;width:600px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + ";'>";
+String urLL = bulunanespv4[1].substring(bulunanespv4[1].indexOf("]")+1,bulunanespv4[1].length());
+Serial.println(urLL);
+gdata+= "<iframe src='http://" + urLL + "/' name='iframe_a' title='Iframe' style='width:100%; height:100%;'></iframe>";
+gdata+= "</td>";
+gdata+= "<tr>";
+gdata+= "<table>";
+xilent.println(gdata);
+xilent.println("</body></html>");
+}
 
 
 

@@ -1,88 +1,27 @@
-/*
-
- ana programda yukarıda tanımlanacaklar///////////////
-int kimdir=0;
-unsigned int kimdirsayac;
-int espv4sayac=1;
-String bulunanespv4[10];
-///////////////////////////////////
-ana programda loop içinde//////////
-  
-  
-        if (Firebase_ready && zamanfark > 2950 && zamanfark < 3000)
-        {
-            zamanfark=3001;
-            if(kimdir==0)
-            {
-            programrun();
-            fbsayacoku();
-            }
-        }
-
-  
-  
-  if(kimdir>0)
-  {
-    httptara();
-  }
-
-/*
-//////////////////////////////////////////////////////
-
-htpcl.ino içinde ////////////////////////////////////
-
-if(header.indexOf("/whois")>-1){
-  if(kimdir==0)kimdir=1;header="GET /pinayar HTTP/1.1";headerOld=header; espv4sayac=1;
-  }
-
-menu sıfırda bilgi ///
- if(kimdir!=0) xilent.println("<label style='font-size: 12px;vertical-align: top;'>Ağ taraması " +String((int)((kimdir*100)/255)) + " %</label><br>");
-
-
-
-
-            xilent.println("Giris formati (Bosluk kullanma, Bosluklarin yerine \"|\" isareti kullanilacak.)<br>pinAdi pinModu pinSinyalTipi pinMinDegeri pinDegeri pinMaxDegeri pinEtiketi");
-            xilent.println("<table>  <caption>PIN AYARLARI VE AĞDAKİ ESPLER</caption> <tr> <td scope=\"col\">pin ayarları:</td><td scope=\"col\">Ağdaki ESPv4 cihazları</td></tr>");
-            xilent.println("<td><form method='get' action='pinayar'><br>");
-            xilent.println("<textarea name='is' id='id' cols='50' rows='10' >");
-            xilent.println(pinayar);
-            xilent.println("</textarea>");
-            xilent.println("<br>ESP ye bağlı Cihazları kapatın.<br>");
-            xilent.println("<input type='submit' value='Pinayar Kaydet'>");
-            xilent.println("</form></td><td>");
-            
-
-            xilent.println("<label style='font-size:12px;vertical-align:top;'>");
-            for(int i=1;i<51;i++)
-            {
-              if(bulunanespv4[i]!="")
-              {
-                xilent.println(bulunanespv4[i]+"<br>");
-              }else break;
-            }
-            xilent.println("</label></td>");
-
-            xilent.println("</table><br>");
-            xilent.println("Altta ESP-Wemos pinleri icin bir ornek verilmistir.<br>");
-            xilent.println("D0|OUT|DIG|0|0|1|Sarj1_pirizi<br>");
-            xilent.println("D1|OUT|PWM|0|0|1|Servo<br>");
-            xilent.println("D3|INP|DHT1|1|-2|-5|Temp_Hum<br>");
-            xilent.println("A0|INP|ANG|0|0|1024|Volt3v3<br>");
-            xilent.println("<br><br>");
-
-
-
-*/
-
-
-//burada olanlar ///////////////////
 #include <WiFiClient.h>
 
 void httptara()
 {
-  if(WiFi.status()==!WL_CONNECTED)return;
 
+            if(millis()-otuzsaniye > 29000)
+            {
+                tarazamani=millis();
+               if(millis()-otuzsaniye > 32000)otuzsaniye=millis();
+               else return;
+            }
 
+  tarazamani=millis();
+  
+  if(WiFi.status()==!WL_CONNECTED){kimdir=-2;return;}
+
+                                          if(kimdir==1)    // silme işlemi
+                                          {   LittleFS.remove("/espler.txt");
+                                              LittleFS.remove("/kimdirf.txt");
+                                                            for(int j=1;j<21;j++)
+                                                            {
+                                                                bulunanespv4[j]="";
+                                                            }
+                                          }
 
 
             IPAddress lip = WiFi.localIP();
@@ -100,9 +39,10 @@ void httptara()
 
             WiFiClient client2;
             HTTPClient http2;
-            http2.setTimeout(800);
+            http2.setTimeout(http2setTimeout);
             //Serial.print("[HTTP] begin...\n");
             // configure traged server and url
+            yield();
             http2.begin(client2, testserver);  // HTTP
 
             //Serial.print("[HTTP] GET...\n");
@@ -150,11 +90,63 @@ void httptara()
 
             kimdir+=1;
             if(kimdir>255){
-            kimdir=-2;kimdirsonyeri=-2;delay(1200);return;
-            //esplerikaydet();
+            kimdir=-2;kimdirsonyeri=-2;
+            esplerikaydet();
             }
 
           }
 
 }
 
+
+void esplerikaydet()
+{
+  File espler;
+  espler.close();
+  LittleFS.remove("/espler.txt");
+  espler = LittleFS.open("/espler.txt", "w+");
+                  for(int j=1;j<21;j++)
+                  {
+                    if(bulunanespv4[j] != "")
+                    {
+                      if(bulunanespv4[j].indexOf("\n") >0) bulunanespv4[j] = bulunanespv4[j].substring(0,bulunanespv4[j].indexOf("\n"));
+                      espler.println(bulunanespv4[j]);
+                    }
+                  }
+ espler.close();
+
+  File kimdirf;
+  kimdirf.close();
+  LittleFS.remove("/kimdirf.txt");
+  kimdirf = LittleFS.open("/kimdirf.txt", "w+");
+  kimdirf.println((String)kimdirsonyeri);
+  kimdirf.close();
+
+}
+
+
+
+
+void esplerioku()
+{
+  File espler;
+  espler.close();
+  espler = LittleFS.open("/espler.txt", "r");
+    String geciciespler = espler.readString();
+                  for(int j=1;j<21;j++)
+                  {
+                    if(geciciespler.length() >0)
+                    {
+                      bulunanespv4[j] = geciciespler.substring(0,geciciespler.indexOf("\n"));
+                      geciciespler=geciciespler.substring(geciciespler.indexOf("\n")+1, geciciespler.length());
+                    }else break;
+                  }
+ espler.close();
+
+  File kimdirf;
+  kimdirf.close();
+  kimdirf = LittleFS.open("/kimdirf.txt", "r");
+  String kimdirSSonyeri  = kimdirf.readString();
+  kimdirsonyeri=kimdirSSonyeri.toInt();
+ kimdirf.close();
+}

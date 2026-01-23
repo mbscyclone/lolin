@@ -118,13 +118,13 @@ String pass = "";
 int rescanwifi = 0;
 
 
-//int aut = 0;
-//int autcode;
-//int logintimeout;
-//int logintimeoutmax=240000;
-//String capt;
-//String unme="admin";
-//String pwrd="1234";
+int aut = 0;
+int autcode;
+int logintimeout;
+int logintimeoutmax=240000;
+String capt;
+String unme="admin";
+String pwrd="qw12";
 
 
 int sayfayenile=0;
@@ -211,7 +211,10 @@ int kimdirsonyeri=-1;
 #include <ESP8266mDNS.h>
 ESP8266WebServer server(8080);
 
+unsigned long otuzsaniye=millis();
 unsigned long tarazamani=millis();
+int http2setTimeout=1000;
+
 
 void handleRoot() {
   if(kimdir>-1)return;
@@ -275,7 +278,8 @@ String zaman;
 
 int espv4sayac=1;
 String bulunanespv4[20];
-
+String bulunanespurliframe[20];
+bool bulunanespvar=false;
 
 
 bool pinlerdagitildi=false;
@@ -1518,6 +1522,7 @@ if(WiFi.status()==WL_CONNECTED)
     const unsigned short mqttPort=1883;
     broker.init(mqttPort);
 
+    esplerioku();
 
 }
 
@@ -1572,14 +1577,13 @@ broker.update();
 if(WiFi.status()==WL_CONNECTED)
 {
   if(kimdir>-1)
-  {
-      if(millis()-tarazamani > 800)
+      if(millis()-tarazamani > 1200)
       {
-        tarazamani=millis();
+
         httptara();
       }
-  }
 }
+
 //Serial.println(httpserver.status());
 if(webstart>2){
   webstart+=1;
@@ -1601,6 +1605,9 @@ if(webstart>2){
     }
   // put your main code here, to run repeatedly:
   otaloop();
+  yield();
+  //if(millis()-tarazamani < http2setTimeout+200) {} // bekle
+  //else 
   htpcl();
   app.loop();
 
