@@ -1,0 +1,26 @@
+#######################################
+# Syntax Coloring Map for Melody
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+Melody	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+restart	KEYWORD2
+length	KEYWORD2
+hasNext	KEYWORD2
+next	KEYWORD2
+index	KEYWORD2
+getFrequency	KEYWORD2
+getLoudness	KEYWORD2
+getDuration	KEYWORD2
+setTempo	KEYWORD2
+getTempo	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
