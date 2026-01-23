@@ -130,3 +130,40 @@ void dosyaokumyssidname() {
 
 
 
+void telegramtokendosyaoku() {
+
+  //if (digitalRead(FactoryDefault) == HIGH) {
+    // cleareprom();
+  //}
+
+  dosya = LittleFS.open("/telegramdata.txt", "r");
+  if (dosya) {
+    // dosya başarı ile açıldı;
+    String telegram_botTokentmp = dosya.readStringUntil('\n');
+    telegram_botToken = telegram_botTokentmp.substring(0, telegram_botTokentmp.length() - 1);
+
+    String telegram_chatIDtmp = dosya.readStringUntil('\n');
+    telegram_chatID = telegram_chatIDtmp.substring(0, telegram_chatIDtmp.length() - 1);
+    telegram_hazir=true;
+    dosya.close();
+    //Serial.println("read bitti");
+  }else{telegram_hazir=false;}
+  if(telegram_botToken.length()<2){telegram_hazir=false;}
+}
+
+
+
+void telegramtokendosyayaz()
+{
+                dosya.close();
+                LittleFS.remove("/telegramdata.txt");
+                dosya = LittleFS.open("/telegramdata.txt", "w+");
+                if (dosya) {
+                  dosya.println(telegram_botToken);
+                  dosya.println(telegram_chatID);
+                  dosya.close();
+                  Serial.println("telegram Write bitti");
+                }
+                dosya.close();
+                telegramtokendosyaoku();
+}

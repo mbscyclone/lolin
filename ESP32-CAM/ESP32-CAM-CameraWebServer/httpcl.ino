@@ -54,8 +54,8 @@ void htpcl() {
                         xilent.println("<p><form action=\"/ssidset\" method=\"POST\"><input type=\"submit\" value=\"Bağlantı ayar\"></form></p></td>");
                         xilent.println("<td style=\"border:1px solid black;width:250px\">");
                         xilent.println("<p><form action=\"/myssidnameayar\" method=\"POST\"><input type=\"submit\" value=\"Cihaz adı ayar\"></form></p></td>");
-                        //xilent.println("<td style=\"border:1px solid black;width:250px\">");
-                        //xilent.println("<p><form action=\"/serveripayar\" method=\"POST\"><input type=\"submit\" value=\"Server ip ayar\"></form></p></td>");
+                        xilent.println("<td style=\"border:1px solid black;width:250px\">");
+                        xilent.println("<p><form action=\"/telegramset\" method=\"POST\"><input type=\"submit\" value=\"Telegram bot ayar\"></form></p></td>");
                         
                         //xilent.println("<td style=\"border:1px solid black;width:250px\">");
                         //xilent.println("<p><form action=\"/mqttipayar\" method=\"POST\"><input type=\"submit\" value=\"MQTT ayar\"></form></p></td>");
@@ -134,7 +134,7 @@ void htpcl() {
               xilent.println(st);
               xilent.println("</td><tr></table><br>");
               xilent.println("Bağlanılacak Modemin Wifi ismi (SSID) ve Şifresi (PASSWORD) giriş bölümü.");
-              xilent.println("            Kaydettikten sonra cihaza reset gerekli.");
+              xilent.println("            Kaydettikten sonra cihaza ⚠️ reset gerekli.");
               xilent.println("<br><form action=\"/ssidset\" method=\"get\"><label>SSID: </label><input name='ssid' length=32><label>PASS: </label><input name='pass' length=32><input type='submit'value='Kaydet'></form>");
 // ssidpass sonu /////////////////////
    }
@@ -166,6 +166,45 @@ void htpcl() {
              }
 
 // myssidname sonu ///////////////////////
+
+
+// telegram başı //////////////////
+    // ssidpass başı /////////////////////
+   if (header.indexOf("/telegramset") > -1) {
+    xilent.println("Telegram ayar bölümü");
+    xilent.println("<br><br>");
+    xilent.println("        TELEGRAM CHATBOT BİLGİLERİ GİRİŞİ");
+    xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
+    xilent.println("<br>");
+
+    // ssidpass başı /////////////////////
+    if (header.indexOf("/telegramset?") > -1) {
+      //
+      // yazma kısmı
+      if (header.indexOf("token=") > -1) {
+        telegram_botToken = header.substring((header.indexOf("token=") + 6), header.indexOf("&"));
+        Serial.println(telegram_botToken);
+      }
+      if (header.indexOf("&chatid=") > -1) {
+        telegram_chatID = header.substring((header.indexOf("&chatid=") + 8), header.indexOf(" HTTP/"));
+        Serial.println(telegram_chatID);
+        telegramtokendosyayaz();
+        ////client.abort();;
+        ESP.restart();
+      }
+    }
+
+
+
+              xilent.println("Telegram Chat bot ayarları giriş bölümü.");
+              xilent.println("            Kaydettikten sonra cihaza ⚠️ reset çekilecektir.");
+              xilent.println("<br><form action=\"/telegramset\" method=\"get\"><label>Telegram Token: </label><input name='token' length=32><label>Telegram chatID: </label><input name='chatid' length=32><input type='submit'value='Kaydet'></form>");
+   }
+// telegram sonu //////////////////
+
+
+
+
 
 
             if (header.indexOf("/ HTTP/1.1") > -1) {
@@ -213,17 +252,17 @@ void htpcl() {
                 { xilent.printf("Camera init OK ");// camerr="Camera init OK " + err;
                   xilent.println(err);
                 }
-              } 
 
-
-
+//⚠️🔐🚨
+              if(telegram_hazir==true) xilent.println("<br>    Telegram Chat Bot ayarları: yapılmış ✅<br>");
+              else xilent.println("<br>    Telegram Chat Bot ayarları: yapılmamış ❌    <br>");
               xilent.println("<br><br>");
               xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
               xilent.println("<br>");
-
+              } 
 
               xilent.println("    Reset bölümüdür.<br>");
-              xilent.println("    <form method='post' action='reset'><label>        Reset</label>");
+              xilent.println("    <form method='post' action='reset'><label>        ⚠️ Reset</label>");
               xilent.println("   <input type='submit'>");
               xilent.println("</form>");
 

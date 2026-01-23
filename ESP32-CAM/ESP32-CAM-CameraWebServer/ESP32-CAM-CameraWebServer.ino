@@ -27,13 +27,15 @@ unsigned long reConnectsayac = millis();
 
 
 //telegram bot link="t.me/kev1_bot";
-String botToken = "8327870196:AAEjrwZMHcTuOXehzge7m5uk5VU2jmyTUg8"; // [BotFather] /start >>> /addnewbot >>> name kev1_bot >> //HTTP_API
-String chatID="8411559509"; // [Chat I'd Info Bot] /start >>> name: Murat BEKTAŞ username: @Muratbk_141 chatid:8411559509
+bool telegram_hazir = false;
 
-// PIR sensor
-//#define PIR_PIN 3
-unsigned long lastMotionTime = 0;
-const unsigned long motionCooldown = 15000; // 15 seconds
+String telegram_botToken;  //= "8327870196:AAEjrwZMHcTuOXehzge7m5uk5VU2jmyTUg8"; // [BotFather] /start >>> /addnewbot >>> name kev1_bot >> //HTTP_API
+String telegram_chatID;    //= "8411559509"; // [Chat I'd Info Bot] /start >>> name: Murat BEKTAŞ username: @Muratbk_141 chatid:8411559509
+
+                          // PIR sensor
+                          //#define PIR_PIN 3
+                          unsigned long lastMotionTime = 0;
+const unsigned long motionCooldown = 15000;  // 15 seconds
 
 bool WiFiAP = true;  // Do yo want the ESP as AP?
 
@@ -53,7 +55,7 @@ void startCameraServer();
 void setupLedFlash();
 
 
-void sendPhotoTelegram(camera_fb_t * fb) {
+void sendPhotoTelegram(camera_fb_t *fb) {
   if (WiFi.status() != WL_CONNECTED) return;
 
   clientTCP.stop();
@@ -65,7 +67,7 @@ void sendPhotoTelegram(camera_fb_t * fb) {
   String boundary = "ESP32CAMBOUNDARY";
   String startRequest = "--" + boundary + "\r\n";
   startRequest += "Content-Disposition: form-data; name=\"chat_id\"\r\n\r\n";
-  startRequest += String(chatID) + "\r\n--" + boundary + "\r\n";
+  startRequest += telegram_chatID + "\r\n--" + boundary + "\r\n";
   startRequest += "Content-Disposition: form-data; name=\"caption\"\r\n\r\n";
   startRequest += "⚠️ Motion Detected!\r\n--" + boundary + "\r\n";
   startRequest += "Content-Disposition: form-data; name=\"photo\"; filename=\"image.jpg\"\r\n";
@@ -74,7 +76,7 @@ void sendPhotoTelegram(camera_fb_t * fb) {
 
   int contentLength = startRequest.length() + fb->len + endRequest.length();
 
-  String headers = "POST /bot" + String(botToken) + "/sendPhoto HTTP/1.1\r\n";
+  String headers = "POST /bot" + String(telegram_botToken) + "/sendPhoto HTTP/1.1\r\n";
   headers += "Host: api.telegram.org\r\n";
   headers += "Content-Type: multipart/form-data; boundary=" + boundary + "\r\n";
   headers += "Content-Length: " + String(contentLength) + "\r\n\r\n";
@@ -195,9 +197,9 @@ void setup() {
     Serial.println("Dosya sistemi başarılı");
   }
 
-dosyaokumyssidname();
-connectWifi();
-//  if(WiFi.status()==WL_CONNECTED)otasetup();
+  dosyaokumyssidname();
+  connectWifi();
+  //  if(WiFi.status()==WL_CONNECTED)otasetup();
 
   startCameraServer();
 
@@ -212,7 +214,9 @@ connectWifi();
   ////pinMode(PIR_PIN, INPUT);
 
 
-/*
+  telegramtokendosyaoku();
+
+  /*
   if (!MDNS.begin("esp32")) {
     Serial.println("Error setting up MDNS responder!");
     while (1) {
@@ -230,7 +234,7 @@ connectWifi();
   */
 }
 
-int pirpin=0;
+int pirpin = 0;
 void loop() {
 
   serin();
@@ -244,20 +248,22 @@ void loop() {
   }
 
   //if (digitalRead(PIR_PIN) == HIGH && millis() - lastMotionTime > motionCooldown) {
+
+  if (telegram_hazir == true) {
     if (pirpin == 1 && millis() - lastMotionTime > motionCooldown) {
-      pirpin=0;
-    lastMotionTime = millis();
-    Serial.println("🚨 Motion detected!");
+      pirpin = 0;
+      lastMotionTime = millis();
+      Serial.println("🚨 Motion detected!");
 
-    camera_fb_t * fb = esp_camera_fb_get();
-    if (!fb) {
-      Serial.println("Camera capture failed");
-      return;
+      camera_fb_t *fb = esp_camera_fb_get();
+      if (!fb) {
+        Serial.println("Camera capture failed");
+        return;
+      }
+      sendPhotoTelegram(fb);
+      esp_camera_fb_return(fb);
     }
-    sendPhotoTelegram(fb);
-    esp_camera_fb_return(fb);
   }
-
 }
 
 
@@ -268,7 +274,7 @@ IPAddress AP_NETWORK_MASK(255, 255, 255, 0);
 
 
 void connectWifi(void) {
-  WiFi.mode(WIFI_AP_STA); //1  //ESP8266 works in both AP mode and station mode
+  WiFi.mode(WIFI_AP_STA);  //1  //ESP8266 works in both AP mode and station mode
   //WiFi.mode(WIFI_STA); 2  // ESP8266 works in station mode
   // WiFi.begin(ssid, password); // given the network
 
@@ -280,12 +286,12 @@ void connectWifi(void) {
   //    Serial.print(".");
   //  }
   dosyaokussidpass();
-  if(esphostname!="")WiFi.hostname(esphostname);
+  if (esphostname != "") WiFi.hostname(esphostname);
   WiFi.begin(ssid, pass);
   //Serial.println(ssid);
   //Serial.println(pass);
   //delay(1000);
-    WiFi.setSleep(false);
+  WiFi.setSleep(false);
 
 
   if (testWifi()) {
@@ -294,8 +300,8 @@ void connectWifi(void) {
     Serial.println(WiFi.gatewayIP());
     WiFi.softAP(esphostname, "12345678");  // bağlanınca ap kalksın için // koyabiliriz.
 
-  IPAddress lip = WiFi.localIP();
-  String mylocalip = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
+    IPAddress lip = WiFi.localIP();
+    String mylocalip = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
 
     //buzzercal(2000, 3); delay(100);
     //buzzercal(3000, 2); delay(10);
@@ -305,21 +311,22 @@ void connectWifi(void) {
     Serial.println("HotSpot On");
     //                                wifiscan();
     //                                lookAP();// S etup HotSpot
-  WiFi.softAPConfig(AP_LOCAL_IP, AP_GATEWAY_IP, AP_NETWORK_MASK);
+    WiFi.softAPConfig(AP_LOCAL_IP, AP_GATEWAY_IP, AP_NETWORK_MASK);
 
-  int str_len=esphostname.length()+1;
-  char ch[str_len];
-  esphostname.toCharArray(ch, str_len);
+    int str_len = esphostname.length() + 1;
+    char ch[str_len];
+    esphostname.toCharArray(ch, str_len);
 
 
-  WiFi.softAPsetHostname(ch);
-  WiFi.mode(WIFI_AP);
-  WiFi.softAP("ESP32-CAM_AI-Thinker", "12345678");
-        //delay(100);
-   
+    WiFi.softAPsetHostname(ch);
+    WiFi.mode(WIFI_AP);
+    WiFi.softAP("ESP32-CAM_AI-Thinker", "12345678");
+    //delay(100);
+
     IPAddress IP = WiFi.softAPIP();
-    
-    Serial.print("softAPIP: "); Serial.println(IP);
+
+    Serial.print("softAPIP: ");
+    Serial.println(IP);
     Serial.println(WiFi.localIP());
     Serial.println(WiFi.gatewayIP());
     //buzzercal(3000, 50); delay(100);
@@ -448,6 +455,3 @@ void wifiscan(void) {
   }
   st += "</ol><br>";
 }
-
-
-
