@@ -1352,14 +1352,14 @@ void vrkontrol() {
         if (bestursay == 0) VRP[vr] = "";
       }
 
-
-      if (VRP[vr].indexOf("SEND%3E") == 0) {
+/*      if (VRP[vr].indexOf("SEND%3E") == 0) {
         String htpServerip = VRP[vr].substring(VRP[vr].indexOf("%3E") + 3, VRP[vr].length());
         htpServerip = htpServerip.substring(0, htpServerip.indexOf(","));
         String gonderilecek = htpServerip.substring(htpServerip.indexOf(",") + 1, htpServerip.length());
         gonderilecek = htpServerip.substring(0, htpServerip.length());
-        sendserver(htpServerip, gonderilecek);
+        sendserver80(htpServerip, "80" ,gonderilecek);
       }
+      */
     }
   }
 }

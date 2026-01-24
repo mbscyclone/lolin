@@ -209,7 +209,7 @@ void updateoutput()
 */
         }
       if(degisenler!="" && degisenler!= edegisenler){
-        if(htServerip.length()>3)sendserver(htServerip, degisenler);
+        if(htServerip.length()>3)sendserver8080(htServerip, degisenler);
       }
         yield();
 
