@@ -186,7 +186,7 @@ void htpcl() {
             }
             else
             {
-              Sdata = serip.substring(serip.indexOf("/SEND>") + 6, serip.length());
+              Sdata = serip.substring(serip.indexOf("data:") + 5, serip.length());
             }
 
             Serial.print("Sdata: ");
