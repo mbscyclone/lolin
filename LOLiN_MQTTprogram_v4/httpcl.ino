@@ -1,5 +1,5 @@
 void httpheader(WiFiClient xilent) {
-  xilent.println("<!DOCTYPE HTML>\r\n<html>");
+  xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>");
   xilent.println("<head><meta name=\"viewport\" xo=\"width=device-width, initial-scale=1\">");
   //xilent.println("<META charset=iso-8859-9\">";
   xilent.println("<meta charset=\"UTF-8\">");
@@ -117,7 +117,7 @@ void htpcl() {
               String dnsStr = String(gip[0]) + '.' + String(gip[1]) + '.' + String(gip[2]) + '.' + String(gip[3]);
               IPAddress ip = WiFi.softAPIP();
               String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
-              xilent.println("<!DOCTYPE HTML>\r\n<html>");
+              xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>");
               xilent.println("<head><meta name=\"viewport\" xo=\"width=device-width, initial-scale=1\">");
               xilent.println("<META charset=iso-8859-9\">");
               xilent.println("</head>");
@@ -164,11 +164,32 @@ void htpcl() {
           if (header.indexOf("/Menu0") > -1) Menu = 0;
           if (header.indexOf("/Menu1") > -1) Menu = 1;
 
+          String seriptm = header;
+          String serip = Karakterduzeltfunc(seriptm);
+
+//////////////////////////////////////////
+          if (serip.indexOf("/SPAYPIN") > -1) {
+              xilent.println("HTTP/1.1 200 OK\r\n");
+              for (int x=0;x<pinsayisi+1;x++)
+              {
+                if(pinname[x].length()>0){
+                String gonrd=pinname[x] + "|" + pinmode[x] + "|" + pinsignaltype[x] + "|" + pinminvalue[x] + "|" + pinval[x] + "|" + pinmaxvalue[x] + "|" + pinlabel[x] + "|" + PinState[x] + "<br>";
+                xilent.println(gonrd);
+                }
+              }
+              xilent.println("EndText");
+            return;
+          }
+
+
+
+
+//////////////////////////////////////////
+
 
           ///////////////////////////////////////////////////////////////
           ///////////////////////////////////////////////////////////////
-          String seriptm = header;
-          String serip = Karakterduzeltfunc(seriptm);
+
           if (serip.indexOf("/SEND>") > -1) {
             String htpServerip = "";
             String htpport = "";
@@ -883,6 +904,7 @@ void htpcl() {
 
           if (Menu == 0) {
 
+
             creator += "at";
             //                              Serial.print("butonpbgcol:");
             //                          Serial.println(butonpbgcol);
@@ -1165,7 +1187,7 @@ void htpcl() {
             IPAddress lip = WiFi.localIP();
             String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
 
-            xilent.println("<!DOCTYPE html><html><head><title>" + esphostname + "  -> " + lipStr + " - ESP8266-Pro.v4</title>");
+            xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html><html><head><title>" + esphostname + "  -> " + lipStr + " - ESP8266-Pro.v4</title>");
 
             xilent.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
             xilent.println("<meta charset=\"UTF-8\">");
@@ -1344,81 +1366,6 @@ void htpcl() {
 
 
                 if (pinmode[x] == "OUT" && pinsignaltype[x] == "PWM") {
-
-
-
-                  /*
-const char* cvv1 = R"literal(<div class='slidecontainer'><form method='get' id='form)literal";
-
-const char* cvv11 = R"literalcvv11(' action='/)literalcvv11";
-
-const char* cvv2 = R"literal1(<input type='range' min=')literal1";
-
-
-const char* minva1 = R"literal2(' max=')literal2";
-
-const char* maxva1 = R"literal3(' value=')literal3";
-
-
-
-                  //<button class="button butayr"> > </button>
-const char* cvv3 = R"literal4(' class='slider' name='pwm' id='myRange)literal4";
-
-const char* cvv31 = R"literal31('>
-  <span id='demo)literal31";
-
-const char* cvv32 = R"literalcvv32('></span>
-
-  <input type='submit' style='width:50px;' value='>'></form></div>
-
-
-<script>
-var slider = document.getElementById('myRange)literalcvv32";
-
-const char* cvv33 = R"literalcvv33(');
-var output)literalcvv33";
-
-
-const char* out331 = R"literalout331( = document.getElementById('demo)literalout331";
-
-const char* cvv34 = R"literalcvv34(');
-output)literalcvv34";
-
-const char* out333 = R"literalout333(.innerHTML = slider.value;
-
-slider.oninput = function() {
-  output)literalout333";
-
-
-const char* out332 = R"literalout332(.innerHTML = this.value;
-}
-slider.onmouseup = function () {
- document.getElementById("form)literalout332";
-
-const char* cvv35 = R"literalcvv35(").submit();
-}
-</script>
-)literalcvv35";
-
-                  String cv1 = String(cvv1);
-                  String cv11 = String(cvv11);
-                  String cv2 = String(cvv2);
-                  String minv = String(minva1);
-                  String maxv = String(maxva1);
-                  String cv3 = String(cvv3);
-                  String cv31 = String(cvv31);
-                  String cv32 = String(cvv32);
-                  String cv33 = String(cvv33);
-                  String out31 = String(out331);
-                  String cv34 = String(cvv34);
-                  String out33 = String(out333);
-                  String out32 = String(out332);
-                  String cv35 = String(cvv35);
-                  //Serial.print("pinmaxvalue[x] :");Serial.print(pinmaxvalue[x]);
-
-                  xilent.println("<br><br>" + cv1 + pinname[x] + cv11 + pinname[x] + "'>" + pinlabel[x] + " [" + pinname[x] + "]" + cv2 + "" + pinminvalue[x] + minv + pinmaxvalue[x] + maxv + PinState[x] + cv3 + pinname[x] + cv31 + pinname[x] + cv32 + pinname[x] + cv33 + pinname[x] + out31 + pinname[x] + cv34 + pinname[x] + out33 + pinname[x] + out32 + pinname[x] + cv35);
-*/
-
 
                   const char* liter = R"lite1(<div class='slidecontainer'>
   <form method='get' id='formĞname' action='/Ğname'>Ğlabel [Ğname]<input type='range' min='Ğmin' max='Ğmax' value='Ğstate' class='slider' name='pwm' id='myRangeĞname'>
