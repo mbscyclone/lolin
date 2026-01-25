@@ -1,6 +1,7 @@
 int xcurrentTime=0;
 int timeoutTime=5000;
 
+
 void htpcl() {
   WiFiClient xilent = htserver.available();
   header = "";
@@ -17,7 +18,7 @@ void htpcl() {
         for (int q = 0; q < 2000; q++) {
           char c = xilent.read();  // read a byte, then
 
-          //Serial.print((int)c);
+          // Serial.print((int)c);
           if (int(c) == 255) break;
           Serial.print(c);  // print it out the serial monitor
           header += c;
@@ -35,6 +36,21 @@ void htpcl() {
           Serial.println("");
     if(header.indexOf("/favicon") > -1)return;
 
+
+  if (header.indexOf("/ser:") > -1) {
+    dosyaokumyssidname();
+    IPAddress lip = WiFi.localIP();
+    String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
+    String gd = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n" + YOL + "[" + esphostname + "]" + lipStr;
+    xilent.println(gd);
+    xilent.println("");
+    Serial.println("Server geldi  header: " + header);
+    return;
+  }
+
+
+    if (header.indexOf("/pipo") > -1)pirpin=1;
+
     xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>ESP32: Selam");
     xilent.println("<head><meta charset=\"UTF-8\"><style>body {background-color: #999999;} </style>");
                         xilent.println("<meta name=\"viewport\" xo=\"width=device-width, initial-scale=1\">");
@@ -44,10 +60,10 @@ void htpcl() {
                         xilent.println("<body>");
                         xilent.println("<font size=\"3\" color=\"#FF0000\">" + esphostname + "</font>");
                         xilent.println("<br><table style=\"border:5px solid black;width:500px\"><tr>");
-                        //xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
-                        //xilent.println("<p><form action=\"/Menu0\" method=\"POST\"><input type=\"submit\" value=\"Anasayfa\"></form></p></td>");
                         xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
-                        xilent.println("<p><form action=\"/\" method=\"POST\"><input type=\"submit\" value=\"Durum\"></form></p></td>");
+                        xilent.println("<p><form action=\"/\" method=\"POST\"><input type=\"submit\" value=\"Anasayfa\"></form></p></td>");
+                        xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
+                        xilent.println("<p><form action=\"/durum\" method=\"POST\"><input type=\"submit\" value=\"Durum\"></form></p></td>");
                         //xilent.println("<td style=\"border:1px solid black;width:250px\">");
                         //xilent.println("<p><form action=\"/pnayar\" method=\"POST\"><input type=\"submit\" value=\"Pin ayar\"></form></p></td>");
                         xilent.println("<td style=\"border:1px solid black;width:250px;\">");
@@ -63,9 +79,6 @@ void htpcl() {
                         //xilent.println("<p><form action=\"/firebaseset\" method=\"POST\"><input type=\"submit\" value=\"Firebase ayar\"></form></p></td>");
 
                         xilent.println("</tr></table>");
-
-
-
 
     // ssidpass başı /////////////////////
    if (header.indexOf("/ssidset") > -1) {
@@ -154,6 +167,12 @@ void htpcl() {
               dosyayazmyssidname();
             }
 
+            if (header.indexOf("/myssidnameayar?fbyol=") > -1) {
+              YOL = header.substring((header.indexOf("?fbyol=") + 7), header.indexOf(" HTTP/"));
+              Serial.println("buradan geçtim");
+              dosyayazfbyol();
+            }
+
               xilent.println("    Benim Wifi ismim giriş bölümüdür.<br>");
               xilent.println("    <form method='get' action='myssidnameayar'><label>Benim wifi ismim (SSID) : " + esphostnameOnek + "-</label><input name='is' length=32 value='");
               xilent.println(myssidyazilimi);
@@ -161,6 +180,14 @@ void htpcl() {
               //xilent.println("<label>Baglanilacak SERVER adressi: </label><input name='mq' length=32 value=");
 //              xo += SERVERip;
               xilent.println("'>    <input type='submit'>");
+              xilent.println("</form>");
+
+
+              xilent.println("'><br><br>");
+              xilent.println("<form method='get' action='myssidnameayar'>");
+              xilent.println("<label>Database deki Yol (Örnek: Balıkesir ev1: bev1, yazlık 10Yz1, gibi kısa kodlar kullanın. Database için kullanılmaz. Yerel server için gereklidir.)<br> YOL : </label><input name='fbyol' id='fbyol' style=\"width:70px;\" value='");
+              xilent.println(YOL);
+              xilent.println("'><input type='submit'>");
               xilent.println("</form>");
 
              }
@@ -198,7 +225,7 @@ void htpcl() {
 
               xilent.println("Telegram Chat bot ayarları giriş bölümü.");
               xilent.println("            Kaydettikten sonra cihaza ⚠️ reset çekilecektir.");
-              xilent.println("<br><form action=\"/telegramset\" method=\"get\"><label>Telegram Token: </label><input name='token' length=32><label>Telegram chatID: </label><input name='chatid' length=32><input type='submit'value='Kaydet'></form>");
+              xilent.println("<br><form action=\"/telegramset\" method=\"get\"><label>Telegram Token: </label><input name='token' length=32 value='" + telegram_botToken +  "'><label>Telegram chatID: </label><input name='chatid' length=32 value='" + telegram_chatID + "'><input type='submit'value='Kaydet'></form>");
    }
 // telegram sonu //////////////////
 
@@ -207,11 +234,11 @@ void htpcl() {
 
 
 
-            if (header.indexOf("/ HTTP/1.1") > -1) {
+            if (header.indexOf("/durum HTTP/1.1") > -1) {
 
-              //Serial.println(Menu);
-              //Serial.println(header);
-              //Serial.println(xo);
+              // Serial.println(Menu);
+              // Serial.println(header);
+              // Serial.println(xo);
               IPAddress lip = WiFi.localIP();
               String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
               IPAddress gip = WiFi.gatewayIP();
@@ -259,7 +286,7 @@ void htpcl() {
               xilent.println("<br><br>");
               xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
               xilent.println("<br>");
-              } 
+
 
               xilent.println("    Reset bölümüdür.<br>");
               xilent.println("    <form method='post' action='reset'><label>        ⚠️ Reset</label>");
@@ -269,8 +296,43 @@ void htpcl() {
               xilent.println("<br>");
               xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
               xilent.println("<br>");
+              } 
 
 
+
+              if (header.indexOf("/pirdevrede")>-1 || header.indexOf("/ HTTP/1.1") > -1) {
+              if(header.indexOf("/pirdevrede?")>-1)
+              {
+                if (header.indexOf("pir=") > -1) {
+                  pirdevrede = header.substring((header.indexOf("pir=") + 4), header.indexOf(" HTTP/1.1"));
+                  Serial.println(pirdevrede);
+                  dosyayazpirdevrede();
+                }
+              }
+              xilent.println("_______________________________");
+              xilent.println("<br>");
+              //camera_fb_t *fb = esp_camera_fb_get();
+
+              xilent.println("Hareket sensörü");
+//              xilent.println("            Kaydettikten sonra cihaza ⚠️ reset çekilecektir.");
+              xilent.println("<br><form action=\"/pirdevrede\" method=\"get\"><label>Pir durum:");
+              if(pirdevrede=="1")xilent.println(" devrede ");
+              else xilent.println(" devre dışı ");
+              xilent.println("</label><br><br><label >Pir devrede ? </label><input type='submit' name='pir' value='1'>Evet     <input type='submit' name='pir' value='0'>Hayır</form>");
+
+
+              xilent.println("<br>");
+              xilent.println("_______________________________");
+              //xilent.println("    <label style='font-size:16px;'>📷</label>İzleme<br>");
+              //xilent.println("    <form method='get' action='foto'><label>        Foto göster</label>");
+              //xilent.println("   <input type='submit'>");
+              //xilent.println("</form>");
+
+  xilent.println("<br>");
+  }
+              IPAddress lip = WiFi.localIP();
+              String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
+    //xilent.println("<a id=\"save-still\" href=" + lipStr + ":80/#\" class=\"button save\" download=\"capture.jpg\">Save</a>");
     xilent.println("</body></html>\r\n\r\n");
 
 

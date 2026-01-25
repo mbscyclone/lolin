@@ -146,7 +146,10 @@ void telegramtokendosyaoku() {
     telegram_chatID = telegram_chatIDtmp.substring(0, telegram_chatIDtmp.length() - 1);
     telegram_hazir=true;
     dosya.close();
-    //Serial.println("read bitti");
+    Serial.println("read bitti");
+    Serial.println(telegram_chatID);
+    Serial.println(telegram_botToken);
+
   }else{telegram_hazir=false;}
   if(telegram_botToken.length()<2){telegram_hazir=false;}
 }
@@ -166,4 +169,64 @@ void telegramtokendosyayaz()
                 }
                 dosya.close();
                 telegramtokendosyaoku();
+}
+
+
+
+
+
+String pirdevredemi = "";
+void dosyayazpirdevrede() {
+  dosya.close();
+  LittleFS.remove("/pirdevrede.txt");
+  dosya = LittleFS.open("/pirdevrede.txt", "w+");
+  if(dosya){
+  dosya.println(pirdevrede);
+  Serial.println(pirdevrede);
+  dosya.close();
+  }
+}
+
+
+
+void dosyaokupirdevrede() {
+  //   я
+  int yazili = 0;
+  pirdevrede = "";
+  dosya.close();
+  dosya = LittleFS.open("/pirdevrede.txt", "r");
+
+  if (dosya) {
+    String pirdevredemi = dosya.readStringUntil('\n');
+    pirdevredemi = pirdevredemi.substring(0, pirdevredemi.length() - 1);
+    Serial.println(pirdevredemi);
+    pirdevrede = pirdevredemi;
+    dosya.close();
+  }
+}
+
+
+
+void dosyaokufbyol()
+{
+                dosya.close();
+                dosya = LittleFS.open("/fbyol.txt", "r");
+                if (dosya) {
+                YOL = dosya.readStringUntil('\n');
+                YOL= YOL.substring(0,YOL.length()-1);
+                dosya.close();
+                }
+}
+
+void dosyayazfbyol()
+{
+                  reConnectsayac=0;
+                dosya.close();
+                LittleFS.remove("/fbyol.txt");
+                dosya = LittleFS.open("/fbyol.txt", "w+");
+                if (dosya) {
+                  dosya.println(YOL);
+                  dosya.close();
+                  dosyaokufbyol();
+                }
 }

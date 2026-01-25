@@ -29,12 +29,10 @@ unsigned long reConnectsayac = millis();
 //telegram bot link="t.me/kev1_bot";
 bool telegram_hazir = false;
 
-String telegram_botToken;  //= "8327870196:AAEjrwZMHcTuOXehzge7m5uk5VU2jmyTUg8"; // [BotFather] /start >>> /addnewbot >>> name kev1_bot >> //HTTP_API
-String telegram_chatID;    //= "8411559509"; // [Chat I'd Info Bot] /start >>> name: Murat BEKTAŞ username: @Muratbk_141 chatid:8411559509
 
-                          // PIR sensor
-                          //#define PIR_PIN 3
-                          unsigned long lastMotionTime = 0;
+// PIR sensor
+//#define PIR_PIN 3
+unsigned long lastMotionTime = 0;
 const unsigned long motionCooldown = 15000;  // 15 seconds
 
 bool WiFiAP = true;  // Do yo want the ESP as AP?
@@ -47,6 +45,7 @@ String creator;
 
 String esphostnameOnek = "ESP32-CAM_AI-Thinker";
 String esphostname = "";
+String YOL;
 
 //NetworkServer server(8080);
 WiFiServer htserver(8080);
@@ -54,6 +53,8 @@ WiFiServer htserver(8080);
 void startCameraServer();
 void setupLedFlash();
 
+String telegram_botToken;  //= "8327870196:AAEjrwZMHcTuOXehzge7m5uk5VU2jmyTUg8"; // [BotFather] /start >>> /addnewbot >>> name kev1_bot >> //HTTP_API
+String telegram_chatID;    //= "8411559509"; // [Chat I'd Info Bot] /start >>> name: Murat BEKTAŞ username: @Muratbk_141 chatid:8411559509
 
 void sendPhotoTelegram(camera_fb_t *fb) {
   if (WiFi.status() != WL_CONNECTED) return;
@@ -69,7 +70,7 @@ void sendPhotoTelegram(camera_fb_t *fb) {
   startRequest += "Content-Disposition: form-data; name=\"chat_id\"\r\n\r\n";
   startRequest += telegram_chatID + "\r\n--" + boundary + "\r\n";
   startRequest += "Content-Disposition: form-data; name=\"caption\"\r\n\r\n";
-  startRequest += "⚠️ Motion Detected!\r\n--" + boundary + "\r\n";
+  startRequest += esphostname + "-> ⚠️ Motion Detected!\r\n--" + boundary + "\r\n";
   startRequest += "Content-Disposition: form-data; name=\"photo\"; filename=\"image.jpg\"\r\n";
   startRequest += "Content-Type: image/jpeg\r\n\r\n";
   String endRequest = "\r\n--" + boundary + "--\r\n";
@@ -85,7 +86,6 @@ void sendPhotoTelegram(camera_fb_t *fb) {
   clientTCP.print(startRequest);
   clientTCP.write(fb->buf, fb->len);
   clientTCP.print(endRequest);
-
   delay(500);
   while (clientTCP.connected()) {
     String line = clientTCP.readStringUntil('\n');
@@ -125,7 +125,7 @@ void setup() {
   config.xclk_freq_hz = 20000000;
   config.frame_size = FRAMESIZE_UXGA;
   config.pixel_format = PIXFORMAT_JPEG;  // for streaming
-  //config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
+  //config.pixel_format = PIXFORMAT_RGB565;  // for face detection/recognition
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
   config.fb_location = CAMERA_FB_IN_PSRAM;
   config.jpeg_quality = 12;
@@ -161,36 +161,38 @@ void setup() {
   err = esp_camera_init(&config);
   if (err != ESP_OK) {
     Serial.printf("Camera init failed with error 0x%x", err);
-    return;
+    //return;
   }
 
-  sensor_t *s = esp_camera_sensor_get();
+  if (err == ESP_OK) {
+    sensor_t *s = esp_camera_sensor_get();
 
-  // initial sensors are flipped vertically and colors are a bit saturated
-  if (s->id.PID == OV3660_PID) {
-    s->set_vflip(s, 1);        // flip it back
-    s->set_hmirror(s, 1);      // flip horizontal
-    s->set_brightness(s, 1);   // up the brightness just a bit
-    s->set_saturation(s, -2);  // lower the saturation
-  }
-  // drop down frame size for higher initial frame rate
-  if (config.pixel_format == PIXFORMAT_JPEG) {
-    s->set_framesize(s, FRAMESIZE_QVGA);
-  }
+    // initial sensors are flipped vertically and colors are a bit saturated
+    if (s->id.PID == OV3660_PID) {
+      s->set_vflip(s, 1);        // flip it back
+      s->set_hmirror(s, 1);      // flip horizontal
+      s->set_brightness(s, 1);   // up the brightness just a bit
+      s->set_saturation(s, -2);  // lower the saturation
+    }
+    // drop down frame size for higher initial frame rate
+    if (config.pixel_format == PIXFORMAT_JPEG) {
+      s->set_framesize(s, FRAMESIZE_QVGA);
+    }
 
 #if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
-  s->set_vflip(s, 1);
-  s->set_hmirror(s, 1);
+    s->set_vflip(s, 1);
+    s->set_hmirror(s, 1);
 #endif
 
 #if defined(CAMERA_MODEL_ESP32S3_EYE)
-  s->set_vflip(s, 1);
+    s->set_vflip(s, 1);
 #endif
 
 // Setup LED FLash if LED pin is defined in camera_pins.h
 #if defined(LED_GPIO_NUM)
-  setupLedFlash();
+    setupLedFlash();
 #endif
+  }
 
   if (LittleFS.begin()) {
     Serial.println();
@@ -198,6 +200,7 @@ void setup() {
   }
 
   dosyaokumyssidname();
+  dosyaokufbyol();
   connectWifi();
   //  if(WiFi.status()==WL_CONNECTED)otasetup();
 
@@ -232,9 +235,12 @@ void setup() {
   // Add service to MDNS-SD
   MDNS.addService("http", "tcp", 8080);
   */
+
+  dosyaokupirdevrede();
 }
 
 int pirpin = 0;
+String pirdevrede;
 void loop() {
 
   serin();
@@ -249,8 +255,13 @@ void loop() {
 
   //if (digitalRead(PIR_PIN) == HIGH && millis() - lastMotionTime > motionCooldown) {
 
+
   if (telegram_hazir == true) {
-    if (pirpin == 1 && millis() - lastMotionTime > motionCooldown) {
+    if (pirdevrede == "1" && pirpin == 1 && millis() - lastMotionTime > motionCooldown) {
+      pinMode(LED_GPIO_NUM, OUTPUT);
+      int led_intensity1 = digitalRead(LED_GPIO_NUM);
+      digitalWrite(LED_GPIO_NUM,255);
+      delay(600);
       pirpin = 0;
       lastMotionTime = millis();
       Serial.println("🚨 Motion detected!");
@@ -260,6 +271,8 @@ void loop() {
         Serial.println("Camera capture failed");
         return;
       }
+      delay(1);
+      digitalWrite(LED_GPIO_NUM,led_intensity1);
       sendPhotoTelegram(fb);
       esp_camera_fb_return(fb);
     }
