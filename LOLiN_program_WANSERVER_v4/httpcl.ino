@@ -1,5 +1,7 @@
 String urLL="";
 
+String seciliespurldata;
+
 void httpheader(WiFiClient xilent) {
   xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>");
   xilent.println("<head><meta name=\"viewport\" xo=\"width=device-width, initial-scale=1\">");
@@ -8,9 +10,9 @@ void httpheader(WiFiClient xilent) {
   xilent.println("<link rel=\"icon\" href=\"data:,\">");
 
   xilent.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: left;}");
-  xilent.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;text-decoration: none; font-size: 10px; margin: 2px; cursor: pointer;}");
-  xilent.println(".button2 {background-color: #77878A; border: none; color: white; padding: 16px 40px;text-decoration: none; font-size: 10px; margin: 2px; cursor: pointer;}");
-  xilent.println(".button3 {background-color: #77878A; border: none; color: black; padding: 16px 40px;text-decoration: none; font-size: 10px; margin: 2px; cursor: pointer;}");
+  xilent.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;text-decoration: none; font-size:10px; margin: 2px; cursor: pointer;}");
+  xilent.println(".button2 {background-color: #77878A; border: none; color: white; padding: 16px 40px;text-decoration: none; font-size:10px; margin: 2px; cursor: pointer;}");
+  xilent.println(".button3 {background-color: #77878A; border: none; color: black; padding: 16px 40px;text-decoration: none; font-size:10px; margin: 2px; cursor: pointer;}");
   xilent.println("</style>");
   xilent.println("</head>");
   xilent.println("<body>");
@@ -159,122 +161,13 @@ void htpcl() {
           }
 */
 
-          //////////////////
-          //////////////////
-
-          creator += "ur";
-
-
-          int headerset = 1;
-          // if the current line is blank, you got two newline characters in a row.
-          // that's the end of the xilent HTTP request, so send a response:  /*
-
-          if (header.indexOf("/Menu0") > -1) Menu = 0;
-          if (header.indexOf("/Menu1") > -1) Menu = 1;
-          if (header.indexOf("/Menu3") > -1) Menu = 3;
 
 
 
 
-// menu 3 başı
-          if (Menu == 3) {
 
 
-/// ortak /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-            xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>");
-            xilent.println("<head><meta name=\"viewport\" xo=\"width=device-width, initial-scale=1\">");
-            xilent.println("<meta charset=\"UTF-8\">");
-            xilent.println("<link rel=\"icon\" href=\"data:,\">");
-            xilent.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: left;}");
-            //xilent.println("</style><style>");
-            xilent.println("body {background-color: #" + butonpbgcol + ";} </style>");  //darkblue, lightblue, #b0b0b0 gibi
-            xilent.println("</head>");
-            xilent.println("<body>");
-            xilent.println("<h2>" + esphostname + "</h2>");
-
-
-            if(header.indexOf("/GTP:")>-1)
-            {
-              String htpServerip = "";  
-              htpServerip = header.substring(header.indexOf("/GTP:")+5,header.indexOf(" HTTP/1.1"));
-              getpserver80(htpServerip +"SPAYPIN");
-              Serial.println(payload2);
-              xilent.println(payload2);
-              xilent.println("</body></html>");
-              xilent.println("\r\n\r\n");
-              xilent.println();
-            }
-//////////////////////////////////////////////////////////////////////
-
-            // hostN dışarıdan mı local mi?
-            String lipstrN2 = String(lip[0]) + '.' + String(lip[1]) + '.';
-
-            String hostNtmp = hostN;
-            String hostN1 = hostNtmp.substring(0, hostNtmp.indexOf("."));
-            hostNtmp = hostNtmp.substring(hostNtmp.indexOf(".") + 1, hostNtmp.length());
-            hostN1 = hostN1 + "." + hostNtmp.substring(hostNtmp.indexOf(".") + 1, hostNtmp.length());
-
-            if (hostN1 != lipstrN2) {
-
-              // hostN gönderme başı ///////////////////////////////
-              xilent.println("  Ipadr: ");
-              xilent.println(lipStr);
-              xilent.println("  WanIp: ");
-              xilent.println(hostN+"<br>");
-
-            xilent.println("<p><form action=\"/Menu0\" method=\"POST\"><input type=\"submit\" value=\"Home\"></form></p></td>");
-            xilent.println("<table style='border:1px solid black; width:100%; height:800px;'><tr>");
-            xilent.println("<td style='border:1px solid black; width:200px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + "; '>");
-
-            String komuta="/";
-            for (int i = 1; i < 20; i++) {
-              if (bulunanespv4[i] != "") {
-                String urLL = bulunanespv4[i].substring(bulunanespv4[i].indexOf("]") + 1, bulunanespv4[i].length());
-                String bulunanespv4name = bulunanespv4[i].substring(bulunanespv4[i].indexOf("[") + 1, bulunanespv4[i].indexOf("]"));
-                String bulunanespurldata = "<a href='/GTP:http://" + urLL + komuta +"' ><label style='font-size: 12px;' type='submit'>" + bulunanespv4name + "</label></a><br>";
-               xilent.println(bulunanespurldata);
-               xilent.println("<br><br>");
-              } else break;
-            }
-            String gdata = "</td>";
-            gdata += "<td style='border:1px solid black ;width:600px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + ";'>";
-            urLL = bulunanespv4[1].substring(bulunanespv4[1].indexOf("]") + 1, bulunanespv4[1].length());
-            Serial.println(urLL);
-            gdata += "</table>";
-            xilent.println(gdata);
-
-            xilent.println("</body></html>");
-              return;
-            } else {
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
-            xilent.println("<p><form action=\"/Menu0\" method=\"POST\"><input type=\"submit\" value=\"Home\"></form></p></td>");
-            xilent.println("<table style='border:1px solid black; width:100%; height:800px;'><tr>");
-            xilent.println("<td style='border:1px solid black; width:200px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + "; '>");
-
-            for (int i = 1; i < 20; i++) {
-              if (bulunanespv4[i] != "") {
-                String urLL = bulunanespv4[i].substring(bulunanespv4[i].indexOf("]") + 1, bulunanespv4[i].length());
-                xilent.println(bulunanespurliframe[i]);
-              } else break;
-            }
-            String gdata = "</td>";
-            gdata += "<td style='border:1px solid black ;width:600px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + ";'>";
-            urLL = bulunanespv4[1].substring(bulunanespv4[1].indexOf("]") + 1, bulunanespv4[1].length());
-            Serial.println(urLL);
-            gdata += "<iframe src='http://" + urLL + "/' name='iframe_a' title='Iframe' style='width:100%; height:100%;'></iframe>";
-            gdata += "</td>";
-            gdata += "<tr>";
-            gdata += "</table>";
-            xilent.println(gdata);
-            xilent.println("</body></html>");
-            }
-          }
-// menu 3 sonu
 
 
 
@@ -296,7 +189,7 @@ void htpcl() {
                 htpServerip = serip.substring(serip.indexOf("http://"), portbas);
                 port = serip.substring(portbas, serip.length());
               }
-               Sdata = "/SEND>" + serip.substring(serip.indexOf("data:") + 5, serip.indexOf(" HTTP/1.1"));
+               Sdata = "/SEND>data:" + serip.substring(serip.indexOf("data:") + 5, serip.indexOf(" HTTP/1.1"));
             }
             else
             {
@@ -308,6 +201,7 @@ void htpcl() {
 
             if (htpServerip.length() > 0) {
               sendserver80(htpServerip, port, Sdata);
+              if(seciliespurldata!="") header = "GET /GTP:http://" + seciliespurldata + "/";
             } else {
               for (int z = 0; z < 11; z++) {
                 if (Sdata.length() < 1) break;
@@ -354,6 +248,251 @@ void htpcl() {
           //////////////////////////////////////////////////////
           ////////////////////////////////////////////////////////////////
 
+
+
+
+
+
+
+
+
+          //////////////////
+          //////////////////
+
+          creator += "ur";
+
+
+          int headerset = 1;
+          // if the current line is blank, you got two newline characters in a row.
+          // that's the end of the xilent HTTP request, so send a response:  /*
+
+          if (header.indexOf("/Menu0") > -1) Menu = 0;
+          if (header.indexOf("/Menu1") > -1) Menu = 1;
+          if (header.indexOf("/Menu3") > -1) Menu = 3;
+
+
+
+
+// menu 3 başı
+          if (Menu == 3) {
+
+
+/// ortak /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>");
+            xilent.println("<head><meta name=\"viewport\" xo=\"width=device-width, initial-scale=1\">");
+            xilent.println("<meta charset=\"UTF-8\">");
+            xilent.println("<link rel=\"icon\" href=\"data:,\">");
+            /*xilent.println("<style>");
+            xilent.println(".button { background-color: #" + butonactcol + "; border: 5px solid yellow; border-radius: 10px 10px 10px 10px; color: white; padding: 10px 10px;text-decoration: none; font-size:12px; margin: 1px; cursor: pointer;}");
+            xilent.println(".butoff {background-color: #" + butonpascol + "; border: 5px solid gray; border-radius: 10px 10px 10px 10px; color: white; padding: 10px 10px;text-decoration: none; font-size:12px; margin: 1px; cursor: pointer;}");
+            xilent.println(".butayr {background-color: #" + butonayrcol + "; border: 5px solid gray; border-radius: 6px 6px 20px 15px; color: black; padding: 10px 10px;text-decoration: none; font-size:12px; margin: 1px; cursor: pointer;}");
+            xilent.println("</style>");*/
+            xilent.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: left;}");
+            //xilent.println("</style><style>");
+            xilent.println("body {background-color: #" + butonpbgcol + ";} </style>");  //darkblue, lightblue, #b0b0b0 gibi
+            xilent.println("</head>");
+            xilent.println("<body>");
+            xilent.println("<h2>" + esphostname + "</h2>");
+
+
+            // hostN dışarıdan mı local mi?
+            String lipstrN2 = String(lip[0]) + '.' + String(lip[1]) + '.';
+
+            String hostNtmp = hostN;
+            String hostN1 = hostNtmp.substring(0, hostNtmp.indexOf("."));
+            hostNtmp = hostNtmp.substring(hostNtmp.indexOf(".") + 1, hostNtmp.length());
+            hostN1 = hostN1 + "." + hostNtmp.substring(hostNtmp.indexOf(".") + 1, hostNtmp.length());
+
+            if (hostN1 != lipstrN2) {
+
+              // hostN gönderme başı ///////////////////////////////
+              xilent.println("  Ipadr: ");
+              xilent.println(lipStr);
+              xilent.println("  WanIp: ");
+              xilent.println(hostN+"<br>");
+
+            xilent.println("<p><form action=\"/Menu0\" method=\"POST\"><input type=\"submit\" value=\"Home\"></form></p></td>");
+            xilent.println("<table style='border:1px solid black; width:100%; height:800px;'><tr>");
+            xilent.println("<td style='border:1px solid black; width:200px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + "; '>");
+
+            String komuta="/";
+            for (int i = 1; i < 20; i++) {
+              if (bulunanespv4[i] != "") {
+                String urLL = bulunanespv4[i].substring(bulunanespv4[i].indexOf("]") + 1, bulunanespv4[i].length());
+                String bulunanespv4name = bulunanespv4[i].substring(bulunanespv4[i].indexOf("[") + 1, bulunanespv4[i].indexOf("]"));
+                if(bulunanespv4name.indexOf("ESP32-CAM")>-1)komuta = ":8080/";
+                String bulunanespurldata = "<a href='/GTP:http://" + urLL + komuta +"' ><label style='font-size:12px;' type='submit'>" + bulunanespv4name + "</label></a><br>";
+                xilent.println(bulunanespurldata);
+                xilent.println("<br><br>");
+              } else break;
+            }
+            xilent.println("</td>");
+            xilent.println("<td style='border:1px solid black ;width:600px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + ";'>");
+            //urLL = bulunanespv4[1].substring(bulunanespv4[1].indexOf("]") + 1, bulunanespv4[1].length());
+            //Serial.println(urLL);
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+            if(header.indexOf("/GTP:")>-1)
+            {
+              String htpServerip = "";  
+              htpServerip = header.substring(header.indexOf("/GTP:")+5,header.indexOf(" HTTP/1.1"));
+              getpserver80(htpServerip +"SPAYPIN");
+              Serial.println(payload2);
+              xilent.println(payload2);
+
+              if(payload2!="404")
+              {
+/*
+D2|INP|HCE|D1|3|180|hcecho|277
+D3|OUT|DIG|0|0|1|led|0
+D4|OUT|DIG|0|0|1|led2|0
+EndText
+*/
+
+                seciliespurldata=payload2.substring(0,payload2.indexOf("="));
+                payload2=payload2.substring(payload2.indexOf("=")+2, payload2.length());
+
+                for(int c=0; c<11; c++)
+                {
+                  String satr=payload2.substring(0,payload2.indexOf("\r\n"));
+                  payload2=payload2.substring(payload2.indexOf("\r\n")+2, payload2.length());
+
+                  String pinnm=satr.substring(0,satr.indexOf("|"));
+                  satr=satr.substring(satr.indexOf("|")+1, satr.length());
+
+                  String pinmd=satr.substring(0,satr.indexOf("|"));
+                  satr=satr.substring(satr.indexOf("|")+1, satr.length());
+
+                  String pinsg=satr.substring(0,satr.indexOf("|"));
+                  satr=satr.substring(satr.indexOf("|")+1, satr.length());
+
+                  String pinmn=satr.substring(0,satr.indexOf("|"));
+                  satr=satr.substring(satr.indexOf("|")+1, satr.length());
+
+                  String pinvl=satr.substring(0,satr.indexOf("|"));
+                  satr=satr.substring(satr.indexOf("|")+1, satr.length());
+
+                  String pinmx=satr.substring(0,satr.indexOf("|"));
+                  satr=satr.substring(satr.indexOf("|")+1, satr.length());
+
+                  String pinlb=satr.substring(0,satr.indexOf("|"));
+                  satr=satr.substring(satr.indexOf("|")+1, satr.length());
+
+                  String pinst=satr.substring(0,satr.length());
+                  if(pinst.indexOf("\r\n")>-1)String pinst=satr.substring(0,satr.indexOf("\r\n"));
+                  if(pinst.indexOf("\n")>-1)String pinst=satr.substring(0,satr.indexOf("\n"));
+                  satr="";
+
+                  // url satırı dizeynı başı ///////////////////
+                  Serial.print("pinmd");Serial.println(pinmd);
+                  Serial.print("pinsg");Serial.println(pinsg);
+
+                  if(pinmd=="OUT"){
+
+                    if(pinsg=="DIG")
+                    {
+
+
+                  // If the Pin0State is off, it displays the ON button
+
+                  if (pinst == "") pinst = "0";
+                  if (pinst.toInt() == 0) {
+                     String lin= "<br><label style='font-size:12p;'>" + pinnm + "</label>";
+                     lin +=" &nbsp; " + pinlb + " &emsp; : ";
+                     lin += "<a href=\"http://" + lipStr + "/SEND>http://" + seciliespurldata  + ",data:" + pinnm + ":1,SPAYPIN\" method=\"GET\"><input type=\"submit\" value=\"-0-\"></input></a><br>";
+                  Serial.print("seciliespurldata  >>-");Serial.println(seciliespurldata);
+                  Serial.println(lin);
+                  xilent.println(lin);
+                  xilent.println("pinstate:" + pinst);
+                  }
+
+                  if (pinst.toInt() == 1) {
+                     String lin= "<br><label style='font-size:12p;'>" + pinnm + "</label>";
+                     lin +=" &nbsp; " + pinlb + " &emsp; : ";
+                     Serial.print("seciliespurldata  >>-");Serial.println(seciliespurldata);
+                     lin += "<a href=\"http://" + lipStr + "/SEND>http://" + seciliespurldata  + ",data:" + pinnm + ":0,SPAYPIN\" method=\"GET\"><input type=\"submit\" value=\"-1-\"></input></a><br>";
+                  Serial.println(lin);
+                  xilent.println(lin);
+                  xilent.println("pinstate:" + pinst);
+                  }
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  }else
+                  {
+                    String lin= "<br><label style='font-size:12p;'>" + pinnm + "</label>";
+                    
+                    lin += " &nbsp; " + pinlb + " &nbsp; : " + pinst + "<br>";
+                    xilent.println(lin);
+                  }
+
+
+                  // url satırı dizeynı sonu ///////////////////
+
+
+                  if(payload2.indexOf("EndText")>-1 && payload2.indexOf("EndText")<2)break;
+                }
+              }
+            }
+//////////////////////////////////////////////////////////////////////
+            
+            xilent.println("</td></table>");
+
+            xilent.println("</body></html>");
+            xilent.println("\r\n\r\n");
+            xilent.println();
+            return;
+            } else {
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
+            xilent.println("<p><form action=\"/Menu0\" method=\"POST\"><input type=\"submit\" value=\"Home\"></form></p></td>");
+            xilent.println("<table style='border:1px solid black; width:100%; height:800px;'><tr>");
+            xilent.println("<td style='border:1px solid black; width:200px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + "; '>");
+
+            for (int i = 1; i < 20; i++) {
+              if (bulunanespv4[i] != "") {
+                String urLL = bulunanespv4[i].substring(bulunanespv4[i].indexOf("]") + 1, bulunanespv4[i].length());
+                xilent.println(bulunanespurliframe[i]);
+              } else break;
+            }
+            String gdata = "</td>";
+            gdata += "<td style='border:1px solid black ;width:600px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + ";'>";
+            urLL = bulunanespv4[1].substring(bulunanespv4[1].indexOf("]") + 1, bulunanespv4[1].length());
+            Serial.println(urLL);
+            gdata += "<iframe src='http://" + urLL + "/' name='iframe_a' title='Iframe' style='width:100%; height:100%;'></iframe>";
+            gdata += "</td>";
+            gdata += "<tr>";
+            gdata += "</table>";
+            xilent.println(gdata);
+            xilent.println("</body></html>");
+            }
+          }
+
+
+// menu 3 sonu
 
 
 
@@ -1124,7 +1263,7 @@ void htpcl() {
 
 
 
-
+yield();
 
 
 
@@ -1182,22 +1321,22 @@ void htpcl() {
             // xilent.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;text-decoration: none; font-size: 20px; margin: 2px; cursor: pointer;}");
 
 
-            //xilent.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;text-decoration: none; font-size: 10px; margin: 2px; cursor: pointer;}";
-            //xilent.println(".button2 {background-color: #77878A; border: none; color: white; padding: 16px 40px;text-decoration: none; font-size: 10px; margin: 2px; cursor: pointer;}";
-            //xilent.println(".button3 {background-color: #77878A; border: none; color: black; padding: 16px 40px;text-decoration: none; font-size: 10px; margin: 2px; cursor: pointer;}";
+            //xilent.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;text-decoration: none; font-size:10px; margin: 2px; cursor: pointer;}";
+            //xilent.println(".button2 {background-color: #77878A; border: none; color: white; padding: 16px 40px;text-decoration: none; font-size:10px; margin: 2px; cursor: pointer;}";
+            //xilent.println(".button3 {background-color: #77878A; border: none; color: black; padding: 16px 40px;text-decoration: none; font-size:10px; margin: 2px; cursor: pointer;}";
 
 
-            //xilent.println(".button { background-color: #196B7A; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;}");
-            //xilent.println(".butoff {background-color: #A3A3A3; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;");
+            //xilent.println(".button { background-color: #196B7A; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size:10px; margin: 1px; cursor: pointer;}");
+            //xilent.println(".butoff {background-color: #A3A3A3; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size:10px; margin: 1px; cursor: pointer;");
 
-            xilent.println(".button { background-color: #" + butonactcol + "; border: 5px solid yellow; border-radius: 10px 10px 10px 10px; color: white; padding: 10px 10px;text-decoration: none; font-size: 12px; margin: 1px; cursor: pointer;}");
-            xilent.println(".butoff {background-color: #" + butonpascol + "; border: 5px solid gray; border-radius: 10px 10px 10px 10px; color: white; padding: 10px 10px;text-decoration: none; font-size: 12px; margin: 1px; cursor: pointer;}");
-            xilent.println(".butayr {background-color: #" + butonayrcol + "; border: 5px solid gray; border-radius: 6px 6px 20px 15px; color: black; padding: 10px 10px;text-decoration: none; font-size: 12px; margin: 1px; cursor: pointer;}");
+            xilent.println(".button { background-color: #" + butonactcol + "; border: 5px solid yellow; border-radius: 10px 10px 10px 10px; color: white; padding: 10px 10px;text-decoration: none; font-size:12px; margin: 1px; cursor: pointer;}");
+            xilent.println(".butoff {background-color: #" + butonpascol + "; border: 5px solid gray; border-radius: 10px 10px 10px 10px; color: white; padding: 10px 10px;text-decoration: none; font-size:12px; margin: 1px; cursor: pointer;}");
+            xilent.println(".butayr {background-color: #" + butonayrcol + "; border: 5px solid gray; border-radius: 6px 6px 20px 15px; color: black; padding: 10px 10px;text-decoration: none; font-size:12px; margin: 1px; cursor: pointer;}");
             xilent.println("</style>");
 
             xilent.println("<style>body {background-color: #" + butonpbgcol + ";} </style>");  //darkblue, lightblue, #b0b0b0 gibi
 
-
+yield();
 
             xilent.println("</head><body>");
 
@@ -1206,7 +1345,7 @@ void htpcl() {
 
             if (kimdir < 1) {
               xilent.println("<div align=\"center\">");
-              xilent.println("<label style='font-size: 10px;'>Sayfayı yenileme için alttaki düğmeyi kullanabilirsiniz</label><br>");
+              xilent.println("<label style='font-size:10px;'>Sayfayı yenileme için alttaki düğmeyi kullanabilirsiniz</label><br>");
               xilent.println("<table style=\"border:5px solid black;width:00px\"><tr>");
               xilent.println("<td style=\"border:0px solid black;width:90p; align:center; \">");
               xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
@@ -1231,10 +1370,10 @@ void htpcl() {
               //xilent.println("<form action='/' method=\"POST\"><input type=\"submit\" value=\" Yenile\" style='width:80px;'></form>");
               xilent.println("</td></table></div>");
 
-              if (sayfayenile > 0) xilent.println("<label style='font-size: 10px;'>Sayfayı yenile Açık " + String(sayfayenile) + " saniyede bir yenilenecek</label>");
-              if (sayfayenile == 0) xilent.println("<label style='font-size: 10px;'>Sayfayı yenile Kapalı</label>");
+              if (sayfayenile > 0) xilent.println("<label style='font-size:10px;'>Sayfayı yenile Açık " + String(sayfayenile) + " saniyede bir yenilenecek</label>");
+              if (sayfayenile == 0) xilent.println("<label style='font-size:10px;'>Sayfayı yenile Kapalı</label>");
             } else {
-              xilent.println("<label style='font-size: 10px;'>Tarama yapılıyor 30 saniyide bir tazeleme yapılacak... lütfen bekleyin </label>");
+              xilent.println("<label style='font-size:10px;'>Tarama yapılıyor 30 saniyide bir tazeleme yapılacak... lütfen bekleyin </label>");
             }
 
             xilent.println("<h2>" + sonek + "</h2>");
@@ -1248,7 +1387,7 @@ void htpcl() {
             }
             String esphostnamegec = esphostname;
             esphostnamegec.toUpperCase();
-            if (esphostnamegec.indexOf("LOGSERVER") < 0) {
+            if (esphostnamegec.indexOf("WANSERVER") < 0) {
               if (header.indexOf("fireb=On") > -1) {
                 fben = 1;
                 dosyayazfben();
@@ -1336,7 +1475,7 @@ sliderĞname.onmouseup = function () {
                   dizgiorj.replace("Ğstate", PinState[x]);
 
                   //Serial.print(dizgiorj);Serial.println();
-                  xilent.println("<label style='font-size: 12px;'> min: " + pinminvalue[x] + "-max: " + pinmaxvalue[x] + "</label><br>");
+                  xilent.println("<label style='font-size:12px;'> min: " + pinminvalue[x] + "-max: " + pinmaxvalue[x] + "</label><br>");
                   xilent.println(dizgiorj);
 
                   //xilent.println("<br><br>" + cv1 + pinname[x] + cv11 + pinname[x] + "'>" + pinlabel[x] + " [" + pinname[x] + "]" + cv2 + "" + pinminvalue[x] + minv + pinmaxvalue[x] + maxv + PinState[x] + cv3 + pinname[x] + cv31 + pinname[x] + cv32 + pinname[x] + cv33 + pinname[x] + out31 + pinname[x] + cv34 + pinname[x] + out33 + pinname[x] + out32 + pinname[x] + cv35);
@@ -1344,16 +1483,16 @@ sliderĞname.onmouseup = function () {
                   /*
 if(gonderdimbekleint>0) 
 {
-xilent.println("<br><label style='font-size: 12px;'> min: " + pinminvalue[x] +"          -         max: " + pinmaxvalue[x] + "</label><br>");
+xilent.println("<br><label style='font-size:12px;'> min: " + pinminvalue[x] +"          -         max: " + pinmaxvalue[x] + "</label><br>");
 xilent.println(pinlabel[x] + " ["+ pinname[x] +"] =" + PinState[x] +"<br> ");
 }
 else
 {
-xilent.println("<label style='font-size: 12px;'> min: " + pinminvalue[x] +"          -         max: " + pinmaxvalue[x] + "</label>");
+xilent.println("<label style='font-size:12px;'> min: " + pinminvalue[x] +"          -         max: " + pinmaxvalue[x] + "</label>");
 xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinname[x] + "'>"+ pinlabel[x] + " ["+ pinname[x] +"] <input name='pwm' length=4 style=\"width:70px;\" value='" + PinState[x] + "'> <input type='submit' style='width:50px;' value='>'></form>");
 }
 */
-
+yield();
 
                   //xilent.println( buraya slider formu yapacağım)
 
@@ -1421,17 +1560,17 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                 xilent.println("<hr style=\"height:5px;border-width:1;color:black;background-color:black\">");
               }
             }
-
+yield();
 
             xilent.println("<div align=\"left\">");
             xilent.println("<table><td style=\"border:2px solid black;align:center; \">");
-            if (high_low_invert == true) xilent.println("<label style='font-size: 10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label><br>");
-            if (progmsg != "") xilent.println("<label style='font-size: 10px;'>" + progmsg + "</label><br>");
+            if (high_low_invert == true) xilent.println("<label style='font-size:10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label><br>");
+            if (progmsg != "") xilent.println("<label style='font-size:10px;'>" + progmsg + "</label><br>");
             if (errorlog != "") xilent.println("<br>Hata: " + errorlog + "<br>");
             esphostnamegec = esphostname;
             esphostnamegec.toUpperCase();
-            if (esphostnamegec.indexOf("LOGSERVER") > -1) {
-              xilent.println("<label style='font-size: 12px;vertical-align: top;' title='Tamamı SD karta yazılı'>İşlem kayıtları (Son 10 işlem)</label></a><br>");
+            if (esphostnamegec.indexOf("WANSERVER") > -1) {
+              xilent.println("<label style='font-size:12px;vertical-align: top;' title='Tamamı SD karta yazılı'>İşlem kayıtları (Son 10 işlem)</label></a><br>");
               xilent.println("<textarea name='is' id='id' cols='40' rows='20' >");
               xilent.println(SERVERlogbuf);  //xilent.println(SERVERlogbuf);
               xilent.println("</textarea><br></td>");
@@ -1440,8 +1579,8 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
               if (WiFi.status() == WL_CONNECTED) {
                 if (kimdir > 0) {
                   xilent.println("<td width=\"300\" align=\"center\" style='vertical-align: top;border:2px solid black;'>");
-                  xilent.println("<label style='font-size: 12px;'>Ağ taraması " + String((int)((kimdir * 100) / 255)) + " %</label>");
-                  xilent.println("<a href='/agtdur'><label style='font-size: 12px;' type='submit'>Taramayı durdur</label></a><br>");
+                  xilent.println("<label style='font-size:12px;'>Ağ taraması " + String((int)((kimdir * 100) / 255)) + " %</label>");
+                  xilent.println("<a href='/agtdur'><label style='font-size:12px;' type='submit'>Taramayı durdur</label></a><br>");
                   int vif = (int)(((kimdirsonyeri * 100) / 255) / 3);
                   String susluce = "[";
                   for (int progresbar = 1; progresbar < vif; progresbar++) {
@@ -1478,8 +1617,8 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                 Serial.println(kimdir);
                 if (kimdir < 1) {
                   xilent.println("<td width=\"300\" align=\"center\" style='vertical-align: top;border:2px solid black;'>");
-                  xilent.println("<a href='/agtara'><label style='font-size: 12px;' type='submit'>Ağ taraması baştan</label></a>");
-                  if (kimdir < 1 && kimdirsonyeri > 0) xilent.println("<a href='/agtard'><label style='font-size: 12px;' type='submit'> , devam et</label></a>");
+                  xilent.println("<a href='/agtara'><label style='font-size:12px;' type='submit'>Ağ taraması baştan</label></a>");
+                  if (kimdir < 1 && kimdirsonyeri > 0) xilent.println("<a href='/agtard'><label style='font-size:12px;' type='submit'> , devam et</label></a>");
                   else xilent.println("<br>");
 
                   int vif = (int)(((kimdirsonyeri * 100) / 255) / 3);
@@ -1495,15 +1634,15 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
 
 
 
-
+yield();
 
 
                   for (int i = 1; i < 20; i++) {
                     if (bulunanespv4[i] != "") {
                       urLL = bulunanespv4[i].substring(bulunanespv4[i].indexOf("]") + 1, bulunanespv4[i].length());
-                      xilent.println("<a href='http://" + urLL + "'  target='_blank'><label style='font-size: 12px;' type='submit'>" + bulunanespv4[i] + "</label></a><br>");
+                      xilent.println("<a href='http://" + urLL + "'  target='_blank'><label style='font-size:12px;' type='submit'>" + bulunanespv4[i] + "</label></a><br>");
                       String bulunanespv4name = bulunanespv4[i].substring(bulunanespv4[i].indexOf("[") + 1, bulunanespv4[i].indexOf("]"));
-                      bulunanespurliframe[i] = "<a href='http://" + urLL + "'  target='iframe_a'><label style='font-size: 12px;' type='submit'>" + bulunanespv4name + "</label></a><br>";
+                      bulunanespurliframe[i] = "<a href='http://" + urLL + "'  target='iframe_a'><label style='font-size:12px;' type='submit'>" + bulunanespv4name + "</label></a><br>";
                       bulunanespvar = true;
                     } else break;
                   }
@@ -1552,9 +1691,9 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
             xilent.println("><input type='submit'>");
             xilent.println("ffb12a</form></td>");
             /*                        butonactcol butonpascol butonayrcol butonpbgcol
-            xilent.println(".button { background-color: #d1ca03; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;}");
-            xilent.println(".butoff {background-color: #A3A3A3; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;}");
-            xilent.println(".butayr {background-color: #20d3c8; border: none; color: black; padding: 10px 10px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;}");
+            xilent.println(".button { background-color: #d1ca03; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size:10px; margin: 1px; cursor: pointer;}");
+            xilent.println(".butoff {background-color: #A3A3A3; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size:10px; margin: 1px; cursor: pointer;}");
+            xilent.println(".butayr {background-color: #20d3c8; border: none; color: black; padding: 10px 10px;text-decoration: none; font-size:10px; margin: 1px; cursor: pointer;}");
             xilent.println("</style>");
             
             xilent.println("<style>body {background-color: #ffb12a;} </style>");  //darkblue, lightblue, #b0b0b0 gibi
@@ -1597,7 +1736,7 @@ if (uri.indexOf("?") > 0) {
               }
             }
           }
-
+yield();
           //  logintimeout = logintimeoutmax;
 
           //xilent.abort();
@@ -1607,4 +1746,5 @@ if (uri.indexOf("?") > 0) {
       }
     }
   }
+  yield();
 }

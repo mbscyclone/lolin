@@ -32,8 +32,8 @@ void httptara()
     String testserver = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(kimdir);
             String esphostnamegec = esphostname;
             esphostnamegec.toUpperCase();
-            if (esphostnamegec.indexOf("LOGSERVER") < 0) {testserver="http://" + testserver + ":8080/ser:"+ lipStr;}
-            else {testserver="http://" + testserver + ":8080/";}
+            if (esphostnamegec.indexOf("WANSERVER") < 0) {testserver="http://" + testserver + ":8080/ser:"+ lipStr;}
+            else {testserver="http://" + testserver + ":8080/gerT";}
     kimdirsonyeri=kimdir;
 
   Serial.println(testserver);
@@ -46,6 +46,7 @@ void httptara()
             //Serial.print("[HTTP] begin...\n");
             // configure traged server and url
             yield();
+            tarazamani=millis();
             http2.begin(client2, testserver);  // HTTP
 
             //Serial.print("[HTTP] GET...\n");

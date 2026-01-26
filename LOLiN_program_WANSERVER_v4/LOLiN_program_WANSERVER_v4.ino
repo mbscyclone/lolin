@@ -216,7 +216,7 @@ ESP8266WebServer server(8080);
 
 unsigned long otuzsaniye=millis();
 unsigned long tarazamani=millis();
-int http2setTimeout=1000;
+int http2setTimeout=800;
 
 
 void handleRoot() {
@@ -243,14 +243,14 @@ void handleNotFound() {
   String seruri=(String)server.uri();
   String suri=seruri.substring(1,seruri.length());
   Serial.println(suri);
-  SDyaz("/serverlog/",suri);
+  //SDyaz("/serverlog/",suri);
 }
 
 
 
 
 
-
+/*
 #include <SPI.h>
 #include <SD.h>
 #include <SdFat.h>
@@ -264,6 +264,7 @@ int SDtestsayac=0;
 bool SD_ciktidugmesibasildi=false;
 File mySdFile;
 File dir;
+*/
 
 String SERVERusers;
 String Kullaniciadi[5];
@@ -1465,6 +1466,7 @@ httpserver.setNoDelay(true);
     setup2();
     otasetup();
 
+/*
   Serial.print(F("SD Card"));
   if (sd.begin(D8, SPI_HALF_SPEED)) {
     Serial.println("sd.card size byte:");Serial.println(sd.card()->sectorCount() * 512);
@@ -1499,7 +1501,7 @@ if(SD_ok==true){
 
   Serial.println("done!");
 }
-
+*/
 
 
 if(WiFi.status()==WL_CONNECTED)
@@ -1580,7 +1582,7 @@ broker.update();
 if(WiFi.status()==WL_CONNECTED)
 {
   if(kimdir>-1)
-      if(millis()-tarazamani > 1200)
+      if(millis()-tarazamani > 1000)
       {
 
         httptara();
@@ -1754,7 +1756,7 @@ aut=1; // silinecek
 
 //dosya boyutuna bakmak için git büyükse parçala kaydet yapılacak
 
-
+/*
 // SD kart takılı mı testi
 if(esphostname=="SERVER"){
                       if(SD_ok==false)
@@ -1780,7 +1782,7 @@ if(esphostname=="SERVER"){
 
    // yazmayı gerektirecek bişey varsa yaz
 }
-
+*/
 
 
 

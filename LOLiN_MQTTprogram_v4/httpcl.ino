@@ -167,24 +167,8 @@ void htpcl() {
           String seriptm = header;
           String serip = Karakterduzeltfunc(seriptm);
 
-//////////////////////////////////////////
-          if (serip.indexOf("/SPAYPIN") > -1) {
-              xilent.println("HTTP/1.1 200 OK\r\n");
-              for (int x=0;x<pinsayisi+1;x++)
-              {
-                if(pinname[x].length()>0){
-                String gonrd=pinname[x] + "|" + pinmode[x] + "|" + pinsignaltype[x] + "|" + pinminvalue[x] + "|" + pinval[x] + "|" + pinmaxvalue[x] + "|" + pinlabel[x] + "|" + PinState[x] + "<br>";
-                xilent.println(gonrd);
-                }
-              }
-              xilent.println("EndText");
-            return;
-          }
 
 
-
-
-//////////////////////////////////////////
 
 
           ///////////////////////////////////////////////////////////////
@@ -203,10 +187,12 @@ void htpcl() {
                 htpServerip = serip.substring(serip.indexOf("http://"), portbas);
                 port = serip.substring(portbas, serip.length());
               }
-               Sdata = "/SEND>" + serip.substring(serip.indexOf("data:") + 5, serip.indexOf(" HTTP/1.1"));
+                if(serip.indexOf("SPAYPIN")>-1)Sdata = "/SEND>" + serip.substring(serip.indexOf("data:") + 5, serip.indexOf("SPAYPIN"));
+                else Sdata = "/SEND>" + serip.substring(serip.indexOf("data:") + 5, serip.indexOf(" HTTP/1.1"));
             }
             else
             {
+              if(serip.indexOf("SPAYPIN")>-1)Sdata = serip.substring(serip.indexOf("data:") + 5, serip.indexOf("SPAYPIN"));
               Sdata = serip.substring(serip.indexOf("data:") + 5, serip.length());
             }
 
@@ -267,6 +253,22 @@ void htpcl() {
 
 
 
+//////////////////////////////////////////
+          if (serip.indexOf("SPAYPIN") > -1) {
+              xilent.println("HTTP/1.1 200 OK\r\n");
+              xilent.println(lipStr+"=");
+              for (int x=0;x<pinsayisi+1;x++)
+              {
+                if(pinname[x].length()>0){
+                String gonrd=pinname[x] + "|" + pinmode[x] + "|" + pinsignaltype[x] + "|" + pinminvalue[x] + "|" + pinval[x] + "|" + pinmaxvalue[x] + "|" + pinlabel[x] + "|" + PinState[x] + "<br>";
+                xilent.println(gonrd);
+                }
+              }
+              xilent.println("EndText");
+            return;
+          }
+
+//////////////////////////////////////////
 
 
 

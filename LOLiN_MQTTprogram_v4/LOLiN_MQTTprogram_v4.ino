@@ -65,34 +65,6 @@ bool psci;
 unsigned long reConnectsayac = millis();
 
 
-
-// YAZ-GÖNDER için
-// chg=0 değişiklik yok bende
-// chg=1 pinde değişiklik var gönder 1
-// chg=2 pinlerde ve isimlerinde değişiklik var hem onları hem pinde değişikliği gönder sıra ile 2,1
-// chg=3 benim myssidname değişti. hepsini gönder 3,2,1 diye
-
-// OKU-GETİR için
-// chg=10 direk chg=0 sıfır olacak
-// chg=10 yani chg=10 ise oku pinde değişiklik var
-// chg=11 pinlerde ve isimlerinde değişiklik var hem onları hem pinde değişikliği gönder sıra ile 2,1
-// chg=12 benim myssidname değişti. hepsini gönder 3,2,1 diye
-
-
-
-//#define FactoryDefault D7
-//#define DHTPIN D3
-//#define DHTTYPE DHT11
-//DHT dht(DHTPIN, DHTTYPE);
-
-//int red = D0;
-//int green = D1;
-//int blue = D2;
-
-//int sayac=0;
-
-
-
 bool WiFiAP = true;  // Do yo want the ESP as AP?
 WiFiServer httpserver(80);
 String header;
@@ -228,6 +200,15 @@ void handleRoot() {
 }
 
 
+void handleger() {
+
+  dosyaokumyssidname();
+  IPAddress lip = WiFi.localIP();
+  String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
+  String gd = YOL + "[" + esphostname + "]" + lipStr;
+  server.send(200, "text/plain", gd);
+}
+
 void handleNotFound() {
   String message = "File Not Found\n\n";
   message += "URI: ";
@@ -253,7 +234,7 @@ void handleNotFound() {
     Serial.println("Server geldi          ");
     Serial.println(serip);
     htserverkaydet(serip);
-  }  else server.send(404, "text/plain", message);
+  } else server.send(404, "text/plain", message);
 }
 
 
@@ -464,40 +445,6 @@ void espLolin() {
   Pin[9] = A0;
 }
 
-
-
-// epromlu versiyonda eprom cleareprom
-/*
-void cleareprom() {
-  for (int i = 0; i < 80; ++i) {
-    EEPROM.write(i, 0);
-  }
-  EEPROM.commit();
-  Serial.println("eprom cleared");
-  delay(10);
-
-  EEPROM.write(80, 'v');
-  EEPROM.write(81, '3');
-  EEPROM.write(82, 0);
-  for (int i = 83; i < 200; ++i) {
-    EEPROM.write(i, 0);
-  }
-  Serial.println("Factory default... D8 unplug HIGH jumper");
-  while (digitalRead(FactoryDefault) == HIGH) {
-    delay(999);
-    Serial.println("3.3v ile D8 bağlantısını çıkart.");
-  }
-}
-*/
-
-
-
-
-
-
-
-
-
 void setup2() {
   dosyaOkuprogram();
   dosyaOkupinayar();
@@ -560,46 +507,6 @@ void setup2() {
       //
     }
   }
-
-  // Set outputs to LOW
-
-
-  // servo ise /////////////////////////////////////////////////////////////////
-  // myservo.attach(2);
-  // lo opa
-  //myservo.write(pos);  // tell servo to go to position in variable 'pos'
-  //delay(15);           // waits 15ms for the servo to reach the position
-  ////////////////////////////////////////////////////////////////////////////////
-
-
-
-  // DHT ise ///////////////////////////////////////////////////////////////////
-  //#define DHTPIN 2     // Digital pin connected to the DHT sensor
-
-  //#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
-  //#define DHTTYPE DHT21   // DHT 21 (AM2301)
-
-  // DHT dht(DHTPIN, DHTTYPE);
-
-  // lo opa
-  /*
-  float h = dht.readHumidity();
-  // Read temperature as Celsius (the default)
-  float t = dht.readTemperature();
-  // Read temperature as Fahrenheit (isFahrenheit = true)
-  float f = dht.readTemperature(true);
-
-  // Check if any reads failed and exit early (to try again).
-  if (isnan(h) || isnan(t) || isnan(f)) {
-    Serial.println(F("Failed to read from DHT sensor!"));
-    return;
-  }
-
-  // Compute heat index in Fahrenheit (the default)
-  float hif = dht.computeHeatIndex(f, h);
-  // Compute heat index in Celsius (isFahreheit = false)
-  float hic = dht.computeHeatIndex(t, h, false);
-  */
 }
 
 
@@ -1064,14 +971,14 @@ void setup() {
 
   if (WiFi.status() == WL_CONNECTED) dosyaokuhabp();
 
-    dosyaokufbyol();
-    dosyaokufben();
-    dosyaokufburl();
-    dosyaokufbapi();
-    dosyaokufbusername();
-    dosyaokufbuserpass();
+  dosyaokufbyol();
+  dosyaokufben();
+  dosyaokufburl();
+  dosyaokufbapi();
+  dosyaokufbusername();
+  dosyaokufbuserpass();
 
-    if (habp == 2 && fben != 0) connectfb();
+  if (habp == 2 && fben != 0) connectfb();
 
   if (webstart == 0) {
     webstart = 3;
@@ -1086,6 +993,9 @@ void setup() {
 
   if (MDNS.begin("esp8266")) { Serial.println("MDNS responder started"); }
   server.on("/", handleRoot);
+  server.on("/gerT", handleger);
+
+
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("8080 server started");
@@ -1098,9 +1008,12 @@ void setup() {
   setup2();
   otasetup();
 
-   if (WiFi.status() == WL_CONNECTED && habp==1){   mqttipoku(); MQTTConnect();}
+  if (WiFi.status() == WL_CONNECTED && habp == 1) {
+    mqttipoku();
+    MQTTConnect();
+  }
 
-  if (WiFi.status() == WL_CONNECTED) htserveroku(); 
+  if (WiFi.status() == WL_CONNECTED) htserveroku();
 }
 
 
@@ -1134,7 +1047,7 @@ void connectfb() {
 
 void Programtakip(String progdata);
 
-bool mqsendbayrak=false;
+bool mqsendbayrak = false;
 String degisenmq;
 String mqyol;
 String notalar;
@@ -1209,13 +1122,13 @@ void loop() {
 
 
   if (WiFi.status() == WL_CONNECTED) {
-if( habp == 1){
-    mqttclient.loop();
-    // <- fixes some issues with WiFi stability
-    if (!mqttclient.connected()) {
-      MQTTConnect();
+    if (habp == 1) {
+      mqttclient.loop();
+      // <- fixes some issues with WiFi stability
+      if (!mqttclient.connected()) {
+        MQTTConnect();
+      }
     }
-}
 
     if (authdebug != 10 && habp == 2 && fben == 1) {
 
@@ -1256,31 +1169,29 @@ if( habp == 1){
 
     if (hcsrloopvar == true) {
       if (zamanfark % upd == 0) {
-        if(pinayar.length()>0)updateinput();
-        if(programdata.length()>0)programrun();
-        if(pinayar.length()>0)updateoutput();
-        if(pinayar.length()>0)vrkontrol();
-        if(habp==1 && mqsendbayrak==true)
-        {
-          mqttsend(mqyol ,degisenmq);
+        if (pinayar.length() > 0) updateinput();
+        if (programdata.length() > 0) programrun();
+        if (pinayar.length() > 0) updateoutput();
+        if (pinayar.length() > 0) vrkontrol();
+        if (habp == 1 && mqsendbayrak == true) {
+          mqttsend(mqyol, degisenmq);
         }
       }
     } else {
       //if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
       if (zamanfark % upd == 0) {
-        if(pinayar.length()>0)updateinput();
-        if(programdata.length()>0)programrun();
-        if(pinayar.length()>0)updateoutput();
-        if(pinayar.length()>0)vrkontrol();
-        if(habp==1 && mqsendbayrak==true)
-        {
-          mqttsend(mqyol ,degisenmq);
+        if (pinayar.length() > 0) updateinput();
+        if (programdata.length() > 0) programrun();
+        if (pinayar.length() > 0) updateoutput();
+        if (pinayar.length() > 0) vrkontrol();
+        if (habp == 1 && mqsendbayrak == true) {
+          mqttsend(mqyol, degisenmq);
         }
       }
     }
     //if(zamanfark>3950 && zamanfark<3955){zamanfark=3960;updatesayac();}
     //if(zamanfark>3960 && zamanfark<3965){zamanfark=3970;programrun();}
-delay(1);
+    delay(1);
     if (authdebug == 10 && habp == 2) {
       if (zamanfark >= 1772 && zamanfark < 1780) {
         zamanfark = 1782;
@@ -1352,7 +1263,7 @@ void vrkontrol() {
         if (bestursay == 0) VRP[vr] = "";
       }
 
-/*      if (VRP[vr].indexOf("SEND%3E") == 0) {
+      /*      if (VRP[vr].indexOf("SEND%3E") == 0) {
         String htpServerip = VRP[vr].substring(VRP[vr].indexOf("%3E") + 3, VRP[vr].length());
         htpServerip = htpServerip.substring(0, htpServerip.indexOf(","));
         String gonderilecek = htpServerip.substring(htpServerip.indexOf(",") + 1, htpServerip.length());

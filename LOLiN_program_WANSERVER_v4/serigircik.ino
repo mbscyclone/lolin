@@ -120,6 +120,8 @@ void serin()
       }
 ///////////////////////////////////////////////////////////// firebase bitti
 
+
+/*
 // DİRECTORY LİST BAŞI ///////////////////////////////
       if(sergel.indexOf("dir")==0)
       {
@@ -164,6 +166,8 @@ void serin()
         Serial.println(freeKB);
       }
 // size bitişi
+*/
+
 
 /// yardım başı /////////////////////////////////////////////////////////
 

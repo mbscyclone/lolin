@@ -45,6 +45,8 @@ String msg2="";
   
   msg2 = htpServerip + port + goserver;
 
+
+
   Serial.println(htpServerip);
   Serial.println(port);
           Serial.println(msg2);
@@ -55,12 +57,16 @@ String msg2="";
             HTTPClient http2;
             if(port.indexOf("8080")>-1)http2.setTimeout(250);
             else http2.setTimeout(2000);
+
+            if (msg2.indexOf("SPAYPIN")>-1)http2.setTimeout(5000);
+
             http2.begin(client2, msg2);  // HTTP
 
             //Serial.print("[HTTP] GET...\n");
             // start connection and send HTTP header and body
             int httpCode2 = http2.GET();
-            delay(100);
+            if (msg2.indexOf("SPAYPIN")>-1)delay(300);
+            else delay(100);
             // httpCode will be negative on error
             if (httpCode2 > 0) {
             Serial.println("Gönderildi.");
@@ -106,7 +112,7 @@ String msg2="";
              payload2 = http2.getString();
             }else {
               Serial.printf("[HTTP] GET... failed, error: %s\n", http2.errorToString(httpCode2).c_str());
-              payload2 = "[HTTP] GET... failed";
+              payload2 = "404";
             }
 
           }

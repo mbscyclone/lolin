@@ -1,4 +1,4 @@
-
+/*
 //
 // printdirectory files başı
   #include <SdFat.h>
@@ -115,39 +115,6 @@ void deleteOldestLog() {
     Serial.println("Silindi: " + oldestFolder);
   }
 }
-/*
-void SDoku(String filename){
-  String dosyaicerigi;
-dosyaicerigi="";
-  // re-open the file for reading:
-  mySdFile = SD.open(filename, FILE_READ);
-  if (mySdFile) {
-    Serial.println(filename+":");
-
-    // read from the file until there's nothing else in it:
-    while (mySdFile.available()) 
-    {
-        dosyaicerigi=mySdFile.readString();
-
-        if(dosyaicerigi.length()>50){
-          dosyaicerigi.substring(dosyaicerigi.length()-50,dosyaicerigi.length());
-        }
-        Serial.println(dosyaicerigi);
-        SERVERlogbuf=dosyaicerigi;
-        eSERVERlogbuf=dosyaicerigi;
-    // close the file:
-    }
-
-  } else {
-    // if the file didn't open, print an error:
-    Serial.println("error opening test.txt");
-  }
-    mySdFile.close();
-}
-*/
-
-
-
 
 void SDoku(String filename){
   String okusatir;
@@ -166,14 +133,6 @@ void SDoku(String filename){
         Serial.println(okusatir);
     }
 
-/*
-if(eskidosyadakalsin==true){
-    String eskidosya_filename=("/"+zaman.substring(0,zaman.length()-2)+"_mqserlog.txt";
-    SDyaz(eskidosya_filename, String biriktir_okusatir);
-    mySdFile.close();
-    SD.remove(mySdFile);
-}
-*/
 
     // close the file:
     mySdFile.close();
@@ -182,4 +141,4 @@ if(eskidosyadakalsin==true){
     Serial.println(filename + "  error opening..");
   }
 }
-
+*/
