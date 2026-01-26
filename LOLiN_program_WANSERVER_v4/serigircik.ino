@@ -62,7 +62,7 @@ void serin()
 
 
 ///// firebase başlangıç /////////////////////////////////////////////////////////
-
+/*
       if(sergel.indexOf("fburl=")==0)
       {
         DATABASE_URL = sergel.substring((6,sergel.length()));
@@ -92,8 +92,8 @@ void serin()
         USER_PASSWORD = sergel.substring((6,sergel.length()));
         Serial.println( USER_PASSWORD + " [USER_PASSWORD] güncellendi," + "\n FB bilgileri güncellendi. Kayıt için fbset yazınız.");
       }
-
-
+*/
+/*
       if(sergel.indexOf("fbset")==0)
       {
         dosyayazfburl();
@@ -103,6 +103,7 @@ void serin()
         dosyayazfbuserpass();
         Serial.println( "Reset için 'reset' gerekli. \n ESP resetlenecektir.");
       }
+
 
       if(sergel.indexOf("fben=1")==0)
       {
@@ -118,6 +119,7 @@ void serin()
         dosyayazfben();
         Serial.println("Firebase kapatıldı.");
       }
+*/
 ///////////////////////////////////////////////////////////// firebase bitti
 
 

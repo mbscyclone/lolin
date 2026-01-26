@@ -3,7 +3,7 @@ int h;
 void updatesayac()
 {
 pindurumrecyap=false;
-
+/*
         if(Firebase_ready==true){
                 for (int fbg=0;fbg<11;fbg++)
                 {
@@ -18,7 +18,7 @@ pindurumrecyap=false;
                   }
                 }
         }
-
+*/
         for(int x=0;x<pinsayisi;x++){
 
                         if(pinmode[x]=="OUT" & pinsignaltype[x]=="DIG"){
@@ -130,7 +130,7 @@ pindurumrecyap=false;
 
               if(abs(epinstate-pinstate)>10){
                 Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
-                psci=true;
+                //psci=true;
                 ePinState[x] = PinState[x];
               }else
               {
@@ -141,7 +141,7 @@ pindurumrecyap=false;
 
             }else if (pinsignaltype[x].indexOf("DH")>-1)
                       {
-                          psci=true;
+                          //psci=true;
                           
                           ePinState[x] = PinState[x];
                       }
@@ -153,7 +153,7 @@ pindurumrecyap=false;
                        }
                        if(pinmode[x]=="OUT")
                        {
-                         psco=true;
+                         //psco=true;
                          pindurumrecyap=true;
                          ePinState[x] = PinState[x];
                        }
@@ -200,7 +200,7 @@ void updateoutput()
 
                        if(pinmode[x]=="OUT")
                        {
-                         psco=true;
+                        // psco=true;
                          pindurumrecyap=true;
                          ePinState[x] = PinState[x];
                        }

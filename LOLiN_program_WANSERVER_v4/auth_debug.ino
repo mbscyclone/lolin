@@ -1,4 +1,4 @@
-
+/*
 
 // Debug information printing
 void auth_debug(AsyncResult &aResult)
@@ -19,3 +19,4 @@ void auth_debug(AsyncResult &aResult)
     }
     authdebug=aResult.eventLog().code();
 }
+*/

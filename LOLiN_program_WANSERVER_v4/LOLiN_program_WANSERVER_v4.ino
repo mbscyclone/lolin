@@ -26,6 +26,9 @@
 
 //#include <WebSocketsServer.h>
 //#include <ESP8266WebServer.h>
+
+
+/*
 #include <FirebaseClient.h>
 #include "ExampleFunctions.h" // Provides the functions used in the examples.
 
@@ -44,13 +47,13 @@ bool Firebase_ready=false;
 String USER_EMAIL1 = ""; // "asd"     @ işareti sonradan eklenecek
 String USER_EMAIL2 = ""; //"gmail.com"
 
-/* 2. Define the API Key */
+
 String API_KEY = ""; // "AIzaSyDTMhGs_ISD4WKmJrCxw35rqv-bo34ZdYI";
 
-/* 3. Define the RTDB URL */
+
 String DATABASE_URL =""; // "https://esp-v4-default-rtdb.firebaseio.com"; //<databaseName>.firebaseio.com or <databaseName>.<region>.firebasedatabase.app
 String YOL="";
-/* 4. Define the user Email and password that alreadey registerd or added in your project */
+
 String USER_EMAIL = ""; // "asadafag@gmail.com";
 String  USER_PASSWORD = ""; // "bebedede14";
 
@@ -66,9 +69,11 @@ String errorlog;
 int CHZz;
 bool psco;
 bool psci;
+unsigned long fbreConnetsayac=millis();
+*/
 
 unsigned long reConnectsayac=millis();
-unsigned long fbreConnetsayac=millis();
+
 
 #include"sMQTTBroker.h"
 
@@ -224,7 +229,8 @@ void handleRoot() {
             dosyaokumyssidname();
             IPAddress lip = WiFi.localIP();
             String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
-            String gd = YOL + "[" + esphostname + "]" + lipStr;  
+            //String gd = YOL + "[" + esphostname + "]" + lipStr;  
+            String gd = "YOL[" + esphostname + "]" + lipStr;  
   server.send(200, "text/plain", gd);
 }
 
@@ -274,8 +280,8 @@ int MaxUserkayidi=5;
 
 
 //String SERVERLog; 
-String SERVERlogbuf;
-String eSERVERlogbuf;
+//String SERVERlogbuf;
+//String eSERVERlogbuf;
 String SERVERkullanici;
 unsigned long urltestsayac;
 String zaman;
@@ -404,8 +410,8 @@ void dosyaYazpinayar(){
   //pinayarYuzdeliifadesil();
   dosya.print(pinayar);
   dosya.close();
-  dosyaokufbyol();
-  if(Firebase_ready) fbpinayarlariyaz();
+  //dosyaokufbyol();
+  //if(Firebase_ready) fbpinayarlariyaz();
 
   setup2();
 
@@ -1461,7 +1467,7 @@ httpserver.setNoDelay(true);
 
 //Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
 
-    connectfb();
+    //connectfb();
 
     setup2();
     otasetup();
@@ -1533,7 +1539,7 @@ if(WiFi.status()==WL_CONNECTED)
 
 
 
-
+/*
 void connectfb()
 {
 //dosyaokufben();
@@ -1547,25 +1553,9 @@ fben=0;
   dosyaokufbuserpass();
   
             IPAddress lip = WiFi.localIP();
-if (WiFi.status()==WL_CONNECTED)
-  {
-    UserAuth user_auth(API_KEY, USER_EMAIL, USER_PASSWORD, 3000 /* expire period in seconds (<3600) */);
-    Firebase.printf("Firebase Client v%s\n", FIREBASE_CLIENT_VERSION);
-
-    set_ssl_client_insecure_and_buffer(ssl_client);
-
-    Serial.println("Initializing app...");
-  //initializeApp(aClient, app, getAuth(user_auth), auth_debug_print, "🔐 authTask");
-    initializeApp(aClient, app, getAuth(user_auth), auth_debug , "🔐 authTask");
-    // Or intialize the app and wait.
-    // initializeApp(aClient, app, getAuth(user_auth), 120 * 1000, auth_debug_print);
-    app.getApp<RealtimeDatabase>(Database);
-    Database.url(DATABASE_URL);
-  }
-
   }
 }
-
+*/
 
 
 void Programtakip(String progdata);
@@ -1595,26 +1585,26 @@ if(webstart>2){
   zamanfark=1;
   if(webstart>6000)
   {
-    if(Firebase_ready)
-    {
+    //if(Firebase_ready)
+    //{
       webstart=1;
-      fbpinayarlarioku();
-    }else webstart=2;
+    //  fbpinayarlarioku();
+    //}else webstart=2;
   }
 }
 
-    if(Firebase_ready && webstart==2)
-    {
-      fbpinstatelerioku();
-      webstart=1;
-    }
+    //if(Firebase_ready && webstart==2)
+    //{
+    //  fbpinstatelerioku();
+    //  webstart=1;
+    //}
   // put your main code here, to run repeatedly:
   otaloop();
   yield();
   //if(millis()-tarazamani < http2setTimeout+200) {} // bekle
   //else 
   htpcl();
-  app.loop();
+  //app.loop();
 
 
 
@@ -1653,7 +1643,7 @@ if(webstart>2){
 
 
 
-
+/*
 if(authdebug=="10")Firebase_ready=true; else Firebase_ready=false;
 if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben==1){
 
@@ -1664,7 +1654,7 @@ if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben==1){
     connectfb();
   }
 }
-
+*/
      zamanfark +=1;
   
   if (zamanfark > 7100) zamanfark= 1;
@@ -1672,10 +1662,8 @@ if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben==1){
   if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
   if(zamanfark>5057 && zamanfark<5060){zamanfark=5061;updatesayac();}
 
-  //if(zamanfark>3950 && zamanfark<3955){zamanfark=3960;updatesayac();}
-  //if(zamanfark>3960 && zamanfark<3965){zamanfark=3970;programrun();}
   
-
+/*
         if (zamanfark >= 7072 && zamanfark < 7080)
         {  zamanfark= 7082;
           if(fben==1)
@@ -1690,7 +1678,7 @@ if(!Firebase_ready && WiFi.status()==WL_CONNECTED && fben==1){
             }
           }
         }
-
+*/
 
 
 

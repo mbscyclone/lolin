@@ -83,7 +83,7 @@ Serial.println(myssidyazilimi);
   WiFi.hostname(esphostname);
   WiFi.softAP(esphostname, "12345678");
 //  fbchzkaydial();
-    fbdataguncelle();
+    //fbdataguncelle();
 }
 
 
@@ -134,7 +134,7 @@ void dosyayazfben()
                 }
                 dosya.close();
                 dosyaokufben();
-                if(fben==1)connectfb();
+       //         if(fben==1)connectfb();
 }
 
 
@@ -228,7 +228,7 @@ if(fben==0){
 
 
 
-
+/*
 
 void dosyaokufburl()
 {
@@ -361,4 +361,4 @@ void dosyayazfbuserpass()
                   dosyaokufburl();
                 }
 }
-
+*/
