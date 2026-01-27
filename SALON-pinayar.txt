@@ -6,5 +6,6 @@ fbc fb1=/kev1/r/BAHCE;
 if(D2>14)fb1=D1:0;
 if(D2<14)fb1=D1:1;
 
+a
 
-
+800000313679 doğal gaz
