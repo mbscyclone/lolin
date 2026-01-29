@@ -1075,12 +1075,12 @@ void loop() {
   }
   // put your main code here, to run repeatedly:
   otaloop();
-
-  htpcl();
-
+  yield();
+  if (zamanfark < 2070) htpcl();
+  yield();
   app.loop();
 
-
+  yield();
   server.handleClient();
   MDNS.update();
 

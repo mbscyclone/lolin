@@ -34,7 +34,7 @@ Serial.println("Get str." + resul);
                                 if(psco==true || psci==true) fbpinstateleriyaz();
 
                           }
-
+  yield();
 }
 
 void fbsayacyanioku(String rsltt)
