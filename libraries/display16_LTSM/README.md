@@ -6,11 +6,11 @@
 
   * [Overview](#overview)
   * [Installation](#installation)
-  * [Documentation](#documentation)
-    * [Supported devices](#supported-devices)
+  * [Supported devices](#supported-devices)
+  * [Software](#software)
     * [API documentation](#api-documentation)
     * [Fonts](#fonts)
-  * [Software](#software)
+    * [Bitmaps](#bitmaps)
     * [Advanced Graphics](#advanced-graphics)
     * [Advanced buffer mode](#Advanced-buffer-mode)
     * [Debug mode](#debug-mode)
@@ -24,11 +24,12 @@
 * Title : Graphics Library for 16-bit color graphic displays for Arduino eco-system.
 * Description :
 
-0. C++ Library to support 16-bit color graphic displays
+0. C++ Library to support 16-bit color graphic displays.
 1. Graphics class included.
 2. Bitmaps supported: 1, 8, and 16 bit + sprites.
-3. Multiple displays supported, see supported-devices, new components can be easily added.
-    Display driver are separate libraries that import this one.
+3. Multiple displays supported, see supported-devices below, new components can be added.
+    Device display driver are separate libraries that import this one.
+    User can write their own if device not supported.
 4. 16 fonts included, new fonts can be easily added without changing source code
 5. [URL project github link](https://github.com/gavinlyonsrepo/display16_LTSM)
 
@@ -39,9 +40,7 @@
 
 The library is included in the official Arduino library manger and the optimum way to install it is using the library manager which can be opened by the *manage libraries* option in Arduino IDE. 
 
-## Documentation
-
-### Supported devices
+## Supported devices
 
 Component drivers are separate dependent downstream libraries that include this library.
 
@@ -52,6 +51,9 @@ Component drivers are separate dependent downstream libraries that include this 
 | SSD1331| OLED |SPI HW & SW  | [github link](https://github.com/gavinlyonsrepo/SSD1331_LTSM)|
 | ILI9341 | TFT LCD |SPI HW & SW  | [github link](https://github.com/gavinlyonsrepo/ILI9341_LTSM)|
 | GC9A01 | TFT LCD |SPI HW & SW  | [github link](https://github.com/gavinlyonsrepo/GC9A01_LTSM)|
+| GC9D01 | TFT LCD |SPI HW & SW  | [github link](https://github.com/gavinlyonsrepo/GC9D01_LTSM)|
+
+## Software
 
 ### API Documentation
 
@@ -61,24 +63,42 @@ Code is commented for doxygen API documentation software.
 
 The font system readme is in the 'doc' folder [at link.](extras/doc/fonts/README.md)
 
-## Software
+### Bitmaps
 
-### Advanced Graphics
+Functions to support drawing bitmaps & sprites.
 
+| Num | Function Name | Colour support | bitmap size max (128X128 screen) |  Note |
+| ------ | ------ | ------ | ------ | ------ |
+| 1 | drawBitmap | bi-colour | 2048 bytes  | Data horizontally addressed |
+| 2 | drawBitmap8Data | 8 bit color RRRGGGBB  | 16384  | Data from array, Converted by software to 16-bit color |
+| 3 | drawBitmap16Data | 16 bit color 565  | 32768  | Data from array |
+| 4 | drawSpriteData  | 16 bit color  565 | 32768  | Data from array , Draws background color transparent | 
+
+1. Bitmap size in kiloBytes = (screenWidth * screenHeight * bitsPerPixel)/(1024 * 8)
+2. The data array for 1 is created from image files using file data conversion tool [link](https://javl.github.io/image2cpp/)
+3. The data array for 2-4  is created from BMP files using file data conversion tool [link](https://notisrac.github.io/FileToCArray/)
+4. 8-bit bitmaps only take half the memory of 16-bit bitmaps, at the expense of color depth:
+   256 colors vs 65,536 colors.
+
+
+### Advanced Graphics Mode
+
+It is **OFF** by default.
 There is an advanced graphics modes in library.
 Standard graphics supports drawing lines, pixels
 rectangles, triangles, circles and rounded rectangles.
 Advanced graphics supports drawing polygons, dot grid, quadrilaterals, 
 arcs, ellipses and lines at an angle.
-It is **OFF** by default.
 If you want these 'advanced' functions, simply 
 comment in define dislib16 ADVANCED GRAPHICS ENABLE in display16 common LTSM.hpp. 
 This will enable advanced graphics mode. If this is disabled some examples 
-may not work fully or even compile. 
+may not work fully or even compile.
 
 ### Advanced buffer mode
 
-Advanced buffer mode. There is advanced buffer mode where the code writes to a global screen buffer instead of the VRAM of display. It is **OFF** by default more details at readme, 
+It is **OFF** by default.
+Advanced buffer mode. There is advanced buffer mode where the code writes 
+to a global screen buffer instead of the VRAM of display. More details at readme, 
 which is in the 'doc' folder [at link.](extras/doc/buffer_mode/README.md)
 **This mode is only for high RAM MCUs.**
 
@@ -96,10 +116,10 @@ File system Hierarchy:
 
 [![ pic ](https://github.com/gavinlyonsrepo/display16_LTSM/blob/main/extras/images/filesystem.jpg)](https://github.com/gavinlyonsrepo/display16_LTSM/blob/main/extras/images/filesystem.jpg) 
 
-### Error Codes 
+### Error Codes
 
-Most functions that return a value, return a enum. 
-Zero for success and a positive number for an error code. 
+Most functions that return a value, return a enum.
+Zero for success and a positive number for an error code.
 The enum is in file: display16 common LTSM.hpp.
 
 ## Notes

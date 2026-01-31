@@ -11,6 +11,7 @@
 #include "./core/Options.h"
 #include "./core/File/FileConfig.h"
 
+/*
 #if defined(ENABLE_JWT) || defined(ENABLE_ESP_SSLCLIENT)
 #include <ESP_SSLClient.h>
 #endif
@@ -21,13 +22,13 @@
 #endif
 #include "./core/FirebaseApp.h"
 #include "./core/AsyncClient/AsyncClient.h"
-
+*/
 #if defined(ENABLE_DATABASE)
 #if __has_include("database/RealtimeDatabase.h")
 #include "database/RealtimeDatabase.h"
 #endif
 #endif
-
+/*
 #if defined(ENABLE_FIRESTORE)
 #if __has_include("firestore/Databases.h")
 #include "firestore/Databases.h"
@@ -59,6 +60,7 @@
 #endif
 #endif
 
+
 #if defined(ENABLE_FUNCTIONS)
 #if __has_include("functions/Functions.h")
 #include "functions/Functions.h"
@@ -82,7 +84,7 @@
 #include "rules/DataOptions.h"
 #endif
 #endif
-
+*/
 using namespace firebase_ns;
 
 namespace firebase_ns
@@ -95,9 +97,11 @@ namespace firebase_ns
             app.deinit = false;
             app.aClient = &aClient;
             app.aclient_addr = reinterpret_cast<uint32_t>(&aClient);
+/*
 #if defined(ENABLE_JWT)
             app.jwtProcessor()->setAppDebug(getAppDebug(app.aClient));
 #endif
+*/
             if (app.refResult)
             {
                 resultSetDebug(app.refResult, getAppDebug(app.aClient));
@@ -263,9 +267,9 @@ namespace firebase_ns
 #else
 // Default buffer size for large JSON response.
 #if defined(ARDUINO_ARCH_SAMD) || defined(ESP8266)
-            int size = 1024;
+            int size = 512;
 #else
-            int size = 4096;
+            int size = 512;
 #endif
 #endif
             char s[size];

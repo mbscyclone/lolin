@@ -1,38 +1,58 @@
 # Advanced Buffer Mode Readme
 
-**This mode is only for high RAM MCUs.**
+## Table of contents
 
-Advanced buffer mode allows the library to write to a global screen buffer (`screenBuffer`) instead of directly writing to the VRAM of the display. This mode is off by default but can be enabled for specific use cases where buffering is advantageous. ScreenBuffer is a Vector.
+* [Overview](#overview)  
+* [Enable](#enable)  
+* [Usage](#usage)  
+* [Functions](#functions)  
+* [Examples](#examples)
 
-Advanced buffer mode offers several key benefits. It enables double buffering, where all drawing operations are first performed in memory and then written to the display in a single operation. With batch drawing, multiple graphics operations can be completed before updating the screen, improving rendering efficiency. The memory-resident buffer also allows for custom effects like fading or blending to be applied before display. Additionally, since memory operations are faster than direct display writes, this approach leads to optimized performance for applications with frequent updates.
+## Overview
 
-However, it comes with limitations. It requires significant heap memory and flushing the buffer to the display can introduce a performance overhead. Compatibility is also a concern on memory-constrained devices. Use advanced buffer mode when you need complex rendering, visual effects, or performance optimizations. For simpler applications where memory is limited, direct display drawing may be more suitable. Bear in mind many functions in normal mode have some form of local buffered writes already.
+**This mode is intended for high-RAM MCUs only.**
 
-Size of buffer required.
+Advanced buffer mode uses a global screen buffer (`screenBuffer`) to store the entire display 
+image in memory before sending it to the display’s VRAM. 
+This mode is off by default and should only be enabled when buffering offers a clear advantage.
+The buffer is stored in a `std::vector`.
 
-| Display size | bytes |
-| ---- | --- |
-| 96x64  |12,288 |
-| 240x320| 153,600|
+**Benefits include:**
+- **Double buffering:** draw off-screen, then update the display in one flush to reduce flicker.
+- **Batch drawing:** perform multiple graphics operations before a single update for better efficiency.
+- **Special effects:** apply blending, fading, or custom image processing before pushing to the display.
+- **Performance gains:** memory writes are typically faster than direct display writes.
 
-Whether your MCU can use this mode 
-will depend on size of display and the available heap SRAM memory of your MCU + program
-This table (figures are approximations) give some indication. Some examples of SRAM usage for selected display sizes.
+**Limitations:**
+- **High memory use:** requires enough heap to store the full display image.
+- **Flush overhead:** transferring the buffer to the display takes time.
+- **Limited compatibility:** unsuitable for low-RAM devices.
+- Many normal-mode functions already use small local buffers internally, so the benefits may be minimal for simple graphics.
 
-| MCU | Total SRAM | Usable for Framebuffer (safe) | Max Resol (safe) |
-|------------|------|---------|------------|
-| Uno/Nano (ATmega328P)| 2 KB   | ~1 KB  | ~22×22   |
-| Arduino Mega 2560     | 8 KB       | ~6 KB       | ~55×55  |
-| Arduino Uno R4 | 32 KB      | ~24 KB    | ~109×109 |
-| ESP8266     | 80 KB      | ~50 KB    | ~158×158  |
-| ESP32      | 320 KB     | ~200 KB   | ~316×316|
-| RP2040 (Raspberry Pi Pico)| 264 KB     | ~200 KB  | ~316×316  |
-| STM32 “Blue Pill” (F103) | 20 KB      | ~14 KB   | ~83×83  |
+Use advanced buffer mode for complex rendering, animations, or special effects when your MCU has enough free memory. For simpler projects or low-RAM devices, direct drawing may be more efficient.
+
+**Buffer size requirements:**
+
+| Display size XxY | Bytes needed for frame buffer (XxYx2) |
+| ------------ | ------------ |
+| 96×64         | 12,288  |
+| 128×128       | 32,768   |
+| 240×320       | 153,600 |
+
+Whether this mode will compile and work in a users program depends on a combination factors 
+: display resolution, the MCU type, its configuration, 
+and how much data memory remains after your program and other data structures are loaded. 
+Even MCUs with high total RAM may fail to run this mode if other parts of your code or libraries 
+reserve significant memory. Support for 'std::vector' is also required by MCU compiler.
 
 
-## Enabling Advanced Buffer Mode
+## Enable
 
-To enable advanced buffer mode, you need to define the macro `dislib16_ADVANCED_SCREEN_BUFFER_ENABLE`. This macro is located in the file `display16_common_LTSM.hpp` (USER OPTION 2). By default, this macro is commented out or undefined. Once enabled, the library will use the `screenBuffer` for many drawing operations instead of writing directly to the display VRAM.
+To enable advanced buffer mode, you need to define the macro `dislib16_ADVANCED_SCREEN_BUFFER_ENABLE`. 
+This macro is located in the file `display16_common_LTSM.hpp` (USER OPTION 2). 
+By default, this macro is commented out or undefined. 
+Once enabled, the library will use the `screenBuffer` for many drawing operations instead of 
+writing directly to the display VRAM.
 
 ## Usage
 
@@ -40,6 +60,8 @@ To enable advanced buffer mode, you need to define the macro `dislib16_ADVANCED_
 2. destroyBuffer, destroys buffer de-allocates memory, call at end of Display operations.
 3. clearBuffer, fills buffer with a colour, by default black.
 4. writeBuffer, writes buffer in a single SPI buffered write to screen.
+By default this will use a single write but there is also a row by row
+buffered write option, if passed parameter, certain displays require this option.
 
 ## Functions
 
@@ -50,10 +72,9 @@ VRAM of display.
 2. All Bitmap functions.
 3. All Draw text functions only IF **textCharPixelOrBuffer = true** 
 
-The situation with graphic functions is complicated as some use 
-fast draw methods of drawFastVLine() and drawFastHLine().
-and fillRectBuffer uses a local buffer in function to write to display VRAM.
-So depending on the graphic function code may write to screenBuffer and/or VRAM. 
+Note:
+
+FillRectBuffer uses a local buffer in function to write to display VRAM.
 Note fillRectBuffer is wrapped by fillScreen. 
 
 ## Examples

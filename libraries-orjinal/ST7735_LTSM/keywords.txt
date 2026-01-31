@@ -1,0 +1,47 @@
+#######################################
+# Syntax Coloring Map For ST7735_LTSM
+#######################################
+
+#######################################
+# Class
+#######################################
+ST7735_LTSM	KEYWORD1
+
+#######################################
+# Methods
+#######################################
+setAddrWindow	KEYWORD2
+setupGPIO_SPI	KEYWORD2
+TFTInitScreenSize	KEYWORD2
+TFTInitPCBType	KEYWORD2
+TFTPowerDown	KEYWORD2
+setRotation	KEYWORD2
+TFTchangeInvertMode	KEYWORD2
+TFTchangeMode	KEYWORD2
+setScrollDefinition	KEYWORD2
+TFTVerticalScroll	KEYWORD2
+TFTSwSpiGpioDelayGet	KEYWORD2
+TFTSwSpiGpioDelaySet	KEYWORD2
+
+#######################################
+# Enums
+#######################################
+TFT_modes_e	LITERAL1
+TFT_PCBtype_e	LITERAL1
+display_rotate_e	LITERAL1
+
+#######################################
+# Enum Values
+#######################################
+TFT_Normal_mode	LITERAL1
+TFT_Partial_mode	LITERAL1
+TFT_Idle_mode	LITERAL1
+TFT_Sleep_mode	LITERAL1
+TFT_Invert_mode	LITERAL1
+TFT_Display_on_mode	LITERAL1
+TFT_Display_off_mode	LITERAL1
+
+TFT_ST7735R_Red	LITERAL1
+TFT_ST7735R_Green	LITERAL1
+TFT_ST7735S_Black	LITERAL1
+TFT_ST7735B	LITERAL1

@@ -1,0 +1,87 @@
+#######################################
+# Syntax Coloring Map For display16_graphics_LTSM
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+display16_graphics_LTSM	KEYWORD1
+pixel_color565_e	KEYWORD1
+display_rotate_e	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+setBuffer	KEYWORD2
+clearBuffer	KEYWORD2
+writeBuffer	KEYWORD2
+destroyBuffer	KEYWORD2
+setAddrWindow	KEYWORD2
+fillScreen	KEYWORD2
+setCursor	KEYWORD2
+drawPixel	KEYWORD2
+drawLine	KEYWORD2
+drawFastVLine	KEYWORD2
+drawFastHLine	KEYWORD2
+drawRectWH	KEYWORD2
+fillRectBuffer	KEYWORD2
+fillRect	KEYWORD2
+drawRoundRect	KEYWORD2
+fillRoundRect	KEYWORD2
+drawCircle	KEYWORD2
+fillCircle	KEYWORD2
+drawTriangle	KEYWORD2
+fillTriangle	KEYWORD2
+drawEllipse	KEYWORD2
+drawDotGrid	KEYWORD2
+drawQuadrilateral	KEYWORD2
+fillQuadrilateral	KEYWORD2
+drawPolygon	KEYWORD2
+drawLineAngle	KEYWORD2
+drawArc	KEYWORD2
+getArcAngleMax	KEYWORD2
+setArcAngleMax	KEYWORD2
+getArcAngleOffset	KEYWORD2
+setArcAngleOffset	KEYWORD2
+setTextWrap	KEYWORD2
+setTextColor	KEYWORD2
+writeChar	KEYWORD2
+writeCharString	KEYWORD2
+setTextCharPixelOrBuffer	KEYWORD2
+getTextCharPixelOrBuffer	KEYWORD2
+drawBitmap	KEYWORD2
+drawBitmap8Data	KEYWORD2
+drawBitmap16Data	KEYWORD2
+drawSpriteData	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+C_BLACK	LITERAL1
+C_BLUE	LITERAL1
+C_RED	LITERAL1
+C_GREEN	LITERAL1
+C_CYAN	LITERAL1
+C_MAGENTA	LITERAL1
+C_YELLOW	LITERAL1
+C_WHITE	LITERAL1
+C_TAN	LITERAL1
+C_GREY	LITERAL1
+C_BROWN	LITERAL1
+C_DGREEN	LITERAL1
+C_ORANGE	LITERAL1
+C_NAVY	LITERAL1
+C_DCYAN	LITERAL1
+C_MAROON	LITERAL1
+C_PURPLE	LITERAL1
+C_OLIVE	LITERAL1
+C_LGREY	LITERAL1
+C_DGREY	LITERAL1
+C_GYELLOW	LITERAL1
+C_PINK	LITERAL1
+C_LBLUE	LITERAL1
+C_BEIGE	LITERAL1
+Degrees_0	LITERAL1
+Degrees_90	LITERAL1
+Degrees_180	LITERAL1
+Degrees_270	LITERAL1
