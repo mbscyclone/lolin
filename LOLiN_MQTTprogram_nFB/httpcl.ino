@@ -64,7 +64,6 @@ void htpcl() {
           header = header.substring(0, header.indexOf(" HTTP/1.1")+9);
           reConnectsayac = millis();
 
-          //zamanfark=1555;
 
           IPAddress lip = WiFi.localIP();
           String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
@@ -346,19 +345,23 @@ void htpcl() {
               xilent.println("</label><br>");
 
 
-              xilent.println("<table><caption>PROGRAM GiRiSi</caption><tr> <td scope=\"col\">Program:</td><td scope=\"col\">Program Hata</td></tr>");
-              xilent.println("<tr><td>");
-
+              xilent.println("<table><caption>PROGRAM GiRiSi</caption>");
+              xilent.println("<tr><td scope=\"col\">Program:      (Pinleri invert etmek için: PIN_INVERT;)<br>");
               xilent.println("<form method='get' action='programkayit'>");
-              xilent.println("<textarea name='is' id='id' cols='40' rows='10' >");
+              xilent.println("<textarea name='is' id='id' cols='80' rows='15' >");
               xilent.println(programdata);
               xilent.println("</textarea>");
               xilent.println("<br>");
               xilent.println("<input type='submit'>");
               xilent.println("</form>");
-              xilent.println("</td><td style='font-size:12px;vertical-align:top;'>");
-              xilent.println(perlog);
-              xilent.println("</td></tr></table>Pinleri invert etmek için: PIN_INVERT; <br>");
+              xilent.println("</td></tr><br>");
+              if(perlog.length()<1)xilent.println("<td style='font-size:12px;vertical-align:top;'>Hata yok</td>");
+              else {
+                xilent.println("<td scope=\"col\"style='font-size:12px;vertical-align:top;' >Program Hatası: ");
+                xilent.println(perlog);
+                xilent.println("</td>");
+              }
+              xilent.println("</tr><br></table><br><br><br><br>");
 
 
 
@@ -1029,7 +1032,7 @@ void htpcl() {
 
 
               //Programtakip(programdata);
-              zamanfark = 1565;
+              
             }
             creator += "EK";
 
@@ -1088,7 +1091,8 @@ void htpcl() {
                   Outpwm(pinismi, PWMdegerint);
                 }
               }
-              zamanfark = 1555;
+              //if(habp == 3)zamanfark = 3;
+              //else zamanfark = 1555;
             }
 
 

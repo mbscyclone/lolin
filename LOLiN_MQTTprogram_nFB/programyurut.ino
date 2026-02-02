@@ -456,6 +456,7 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
         //Serial.println(htyolla);
         httpgonder();
         delay(50);
+        Serial.println("programyurut > httpgonder ");
       } else
       yap(yapilacakisn, yapilacaklarislemsayisi);
 
@@ -494,7 +495,6 @@ void yap(String yapilacakn, int islemno) {
           //efbtd[indis] = dsag;
           progmsg += (String)satirsayisip + " satır>" + yapilacakn + " degisti.<br>";
           //  Serial.print(fbcyol[indis] + " ------> ");Serial.println(fbtd[indis]);
-          zamanfark =1; fbsayacoku();
         }
       }
 

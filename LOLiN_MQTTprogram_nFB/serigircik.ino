@@ -128,6 +128,7 @@ void serin()
         habp = 0; dosyayazhabp();
         delay(100); ESP.reset();
       }
+
       if(sergel.indexOf("habp1")>-1) 
       {
         habp = 1; dosyayazhabp();
@@ -144,6 +145,7 @@ void serin()
       {
         htpcldis = true;
       }
+      
       if(sergel.indexOf("htpcl")>-1) 
       {
         htpcldis = false;

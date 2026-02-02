@@ -64,7 +64,12 @@ String esphostnameOnek = "";
 String esphostname = "esp-bos";
 bool high_low_invert = false;
 String progmsg;
-unsigned int zamanfark;
+
+
+unsigned long zamanfark=millis();
+unsigned long zamanbasi=millis();
+bool firebaseyegirdim=false;
+
 
 String ssid = "";
 String pass = "";
@@ -1088,53 +1093,54 @@ void loop() {
   //if(htyolla != "")httpgonder();
 
 
+  zamanfark=millis()-zamanbasi;
 
 
-  if (Menu == 0) {
-
-    zamanfark += 1;
-
-    if (zamanfark > 1800) zamanfark = 1;
 
 
     int upd;
-    if (habp == 0) upd = 10;
-    if (habp == 1) upd = 10;
-    if (habp == 2) upd = 400;
-
-    if (hcsrloopvar == true) {
-      if (zamanfark % upd == 0) {
-        if (pinayar.length() > 0) updateinput();
-        if (programdata.length() > 0) programrun();
-        if (pinayar.length() > 0) updateoutput();
-        if (pinayar.length() > 0) vrkontrol();
-        if (mqsendbayrak == true) {
-          if(habp == 1 || habp == 3) mqttsend(mqyol, degisenmq);
-        }
-      }
-    } else {
-      //if(zamanfark>3051 && zamanfark<3054){zamanfark=3056;programrun();}
-      if (zamanfark % upd == 0) {
-        if (pinayar.length() > 0) updateinput();
-        if (programdata.length() > 0) programrun();
-        if (pinayar.length() > 0) updateoutput();
-        if (pinayar.length() > 0) vrkontrol();
-        if (mqsendbayrak == true) {
-          if(habp == 1 || habp == 3) mqttsend(mqyol, degisenmq);
-        }
-      }
+    if(habp > 2){
+    if (habp == 0) upd = 1;
+    if (habp == 1) upd = 1;
+    if (habp == 2) upd = 4;
+    if (habp == 3) upd = 1;
     }
-    delay(1);
-    if (habp >= 2) {
-      if (zamanfark >= 1772 && zamanfark < 1780) {
-        zamanfark = 1782;
+
+    if(habp < 3){
+    if (habp == 0) upd = 5;
+    if (habp == 1) upd = 5;
+    if (habp == 2) upd = 300;
+    if (habp == 3) upd = 200;
+    }
+
+
+    
+      if (zamanfark % upd == 0) {
+        if (pinayar.length() > 0) updateinput();
+        if (programdata.length() > 0) programrun();
+        if (pinayar.length() > 0) updateoutput();
+        if (pinayar.length() > 0) vrkontrol();
+        if (mqsendbayrak == true) {
+          if(habp == 1 || habp == 3) mqttsend(mqyol, degisenmq);
+        }
+      }
+    
+
+
+    //Serial.println(zamanfark);
+    if (habp > 1 && firebaseyegirdim==false) {
+      if (zamanfark >= 900) {
           Serial.println(fben);
           updatefbvirtual();
           fbsayacoku();
       }
     }
 
-  } else zamanfark = 1;
+    if (zamanfark > 1200) {zamanbasi = millis(); zamanfark=millis();firebaseyegirdim=false;}
+
+
+
+
 
 
 

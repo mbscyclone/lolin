@@ -3,11 +3,8 @@ String esayacyani="";
 void fbsayacoku()
 {
 yield();
-  if(bestursay>0)
-  {
-    bestursay+=1;
-    if(bestursay>2)bestursay=0;
-  }
+          firebaseyegirdim=true;
+
 //if(fbpinayaryaz==true){fbpinayaryaz=false;fbpinayarlariyaz();}
 
                       //String getpath="/" + YOL + "/r/"+esphostname;
@@ -46,7 +43,7 @@ Serial.print("response code ");Serial.println(fetchResponseCode);
 }
 
 void fbsayacyanioku(String rsltt)
-{ if(esayacyani!=rsltt){bestursay=1;esayacyani=rsltt;}
+{ 
 
 String rslttmp = rsltt;
 Serial.println(rslttmp);
