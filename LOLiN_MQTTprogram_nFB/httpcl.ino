@@ -271,17 +271,14 @@ void htpcl() {
 //////////////////////////////////////////
             ehabp=habp;
 
-            if (header.indexOf("habp=Off") > -1) {
-              habp = 0;
-            }
+            if (header.indexOf("habp=Off") > -1) habp = 0;
 
-            if (header.indexOf("habp=mqt") > -1) {
-              habp = 1;
-            }
+            if (header.indexOf("habp=mqt") > -1) habp = 1;
 
-            if (header.indexOf("habp=fir") > -1) {
-              habp = 2;
-            }
+            if (header.indexOf("habp=fir") > -1) habp = 2;
+
+            if (header.indexOf("habp=fim") > -1) habp = 3;
+
 
             if(ehabp != habp)
             {
@@ -878,6 +875,14 @@ void htpcl() {
                 xilent.println("<option value=\"fir\"");
               }
               xilent.println(">Firebase</option>");
+
+              if (habp == 3) {
+                xilent.println("<option value=\"fim\" selected");
+              } else {
+                xilent.println("<option value=\"fim\"");
+              }
+              xilent.println(">MQTT&Firebase</option>");
+
               xilent.println("</select><input type=\"submit\" value=\"Submit\"></form>");
 
 
@@ -1316,6 +1321,15 @@ void htpcl() {
                 xilent.println("<option value=\"fir\"");
               }
               xilent.println(">Firebase</option>");
+
+
+              if (habp == 3) {
+                xilent.println("<option value=\"fim\" selected");
+              } else {
+                xilent.println("<option value=\"fim\"");
+              }
+              xilent.println(">MQTT&Firebase</option>");
+
               xilent.println("</select><input type=\"submit\" value=\"Submit\"> değiştirildiğinde ESP restart yapılacak!!!</label></form>");
 
 

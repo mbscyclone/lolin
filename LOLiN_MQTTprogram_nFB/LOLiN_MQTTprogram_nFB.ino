@@ -965,7 +965,10 @@ void setup() {
   dosyaokufbusername();
   dosyaokufbuserpass();
 
-  if (habp == 2 && fben != 0) connectfb();
+  if (WiFi.status() == WL_CONNECTED && fben != 0)
+  {
+    if(habp == 2 || habp == 3)connectfb();
+  } 
 
 
     httpserver.begin();
@@ -981,7 +984,6 @@ void setup() {
   server.on("/", handleRoot);
   server.on("/gerT", handleger);
 
-
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("8080 server started");
@@ -994,9 +996,11 @@ void setup() {
   setup2();
   otasetup();
 
-  if (WiFi.status() == WL_CONNECTED && habp == 1) {
-    mqttipoku();
-    MQTTConnect();
+  if (WiFi.status() == WL_CONNECTED) {
+    if(habp == 1 || habp == 3){
+      mqttipoku();
+      MQTTConnect();
+    }
   }
 
   if (WiFi.status() == WL_CONNECTED) htserveroku();
@@ -1060,7 +1064,7 @@ void loop() {
 
 
   if (WiFi.status() == WL_CONNECTED) {
-    if (habp == 1) {
+    if (habp == 1 || habp == 3) {
       mqttclient.loop();
       // <- fixes some issues with WiFi stability
       if (!mqttclient.connected()) {
@@ -1068,12 +1072,13 @@ void loop() {
       }
     }
 
-    if (habp == 2 && fben == 1) {
-
-      fbresulsay += 1;
-      if (fbresulsay > 3000) {
-        fbresulsay = 0;
-        connectfb();
+    if (fben == 1) {
+      if(habp == 2 || habp == 3){
+        fbresulsay += 1;
+        if (fbresulsay > 3000) {
+          fbresulsay = 0;
+          connectfb();
+        }
       }
     }
   }
@@ -1103,8 +1108,8 @@ void loop() {
         if (programdata.length() > 0) programrun();
         if (pinayar.length() > 0) updateoutput();
         if (pinayar.length() > 0) vrkontrol();
-        if (habp == 1 && mqsendbayrak == true) {
-          mqttsend(mqyol, degisenmq);
+        if (mqsendbayrak == true) {
+          if(habp == 1 || habp == 3) mqttsend(mqyol, degisenmq);
         }
       }
     } else {
@@ -1114,13 +1119,13 @@ void loop() {
         if (programdata.length() > 0) programrun();
         if (pinayar.length() > 0) updateoutput();
         if (pinayar.length() > 0) vrkontrol();
-        if (habp == 1 && mqsendbayrak == true) {
-          mqttsend(mqyol, degisenmq);
+        if (mqsendbayrak == true) {
+          if(habp == 1 || habp == 3) mqttsend(mqyol, degisenmq);
         }
       }
     }
     delay(1);
-    if (habp == 2) {
+    if (habp >= 2) {
       if (zamanfark >= 1772 && zamanfark < 1780) {
         zamanfark = 1782;
           Serial.println(fben);
@@ -1140,8 +1145,11 @@ void loop() {
     if (millis() - reConnectsayac > 60000) {
       reConnectsayac = millis();
       connectWifi();
-      if (WiFi.status() == WL_CONNECTED && habp == 1) MQTTConnect();
-      if (WiFi.status() == WL_CONNECTED && habp == 2) connectfb();
+      if (WiFi.status() == WL_CONNECTED)
+      { 
+        if(habp == 1 || habp == 3) MQTTConnect();
+        if(habp == 2 || habp == 3) connectfb();
+      }
     }
   }
 
