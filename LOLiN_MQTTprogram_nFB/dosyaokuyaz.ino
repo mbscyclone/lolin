@@ -201,6 +201,7 @@ void dosyaokuhabp()
                 //Serial.print("fben:");
                 //Serial.println(fben);
                 }
+                if(habp==-2)habp=-1;
                 dosya.close();
 }
 

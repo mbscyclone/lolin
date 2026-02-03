@@ -58,6 +58,7 @@ unsigned long reConnectsayac = millis();
 bool WiFiAP = true;  // Do yo want the ESP as AP?
 WiFiServer httpserver(80);
 String header;
+String headerold;
 String creator;
 String htyolla;
 String esphostnameOnek = "";
@@ -150,8 +151,6 @@ String yazi;
 
 File dosya;
 
-bool pinayarchg = false;
-
 
 String erlog = "";
 String perlog = "";
@@ -161,7 +160,7 @@ String programdata;
 
 
 
-int habp;
+int habp=-2;
 int ehabp;
 int fben;
 
@@ -371,7 +370,6 @@ void dosyaOkupinayar() {
 
 bool fbpinayaryaz = false;
 void dosyaYazpinayar() {
-  pinayarchg = false;
   reConnectsayac = millis();
   pinayar = Karakterduzeltfunc(pinayar);
   dosya.close();
@@ -961,7 +959,7 @@ void setup() {
 
   //Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
 
-  if (WiFi.status() == WL_CONNECTED) dosyaokuhabp();
+  dosyaokuhabp();
 
   dosyaokufbyol();
   dosyaokufben();
@@ -971,7 +969,7 @@ void setup() {
   dosyaokufbuserpass();
 
   if (WiFi.status() == WL_CONNECTED && fben != 0)
-  {
+  { if(habp==-2)dosyaokuhabp();
     if(habp == 2 || habp == 3)connectfb();
   } 
 
@@ -1002,6 +1000,7 @@ void setup() {
   otasetup();
 
   if (WiFi.status() == WL_CONNECTED) {
+    if(habp==-2)dosyaokuhabp();
     if(habp == 1 || habp == 3){
       mqttipoku();
       MQTTConnect();
@@ -1054,9 +1053,7 @@ void loop() {
   server.handleClient();
   MDNS.update();
 
-  if (pinayarchg == true) {
-    dosyaYazpinayar();
-  }
+
 
   //geciktirmee //yavaşlatma
   //if(macadr!=WiFi.macAddress()){delay(1000);}
@@ -1069,6 +1066,7 @@ void loop() {
 
 
   if (WiFi.status() == WL_CONNECTED) {
+    if(habp==-2)dosyaokuhabp();
     if (habp == 1 || habp == 3) {
       mqttclient.loop();
       // <- fixes some issues with WiFi stability
@@ -1078,6 +1076,7 @@ void loop() {
     }
 
     if (fben == 1) {
+      if(habp==-2)dosyaokuhabp();
       if(habp == 2 || habp == 3){
         fbresulsay += 1;
         if (fbresulsay > 3000) {
@@ -1100,14 +1099,14 @@ void loop() {
 
     int upd;
     if(habp > 2){
-    if (habp == 0) upd = 1;
+    if (habp <= 0) upd = 1;
     if (habp == 1) upd = 1;
     if (habp == 2) upd = 4;
     if (habp == 3) upd = 1;
     }
 
     if(habp < 3){
-    if (habp == 0) upd = 5;
+    if (habp <=  0) upd = 5;
     if (habp == 1) upd = 5;
     if (habp == 2) upd = 300;
     if (habp == 3) upd = 200;
@@ -1116,6 +1115,7 @@ void loop() {
 
     
       if (zamanfark % upd == 0) {
+        headerold="";
         if (pinayar.length() > 0) updateinput();
         if (programdata.length() > 0) programrun();
         if (pinayar.length() > 0) updateoutput();
