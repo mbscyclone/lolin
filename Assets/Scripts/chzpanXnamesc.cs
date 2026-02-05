@@ -21,9 +21,12 @@ public class chzpanXnamesc : MonoBehaviour
         GameObject.Find("CHZtext").GetComponent<Text>().text = this.gameObject.GetComponent<Text>().text;
         GameObject.Find("Program").GetComponent<Programcs>().ekran = GameObject.Find("CHZtext").GetComponent<Text>().text;
         GameObject.Find("Program").GetComponent<Programcs>().pinek = "/pays/" + this.gameObject.GetComponent<Text>().text +"pay";
-        GameObject.Find("Program").GetComponent<Programcs>().listening= false;
+        if(GameObject.Find("Program").GetComponent<Programcs>().listening == true)
+        {
+            GameObject.Find("Program").GetComponent<Programcs>().dbref.Dispose();
+        }
         GameObject.Find("Program").GetComponent<Programcs>().queryy();
-
+        GameObject.Find("Program").GetComponent<Programcs>().listening = false;
 
     }
 

@@ -27,7 +27,7 @@ namespace FirebaseREST
 
         public void Awake()
         {
-              FirebaseSettings firebaseSettingscs = GameObject.Find("FirebaseSettingsObj").GetComponent<FirebaseSettings>();
+            FirebaseSettings firebaseSettingscs = gameObject.GetComponent<FirebaseSettings>();
             //PlayerPrefs.SetString("FBURL",firebaseSettingscs.DATABASE_URL);
             //PlayerPrefs.SetString("FBAPI", firebaseSettingscs.WEB_API);
             firebaseSettingscs.DATABASE_URL = PlayerPrefs.GetString("FBURL");
@@ -85,7 +85,7 @@ namespace FirebaseREST
 
         void OnDestroy()
         {
-            applicationIsQuitting = true;
+           applicationIsQuitting = true;
         }
         
         public bool IsSignedIn => tokenData != null;

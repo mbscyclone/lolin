@@ -7,13 +7,18 @@ using System.Net.NetworkInformation;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
 public class Programcs : MonoBehaviour
 {
+    public GameObject fbprefab;
+
+    public DatabaseReference dbref;
 
     public String ekran = "";
     public String[] chzname;
@@ -21,14 +26,19 @@ public class Programcs : MonoBehaviour
     public String esay = "";
 
 
-    public String[] pinsatir = new String[10];
-    public String[] pinname = new String[10];
-    public String[] pinmode = new String[10];
-    public String[] pinsignaltype = new String[10];
-    public String[] pinminvalue = new String[10];
-    public String[] PinState = new String[10];
-    public String[] ePinState = new String[10];
-    public String[] pinmaxvalue = new String[10];
+    public String[] pinsatir = new String[11];
+    public String[] pinname = new String[11];
+    public String[] pinmode = new String[11];
+    public String[] pinsignaltype = new String[11];
+    public String[] pinminvalue = new String[11];
+    public String[] PinState = new String[11];
+    public String[] ePinState = new String[11];
+    public String[] pinmaxvalue = new String[11];
+    public String[] acilseviyesi = new String[11];
+    public String[] acildeger = new String[11];
+
+
+
     public String[] pinlabel = new String[10];
 
 
@@ -41,30 +51,46 @@ public class Programcs : MonoBehaviour
     public int ilksatirYkonumu = -140;  //UI deki ilk pin objesinin satýr koordinatý = 0;
     public int Yartis = 170;         //Sonraki satir icin ekleme
     public int SuandakiYkonum = -140;   //Þu andaki satir kordinatý Y
-    public int Psatirsaymax = 10;
+    public int Psatirsaymax = 11;
 
     public String pinek = "";
     public float querysayac = 0f;
     bool rquery = false;
     public bool listening = false;
+
+
+
+
+
+/*
+    private void Awake()
+    {
+        DestroyImmediate(GameObject.Find("FirebaseSettingsObj"));
+        GameObject firebaseSettingsObj = Instantiate(fbprefab);
+        firebaseSettingsObj.name = "FirebaseSettingsObj";
+    }
+*/
+
     private void Start()
     {
 
-     chzname = new String[6];
+        chzname = new String[9];
 
-     pinsatir = new String[10];
-     pinname = new String[10];
-     pinmode = new String[10];
-     pinsignaltype = new String[10];
-     pinminvalue = new String[10];
-     PinState = new String[10];
-     ePinState = new String[10];
-     pinmaxvalue = new String[10];
-     pinlabel = new String[10];
+        pinsatir = new String[11];
+        pinname = new String[11];
+        pinmode = new String[11];
+        pinsignaltype = new String[11];
+        pinminvalue = new String[11];
+        PinState = new String[11];
+        ePinState = new String[11];
+        pinmaxvalue = new String[11];
+        acilseviyesi = new String[11];
+        acildeger = new String[11];
+        pinlabel = new String[11];
 
 
 
-    Dbleriyerlestir();
+        Dbleriyerlestir();
     }
 
     String oldasd = "";
@@ -72,7 +98,7 @@ public class Programcs : MonoBehaviour
     {
         if (valuechg == true)
         {
-            Debug.Log("asd: " + asd);
+            //Debug.Log("asd: " + asd);
             ekran = GameObject.Find("CHZtext").GetComponent<Text>().text;
 
             if (ekran.Length < 1)
@@ -90,7 +116,7 @@ public class Programcs : MonoBehaviour
             {
                 pinoku();
                 pinek = "/" + ekran + "pin";
-                if(listening==true) tekgorunumguncelle();
+                if (listening == true) tekgorunumguncelle();
             }
 
             valuechg = false;
@@ -98,53 +124,58 @@ public class Programcs : MonoBehaviour
 
 
         if (asd != null)
-         if (asd.Length > 0)
-         {
-            if (asd != oldasd)
+            if (asd.Length > 0)
             {
+                if (asd != oldasd)
+                {
+                    Debug.Log("asd geldi :" + asd);
                     oldasd = asd;
-                    if (pinek=="/r") rguncelle();
-                else 
-                    if (pinek == "/pays/" + ekran + "pay") 
+                    if (pinek == "/r") rguncelle();
+                    else
+                    if (pinek == "/pays/" + ekran + "pay")
                     {
-                      payoku();
+                        payoku();
                         queryy();
                     }
                     else
                     if (pinek == "/pins/" + ekran + "pin")
                     {
-                        if(querysayac>2f)
+                        if (querysayac > 2f)
                         {
                             querysayac = 0f;
                             if (listening == false) fblisten();
+                            pinoku();
                         }
                         else
                         {
                             querysayac += Time.fixedDeltaTime;
                         }
-                        pinoku();
+                        
                     }
 
 
                 }
 
+                if (pinek == "/r") rguncelle();
+                else
                 if (pinek == "/pins/" + ekran + "pin")
                 {
                     if (querysayac > 2f)
                     {
                         querysayac = 0f;
-                        if(listening==false) fblisten();
+                        if (listening == false) fblisten();
+                        pinoku();
                     }
                     else
                     {
                         querysayac += Time.fixedDeltaTime;
                     }
-                    pinoku();
+                    
                 }
 
 
             }
-         if(rquery==false)queryy();
+        if (rquery == false) queryy();
     }
 
     public void Dbleriyerlestir()
@@ -176,7 +207,8 @@ public class Programcs : MonoBehaviour
             if (PlayerPrefs.GetString("dburl" + i.ToString()) != "" && PlayerPrefs.GetString("dburl" + i.ToString()) != null)
             {
                 GameObject.Find("Panelust/db" + i.ToString()).GetComponent<Text>().text = PlayerPrefs.GetString("dburl" + i.ToString());
-            } else break;
+            }
+            else break;
         }
 
 
@@ -184,9 +216,12 @@ public class Programcs : MonoBehaviour
 
     public void fblisten()
     {
+
         listening = true;
         GameObject Firebasesettingsobj = GameObject.Find("FirebaseSettingsObj");
-        DatabaseReference dbref = FirebaseDatabase.Instance.GetReference(yol + "/pins/" + ekran + "pin");
+        FirebaseDatabase.Instance.StopAllCoroutines();
+
+        dbref = FirebaseDatabase.Instance.GetReference(yol + "/pins/" + ekran + "pin");
         dbref.ValueChanged += (sender, a) =>
         {
             asd = a.Snapshot.GetRawJsonValue();
@@ -202,7 +237,36 @@ public class Programcs : MonoBehaviour
 
     public void geridontotalgorunum()
     {
-        oldasd = " ";asd = "";
+
+
+        GameObject.Find("CHZtext").GetComponent<Text>().text = ""; ekran = "";
+
+        GameObject.Find("payim").GetComponent<Text>().text="";
+        GameObject.Find("pinim").GetComponent<Text>().text="";
+
+        for (int psatirsay = 1; psatirsay < 11; psatirsay++)
+        {
+            pinsatir[psatirsay] = "";
+            pinname[psatirsay] = "";
+            pinmode[psatirsay] = "";
+            pinsignaltype[psatirsay] = "";
+            pinminvalue[psatirsay] = "";
+            ePinState[psatirsay] = "";
+            pinmaxvalue[psatirsay] = "";
+            acilseviyesi[psatirsay] = "";
+            acildeger[psatirsay] = "";
+            pinlabel[psatirsay] = "";
+
+            if (GameObject.Find("pinsatirlaripanel/pin-" + psatirsay.ToString()) != null)
+            {
+                GameObject GO = GameObject.Find("pinsatirlaripanel/pin-" + psatirsay.ToString());
+                DestroyImmediate(GO);
+            }
+        }
+
+
+
+        oldasd = " "; asd = "";
         GameObject.Find("Main Camera").transform.position = GameObject.Find("K6").transform.position;
     }
 
@@ -210,12 +274,12 @@ public class Programcs : MonoBehaviour
     {
         GameObject.Find("Main Camera").transform.position = GameObject.Find("K4").transform.position;
         ekran = "";
-        GameObject.Find("CHZtext").GetComponent<Text>().text=ekran;
+        GameObject.Find("CHZtext").GetComponent<Text>().text = ekran;
     }
 
     public void yolbelirle()
     {
-         GameObject.Find("Main Camera").transform.position = GameObject.Find("K4").transform.position;
+        GameObject.Find("Main Camera").transform.position = GameObject.Find("K4").transform.position;
 
 
 
@@ -231,10 +295,10 @@ public class Programcs : MonoBehaviour
 
 
     public void queryy()
-    { 
+    {
         yol = GameObject.Find("yoltext").GetComponent<Text>().text;
-        if(pinek=="")return;
-        Debug.Log("yol: " + yol + pinek);
+        if (pinek == "") return;
+        //Debug.Log("yol: " + yol + pinek);
         Query query = FirebaseDatabase.Instance.GetReference(yol + pinek);
         query = query.OrderByKey();
         query.GetValueAsync(10, (res) =>
@@ -262,17 +326,26 @@ public class Programcs : MonoBehaviour
     }
 
 
-    public void rguncelle() {
+    public void totalgorunumsliderchged()
+    {
+        float slvalue = GameObject.Find("totalgorunumslider").GetComponent<Slider>().value;
+        GameObject.Find("chzlertutucu").transform.position = new Vector3(GameObject.Find("chzlertutucu").transform.position.x, ilksatirYkonumu + slvalue, GameObject.Find("chzlertutucu").transform.position.z);
+
+    }
+
+    public void rguncelle()
+    {
         String rtmp = asd;
         if (asd.Length < 2) return;
+        GameObject.Find("CHZlertext").GetComponent<Text>().text = "";
         rtmp = rtmp.Substring(rtmp.IndexOf("{\"") + 2, rtmp.Length - (rtmp.IndexOf("{\"") + 2));
-        for (int i=1;i<4;i++)
+        for (int i = 1; i < 9; i++)
         {
-            Debug.Log("rtmp baþ: " + rtmp);
+ //           Debug.Log("rtmp baþ: " + rtmp);
             chzname[i] = rtmp.Substring(0, rtmp.IndexOf("\""));
             GameObject.Find("chzpan" + i.ToString() + "/name").GetComponent<Text>().text = chzname[i];
-
-            if(rtmp.IndexOf("\",")>-1)
+            GameObject.Find("CHZlertext").GetComponent<Text>().text += chzname[i] + " ";
+            if (rtmp.IndexOf("\",") > -1)
                 rtmp = rtmp.Substring(rtmp.IndexOf("\",") + 3, rtmp.Length - (rtmp.IndexOf("\",") + 3)); // cihazismi ve ",  sildik
             else
             {
@@ -335,12 +408,12 @@ public class Programcs : MonoBehaviour
     }
     */
 
-    
+
     public void Datagostersayfasi()
     {
-        if(GameObject.Find("CHZtext").GetComponent<Text>().text.Length>0) ekran = GameObject.Find("CHZtext").GetComponent<Text>().text=""; ;
+        if (GameObject.Find("CHZtext").GetComponent<Text>().text.Length > 0) ekran = GameObject.Find("CHZtext").GetComponent<Text>().text = "";
         yol = GameObject.Find("yol-plane/" + gameObject.transform.parent.name + "/text").GetComponent<InputField>().text;
-         if (GameObject.Find("yol-plane/" + dbykonum.ToString() + "/text").GetComponent<InputField>().text.Length > 0)
+        if (GameObject.Find("yol-plane/" + dbykonum.ToString() + "/text").GetComponent<InputField>().text.Length > 0)
         {
             // data göster sayfasýna git ve dinlemeye baþla
 
@@ -359,11 +432,9 @@ public class Programcs : MonoBehaviour
             // listen baþla+ //////////////////////////////////////
             GameObject Firebasesettingsobj = GameObject.Find("FirebaseSettingsObj");
 
-            DatabaseReference dbref = FirebaseDatabase.Instance.GetReference(yol +"/r");
+            dbref = FirebaseDatabase.Instance.GetReference(yol + "/r");
             dbref.ValueChanged += (sender, a) =>
             {
-
-
 
                 asd = a.Snapshot.GetRawJsonValue();
                 valuechg = true;
@@ -439,15 +510,15 @@ public class Programcs : MonoBehaviour
 
         }
     }
-    
+
 
     public void payoku()
     {
         String paytmp = "";
         String kesilecekolan = "\"";
-        paytmp = asd.Substring(asd.IndexOf(kesilecekolan)+kesilecekolan.Length , asd.Length-(asd.IndexOf(kesilecekolan) + kesilecekolan.Length+1));
+        paytmp = asd.Substring(asd.IndexOf(kesilecekolan) + kesilecekolan.Length, asd.Length - (asd.IndexOf(kesilecekolan) + kesilecekolan.Length + 1));
         Debug.Log("paytmp: " + paytmp);
-            GameObject.Find("payim").GetComponent<Text>().text = paytmp;
+        GameObject.Find("payim").GetComponent<Text>().text = paytmp;
         pinek = "/pins/" + ekran + "pin"; queryy();
     }
 
@@ -457,26 +528,28 @@ public class Programcs : MonoBehaviour
         Debug.Log("pintmp baþý: " + pintmp);
         Debug.Log("asd baþý: " + asd);
 
-                pintmp = pintmp.Substring(1, pintmp.Length - 2);
-                Debug.Log("pintmp: " + pintmp);
-                GameObject.Find("pinim").GetComponent<Text>().text = pintmp;
+        pintmp = pintmp.Substring(1, pintmp.Length - 2);
+        Debug.Log("pintmp: " + pintmp);
+        GameObject.Find("pinim").GetComponent<Text>().text = pintmp;
     }
 
     public void totalgorunumguncelle()
     {
         String paystmp = "";
-        if(asd.IndexOf("\"pays\":")>-1)
+        if (asd.IndexOf("\"pays\":") > -1)
         {
-            paystmp = asd.Substring(asd.IndexOf("\"pays\":{") + 8, asd.Length - (asd.IndexOf("\"pays\":{")+8));
+            paystmp = asd.Substring(asd.IndexOf("\"pays\":{") + 8, asd.Length - (asd.IndexOf("\"pays\":{") + 8));
             paystmp = paystmp.Substring(0, paystmp.IndexOf("},\"pins\":"));
         }
         String pinstmp = "";
         if (asd.IndexOf("\"pins\":") > -1)
         {
-            pinstmp = asd.Substring(asd.IndexOf("\"pins\":{") + 8 , asd.Length - (asd.IndexOf("\"pins\":{") + 8));
-            pinstmp = pinstmp.Substring(0, pinstmp.IndexOf("\"}")+1);
+            pinstmp = asd.Substring(asd.IndexOf("\"pins\":{") + 8, asd.Length - (asd.IndexOf("\"pins\":{") + 8));
+            pinstmp = pinstmp.Substring(0, pinstmp.IndexOf("\"}") + 1);
         }
-        else {pinstmp = asd.Substring(1,asd.Length-2);
+        else
+        {
+            pinstmp = asd.Substring(1, asd.Length - 2);
         }
         //Debug.Log("pays: " + paystmp);
         //Debug.Log("pins: " + pinstmp);
@@ -484,24 +557,24 @@ public class Programcs : MonoBehaviour
 
         GameObject.Find("CHZlertext").GetComponent<Text>().text = "";
 
-            for (int i = 1; i < 4; i++)
+        for (int i = 1; i < 9; i++)
+        {
+            //chztmp=chztmp.Substring(1,chztmp.Length-1);
+            if (paystmp.Length > 0 || pinstmp.Length > 0)
             {
-                //chztmp=chztmp.Substring(1,chztmp.Length-1);
-                if (paystmp.Length > 0 || pinstmp.Length>0)
+
+
+                // cihaz name esphostname
+                //Debug.Log("paystmp baþ: " + paystmp);
+                //Debug.Log("i: " + i.ToString());
+
+                if (paystmp.IndexOf("pay\":\"") > -1)
                 {
-
-
-                    // cihaz name esphostname
-                    //Debug.Log("paystmp baþ: " + paystmp);
-                    //Debug.Log("i: " + i.ToString());
-
-                    if (paystmp.IndexOf("pay\":\"") > -1)
-                    {
-                        chzname[i] = paystmp.Substring(1, paystmp.IndexOf("pay\":\"")-1);
-                        paystmp = paystmp.Substring(chzname[i].Length + 6, paystmp.Length - (chzname[i].Length + 6));
-                        GameObject.Find("chzpan" + i.ToString() + "/name").GetComponent<Text>().text = chzname[i];
-                        Debug.Log("chzname[" + i.ToString() + "]: " + chzname[i]);
-                    }
+                    chzname[i] = paystmp.Substring(1, paystmp.IndexOf("pay\":\"") - 1);
+                    paystmp = paystmp.Substring(chzname[i].Length + 6, paystmp.Length - (chzname[i].Length + 6));
+                    GameObject.Find("chzpan" + i.ToString() + "/name").GetComponent<Text>().text = chzname[i];
+                    Debug.Log("chzname[" + i.ToString() + "]: " + chzname[i]);
+                }
 
                 if (paystmp.Length > 0)
                 {
@@ -517,35 +590,35 @@ public class Programcs : MonoBehaviour
                     //Debug.Log("paystmp devam: " + paystmp);
                 }
 
-                        if (pinstmp.IndexOf("pin\":\"") > -1)
-                        {
-                            pinstmp = pinstmp.Substring(chzname[i].Length + 6, pinstmp.Length - (chzname[i].Length + 6));
-                        }
-                        // pay al
-                        //Debug.Log("pinbaþý ne: " + pinstmp);
-                        String pintmp = pinstmp;
+                if (pinstmp.IndexOf("pin\":\"") > -1)
+                {
+                    pinstmp = pinstmp.Substring(chzname[i].Length + 6, pinstmp.Length - (chzname[i].Length + 6));
+                }
+                // pay al
+                //Debug.Log("pinbaþý ne: " + pinstmp);
+                String pintmp = pinstmp;
 
-                        pintmp = pintmp.Substring(1, pintmp.Length - 1);
+                pintmp = pintmp.Substring(1, pintmp.Length - 1);
                 pintmp = pintmp.Substring(0, pintmp.IndexOf("\""));
-                        //Debug.Log("pintmp: " + pintmp);
-                        GameObject.Find("chzpan" + i.ToString() + "/pin").GetComponent<Text>().text = pintmp;
-                        pinstmp = pinstmp.Substring(pintmp.Length + 1, pinstmp.Length - (pintmp.Length + 1));
-                        //Debug.Log("pinstmp devam: " + pinstmp);
+                //Debug.Log("pintmp: " + pintmp);
+                GameObject.Find("chzpan" + i.ToString() + "/pin").GetComponent<Text>().text = pintmp;
+                pinstmp = pinstmp.Substring(pintmp.Length + 1, pinstmp.Length - (pintmp.Length + 1));
+                //Debug.Log("pinstmp devam: " + pinstmp);
 
 
 
 
 
 
-                if (paystmp.IndexOf("},")>-1 && paystmp.IndexOf("},") < 3)
-                    {
-                        paystmp = "";
-                        break;
-                    }
-                    if(paystmp.Length<3)
-                    {
+                if (paystmp.IndexOf("},") > -1 && paystmp.IndexOf("},") < 3)
+                {
+                    paystmp = "";
                     break;
-                    }
+                }
+                if (paystmp.Length < 3)
+                {
+                    break;
+                }
 
                 /*
                         // pay pinayar
@@ -560,30 +633,29 @@ public class Programcs : MonoBehaviour
                         }
                 */
             }
-                        /*
-                        // pin pinstate
-                        if (pintmp.IndexOf(chzname[i] + "pin\":\"") > -1)
-                        {
+            /*
+            // pin pinstate
+            if (pintmp.IndexOf(chzname[i] + "pin\":\"") > -1)
+            {
 
-                            int pinbas = pintmp.IndexOf(chzname[i] + "pin\":\"") + chzname[i].Length+6;
+                int pinbas = pintmp.IndexOf(chzname[i] + "pin\":\"") + chzname[i].Length+6;
 
-                            pintmp = pintmp.Substring(pinbas, pintmp.IndexOf("\"}") - pinbas);
-                            Debug.Log(pintmp);
-                            GameObject.Find("chzpan" + i.ToString() + "/pin").GetComponent<Text>().text = pintmp;
-                        }
-
-                        */
-
+                pintmp = pintmp.Substring(pinbas, pintmp.IndexOf("\"}") - pinbas);
+                Debug.Log(pintmp);
+                GameObject.Find("chzpan" + i.ToString() + "/pin").GetComponent<Text>().text = pintmp;
             }
 
-                    //Debug.Log(chztmp);
-                
-            
+            */
+
+        }
+
+        //Debug.Log(chztmp);
+
+
 
 
         ekran = GameObject.Find("CHZtext").GetComponent<Text>().text;
         if (ekran.Length > 0) tekgorunumguncelle();
-
 
     }
 
@@ -638,7 +710,7 @@ public class Programcs : MonoBehaviour
         String hum = "";
         String temp = "";
 
-            Debug.Log("ptm BAÞLANGIÇ: " + ptm);
+        Debug.Log("ptm BAÞLANGIÇ: " + ptm);
 
         for (int psatirsay = 1; psatirsay < 11; psatirsay++)
         {
@@ -669,7 +741,7 @@ public class Programcs : MonoBehaviour
                 xx = ptm.IndexOf("|");
                 ptm = ptm.Substring(xx + 1, ptm.Length - (xx + 1));
 
-                ePinState[psatirsay] = ptm.Substring(0, ptm.IndexOf("|"))+".";
+                ePinState[psatirsay] = ptm.Substring(0, ptm.IndexOf("|")) + ".";
                 //Debug.Log("ePinState: " + ePinState[psatirsay]);
 
                 xx = ptm.IndexOf("|");
@@ -678,17 +750,31 @@ public class Programcs : MonoBehaviour
                 pinmaxvalue[psatirsay] = ptm.Substring(0, ptm.IndexOf("|"));
                 //Debug.Log("pinmaxvalue: " + pinmaxvalue[psatirsay]);
 
+                xx = ptm.IndexOf("|");
+                ptm = ptm.Substring(xx + 1, ptm.Length - (xx + 1));
+
+                acilseviyesi[psatirsay] = ptm.Substring(0, ptm.IndexOf("|"));
+                //Debug.Log("pinmaxvalue: " + pinmaxvalue[psatirsay]);
+
+
+                xx = ptm.IndexOf("|");
+                ptm = ptm.Substring(xx + 1, ptm.Length - (xx + 1));
+
+                acildeger[psatirsay] = ptm.Substring(0, ptm.IndexOf("|"));
+                //Debug.Log("pinmaxvalue: " + pinmaxvalue[psatirsay]);
+
 
                 xx = ptm.IndexOf("|");
                 ptm = ptm.Substring(xx + 1, ptm.Length - (xx + 1));
 
                 pinlabel[psatirsay] = ptm.Substring(0, ptm.IndexOf("]"));
-               // Debug.Log("pinlabel: " + pinlabel[psatirsay]);
+                // Debug.Log("pinlabel: " + pinlabel[psatirsay]);
 
                 xx = ptm.IndexOf("][");
                 ptm = ptm.Substring(xx + 1, ptm.Length - (xx + 1));
                 Psatirsaymax = psatirsay;
-            } else
+            }
+            else
             {
                 Psatirsaymax = psatirsay;
                 break;
@@ -697,36 +783,37 @@ public class Programcs : MonoBehaviour
 
         // pin parçalama için
 
-            ptm = pin;
-         Debug.Log("pin BAÞLANGIÇ : " + ptm);
+        ptm = pin;
+        Debug.Log("pin BAÞLANGIÇ : " + ptm);
         for (int psatirsay = 1; psatirsay < Psatirsaymax; psatirsay++)
+        {
+
+            if (ptm.Length > 0)
             {
 
-                if (ptm.Length > 0)
-                {
+                //Debug.Log("PinState: " + ptm.Substring(0, ptm.IndexOf(":")));
 
-                    //Debug.Log("PinState: " + ptm.Substring(0, ptm.IndexOf(":")));
-
-                    int xx;
-                    xx = ptm.IndexOf(":");
-                    ptm = ptm.Substring(xx + 1, ptm.Length - (xx + 1));
+                int xx;
+                xx = ptm.IndexOf(":");
+                ptm = ptm.Substring(xx + 1, ptm.Length - (xx + 1));
                 if (ptm.Length < 2) break;
                 PinState[psatirsay] = ptm.Substring(0, ptm.IndexOf(","));
                 Debug.Log("PinState before: " + PinState[psatirsay] + "   pinsignaltype: " + pinsignaltype[psatirsay]);
-                if (pinsignaltype[psatirsay].IndexOf("DHT")> -1)
+                if (pinsignaltype[psatirsay].IndexOf("DHT") > -1)
                 {
                     if (PinState[psatirsay].IndexOf("t") > -1)
                     {
                         temp = PinState[psatirsay].Substring(PinState[psatirsay].IndexOf("t") + 1, PinState[psatirsay].IndexOf("h") - (PinState[psatirsay].IndexOf("t") + 1));
                         hum = PinState[psatirsay].Substring(PinState[psatirsay].IndexOf("h") + 1, PinState[psatirsay].Length - (PinState[psatirsay].IndexOf("h") + 1));
-                        if(hum.Length<2) hum = hum+ "0";
+                        if (hum.Length < 2) hum = hum + "0";
                     }
                 }
                 else PinState[psatirsay] = (Convert.ToInt32(PinState[psatirsay])).ToString();
 
-                    xx = ptm.IndexOf(",");
-                    ptm = ptm.Substring(xx + 1, ptm.Length - (xx + 1));
-                }else break;
+                xx = ptm.IndexOf(",");
+                ptm = ptm.Substring(xx + 1, ptm.Length - (xx + 1));
+            }
+            else break;
 
 
         }
@@ -735,7 +822,7 @@ public class Programcs : MonoBehaviour
         GameObject psatirprefab = GameObject.Find("pinsatirlaripanel/pin-");
 
         SuandakiYkonum = ilksatirYkonumu;
-        if(SuandakiYkonum>0) SuandakiYkonum = -147;
+        if (SuandakiYkonum > 0) SuandakiYkonum = -147;
         for (int psatirsay = 1; psatirsay < Psatirsaymax; psatirsay++)
         {
             GameObject GO = GameObject.Find("pinsatirlaripanel");
@@ -744,7 +831,8 @@ public class Programcs : MonoBehaviour
                 GO = Instantiate(psatirprefab, GameObject.Find("pinsatirlaripanel").transform);
                 GO.transform.position = new Vector3(GO.transform.position.x, psatirsay * -200, GO.transform.position.z);
                 GO.name = "pin-" + psatirsay.ToString();
-            }else { GO = GameObject.Find("pin-" + psatirsay.ToString());}
+            }
+            else { GO = GameObject.Find("pin-" + psatirsay.ToString()); }
 
             if (ePinState[psatirsay] != PinState[psatirsay])
             {
@@ -776,20 +864,28 @@ public class Programcs : MonoBehaviour
 
                     GameObject.Find(GO.name + "/gosterge/Slider/value").transform.localScale = new Vector3(0f, 1f, 1f);
 
-                } else if (pinmode[psatirsay] == "INP" && (pinsignaltype[psatirsay] == "ANG" || pinsignaltype[psatirsay] == "DIG") )
+                }
+                else if (pinmode[psatirsay] == "INP" && pinsignaltype[psatirsay] == "HCE")
                 {
-                    
+                    GameObject.Find(GO.name + "/gosterge/hce").transform.localScale = new Vector3(1, 1, 1);
+                    GameObject.Find(GO.name + "/gosterge/hce/pinstate").GetComponent<Text>().text = PinState[psatirsay];
+
+                }
+                else if (pinmode[psatirsay] == "INP" && (pinsignaltype[psatirsay] == "ANG" || pinsignaltype[psatirsay] == "DIG"))
+                {
+
                     GameObject.Find(GO.name + "/gosterge/gauge").transform.localScale = new Vector3(1, 1, 1);
                     GameObject.Find(GO.name + "/gosterge/gauge/pinstate").GetComponent<Text>().text = PinState[psatirsay];
                     GameObject.Find(GO.name + "/gosterge/gauge/min").GetComponent<Text>().text = pinminvalue[psatirsay];
                     GameObject.Find(GO.name + "/gosterge/gauge/max").GetComponent<Text>().text = pinmaxvalue[psatirsay];
                     GameObject.Find(GO.name + "/gosterge/gauge/value").GetComponent<Text>().text = PinState[psatirsay];
                     //float angle = (Convert.ToSingle(PinState[psatirsay]) - Convert.ToSingle(pinminvalue[psatirsay])) / (Convert.ToSingle(pinmaxvalue[psatirsay]) - Convert.ToSingle(pinminvalue[psatirsay]));
-                    float angle = 135 -Convert.ToInt32( (Convert.ToInt32(PinState[psatirsay])*270)/((Convert.ToInt32(pinmaxvalue[psatirsay])+0.0001f) - Convert.ToInt32(pinminvalue[psatirsay]))) ; 
-                    
+                    float angle = 135 - Convert.ToInt32((Convert.ToInt32(PinState[psatirsay]) * 270) / ((Convert.ToInt32(pinmaxvalue[psatirsay]) + 0.0001f) - Convert.ToInt32(pinminvalue[psatirsay])));
+
                     //Debug.Log("angle: " + angle.ToString());
                     GameObject.Find(GO.name + "/gosterge/gauge/sifir/o").transform.rotation = Quaternion.Euler(0, 0, angle);
-                }else if (pinmode[psatirsay] == "INP" && pinsignaltype[psatirsay].IndexOf("DHT")>-1)
+                }
+                else if (pinmode[psatirsay] == "INP" && pinsignaltype[psatirsay].IndexOf("DHT") > -1)
                 {
 
                     GameObject.Find(GO.name + "/gosterge/dht").transform.localScale = new Vector3(1, 1, 1);
@@ -842,10 +938,10 @@ public class Programcs : MonoBehaviour
     public int dbykonum = 1;
     public void dbassagi()
     {
-        if(PlayerPrefs.GetString("dburl" + (dbykonum - 1).ToString()).Length > 0)
+        if (PlayerPrefs.GetString("dburl" + (dbykonum - 1).ToString()).Length > 0)
         {
             dbykonum--;
-            GameObject.Find("dbpaneller").transform.position = new Vector3(GameObject.Find("dbpaneller").transform.position.x, (dbykonum * 60)-60, 100);
+            GameObject.Find("dbpaneller").transform.position = new Vector3(GameObject.Find("dbpaneller").transform.position.x, (dbykonum * 60) - 60, 100);
 
             GameObject.Find("Secilidbtext").GetComponent<Text>().text = PlayerPrefs.GetString("dburl" + dbykonum.ToString());
             GameObject.Find("Secilidbapikeytext").GetComponent<Text>().text = PlayerPrefs.GetString("dbapi" + dbykonum.ToString());
@@ -887,18 +983,24 @@ public class Programcs : MonoBehaviour
     {
 
         imggoster += 1;
-        if(imggoster>1) imggoster = 0;
+        if (imggoster > 1) imggoster = 0;
 
-        if(imggoster==0)GameObject.Find("CHZfonimg").transform.localScale = new Vector3(0f, 1f, 1f);
+        if (imggoster == 0) GameObject.Find("CHZfonimg").transform.localScale = new Vector3(0f, 1f, 1f);
         else GameObject.Find("CHZfonimg").transform.localScale = new Vector3(1f, 1f, 1f);
 
-        for (int i = 1; i < 11 ; i++)
+        for (int i = 1; i < 11; i++)
         {
-            if(GameObject.Find("pin-" + i.ToString() + "/fonimg")==null) break;
+            if (GameObject.Find("pin-" + i.ToString() + "/fonimg") == null) break;
 
             if (imggoster == 0) GameObject.Find("pin-" + i.ToString() + "/fonimg").transform.localScale = new Vector3(0f, 1f, 1f);
             else GameObject.Find("pin-" + i.ToString() + "/fonimg").transform.localScale = new Vector3(1f, 1f, 1f);
         }
+    }
+
+
+    public void mainsceneyedon()
+    {
+        SceneManager.LoadScene("main");
     }
 
 }
