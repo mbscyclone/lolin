@@ -79,14 +79,15 @@ int rescanwifi = 0;
 
 bool htpcldis=false;
 
-//int aut = 0;
-//int autcode;
-//int logintimeout;
-//int logintimeoutmax=240000;
-//String capt;
-//String unme="admin";
-//String pwrd="1234";
+int aut = 0;
+int autcode;
+int logintimeout;
+int logintimeoutmax=240000;
+String capt;
+String unme="admin";
+String pwrd="1234";
 int PIN_TONE;
+String Host;
 
 int sayfayenile = 0;
 int Pin[10];
@@ -108,10 +109,12 @@ String PinState[10];
 String ePinState[10];
 String fbPinState[10];
 String pinmaxvalue[10];
+String acilseviyesi[10];
+String acildeger[10];
 String pinlabel[10];
+String ACL="0";
 
-String Acilservis;
-String Acilhasta;
+
 String Abonelik;
 //String pindurumrec;
 //bool pindurumrecyap;
@@ -271,6 +274,8 @@ void dosyaOkupinayar() {
         fbPinState[x] = "";
         pinmaxvalue[x] = "";
         pinlabel[x] = "";
+        acilseviyesi[x]="";
+        acildeger[x]="";
         hcsrT[x] = -1;
         hcsrE[x] = -1;
       }
@@ -349,6 +354,15 @@ void dosyaOkupinayar() {
 
         pinmaxvalue[x] = strtmp.substring(0, strtmp.indexOf("|"));
         strtmp = strtmp.substring(strtmp.indexOf("|") + 1, strtmp.length());
+
+
+        acilseviyesi[x] = strtmp.substring(0, strtmp.indexOf("|"));
+        strtmp = strtmp.substring(strtmp.indexOf("|") + 1, strtmp.length());
+
+        acildeger[x] = strtmp.substring(0, strtmp.indexOf("|"));
+        strtmp = strtmp.substring(strtmp.indexOf("|") + 1, strtmp.length());
+
+
 
         //Serial.print("label bu");Serial.println(strtmp);
 
@@ -819,6 +833,8 @@ void dosyaYazprogram(String programdatat) {
     PinState[x] = "";
     ePinState[x] = "";
     pinmaxvalue[x] = "";
+    acilseviyesi[x] = "";
+    acildeger[x] = "";
     pinlabel[x] = "";
   }
 
@@ -843,7 +859,15 @@ void dosyaYazprogram(String programdatat) {
 
 
 
+String mqyol[12];
+String degisenmq[12];
+bool mqsendbayrak[12];
+int mqdolubayrak;
+int mqsay;
+String notalar;
+uint8_t serstat;
 
+int dhtokusayac = 0;
 
 
 
@@ -851,7 +875,7 @@ int sayPtakipicin = 0;
 
 unsigned long lastMillis;
 
-
+int mqttconnectsayac;
 
 int sil = 0;
 
@@ -860,6 +884,13 @@ void setup() {
   // starttime=millis();
   Serial.begin(115200);
   // dosya setup kısmı ////////////////
+
+            for (int y=1;y<13;y++)
+            {
+              mqyol[y]="";
+            }
+
+
   if (LittleFS.begin()) {
     Serial.println();
     Serial.println("Dosya sistemi başarılı");
@@ -968,11 +999,6 @@ void setup() {
   dosyaokufbusername();
   dosyaokufbuserpass();
 
-  if (WiFi.status() == WL_CONNECTED && fben != 0)
-  { if(habp==-2)dosyaokuhabp();
-    if(habp == 2 || habp == 3)connectfb();
-  } 
-
 
     httpserver.begin();
     butonactcoloku();
@@ -1008,6 +1034,12 @@ void setup() {
   }
 
   if (WiFi.status() == WL_CONNECTED) htserveroku();
+
+
+  if (WiFi.status() == WL_CONNECTED && fben != 0)
+  { if(habp==-2)dosyaokuhabp();
+    if(habp == 2 || habp == 3)connectfb();
+  }
 }
 
 
@@ -1030,13 +1062,7 @@ void connectfb() {
 
 void Programtakip(String progdata);
 
-bool mqsendbayrak = false;
-String degisenmq;
-String mqyol;
-String notalar;
-uint8_t serstat;
 
-int dhtokusayac = 0;
 void loop() {
   //Serial.print("Free heap: "); Serial.println(ESP.getFreeHeap());
 
@@ -1068,18 +1094,17 @@ void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     if(habp==-2)dosyaokuhabp();
     if (habp == 1 || habp == 3) {
-      mqttclient.loop();
       // <- fixes some issues with WiFi stability
       if (!mqttclient.connected()) {
         MQTTConnect();
-      }
+      } else mqttclient.loop();
     }
 
     if (fben == 1) {
       if(habp==-2)dosyaokuhabp();
       if(habp == 2 || habp == 3){
         fbresulsay += 1;
-        if (fbresulsay > 3000) {
+        if (fbresulsay > 4000) {
           fbresulsay = 0;
           connectfb();
         }
@@ -1120,23 +1145,50 @@ void loop() {
         if (programdata.length() > 0) programrun();
         if (pinayar.length() > 0) updateoutput();
         if (pinayar.length() > 0) vrkontrol();
-        if (mqsendbayrak == true) {
-          if(habp == 1 || habp == 3) mqttsend(mqyol, degisenmq);
+//        mqsay+=1;
+//        if(mqsay>50)
+//        {
+//          mqsay=1;
+//        }
+
+        //if (mqsendbayrak[mqsay] == true) {
+        //  if(habp == 1 || habp == 3) mqttsend(mqyol[mqsay], degisenmq[mqsay]);
+        //}
+
+        /*
+        if(mqdolubayrak>0 && (psci==true || psco==true)){
+          bool bosaltma=false;
+          for(int j=1;j<mqdolubayrak+1;j++)
+          {
+            if(mqsendbayrak[j]==true) bosaltma=true;break;
+          }
+
+          if(bosaltma==false)
+          {
+            for(int j=1;j<mqdolubayrak+1;j++)
+            {
+              mqsenddataold[j]="";
+              mqsendbayrak[j]=false;
+            }
+          }
         }
+        */
       }
     
 
 
     //Serial.println(zamanfark);
-    if (habp > 1 && firebaseyegirdim==false) {
-      if (zamanfark >= 900) {
+    if (habp > 1) {
+      if (zamanfark >= 900 && zamanfark <= 1000) {
+          zamanbasi = millis() - 1001;
+          
           Serial.println(fben);
           updatefbvirtual();
           fbsayacoku();
       }
     }
 
-    if (zamanfark > 1200) {zamanbasi = millis(); zamanfark=millis();firebaseyegirdim=false;}
+    if (zamanfark > 1300) {zamanbasi = millis(); zamanfark=millis();}
 
 
 

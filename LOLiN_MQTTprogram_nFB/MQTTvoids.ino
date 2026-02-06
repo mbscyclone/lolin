@@ -1,9 +1,9 @@
 
 ///// MQTT İŞLEMLERİ BAŞLANGICI /////////////////////////
 String mqgonderen;
-String mqsenddataold;
 String mdegisenler;
-int mqttconnectsayac;
+String mdegisen;
+
 void MQTTConnect() {
 
   if (mqttconnectsayac == 0) {
@@ -11,26 +11,32 @@ void MQTTConnect() {
     //dosyaOkuMQTTip();
     const char* ipAdres = MQTTip.c_str();
     mqttclient.begin(ipAdres, mqttnet);
-
-    String Client_IDm = esphostname;
+    String capt = String(random(1000, 9999));
+    String Client_IDm = esphostname +"-"+ capt;
     const char* Client_IDconstchar = Client_IDm.c_str();
-
     mqttclient.connect(Client_IDconstchar, "public", "public");
     mqttclient.onMessage(messageReceived);
-    Serial.println("\nTry connect!");
+    Serial.println("\nTry connect! " + String(ipAdres));
     mqttconnectsayac = 1;
-  } else {
-    if (mqttconnectsayac % 1000 == 0) Serial.print("*");
-    mqttconnectsayac += 1;
-    if (mqttconnectsayac > 5000) mqttconnectsayac = 0;
-  }
 
+    while(!mqttclient.connected() || mqttconnectsayac < 2000)
+    {
+      if (mqttconnectsayac % 1000 == 0) Serial.print("*");
+      mqttconnectsayac += 1;
+    }
+  } else {
+    if (mqttconnectsayac % 100 == 0) Serial.print("*");
+    mqttconnectsayac += 1;
+    if (mqttconnectsayac > 6000) mqttconnectsayac = 0;
+  }
 
   if (mqttclient.connected()) {
     Serial.println("\nconnected!");
     mqttclient.subscribe("/"+YOL+"/#");
     // client.unsubscribe("/hello");
+    mqttconnectsayac = 0;
   }
+
 }
 
 String Gelenmsg;
@@ -48,19 +54,29 @@ void messageReceived(String& topic, String& payload) {
   //if (payload==mqsenddataold) return;
 
   Gelenmsg = payload;
-  Serial.println(Gelentopic);
-  Serial.println(Gelenmsg);
+  //Serial.println(Gelentopic);
+  //Serial.println(Gelenmsg);
   Gelentopic = topic;
 
-  
-  if(Gelenmsg == mqsenddataold){mqsendbayrak=false; return;}
-  
-  
+  //for(int v=1;v<51;v++){
+  //if(Gelenmsg == degisenmq[v])return;
+  //}
+
+  for(int v=1;v<51;v++){
+  if(Gelentopic == mqyol[v]  && Gelenmsg == degisenmq[v])return;
+  }
+
 
   if (Gelenmsg == ePayload && Gelentopic == eTopic) return;
   else {
+
     eTopic = Gelentopic;
     ePayload = Gelenmsg;
+
+  Serial.println(Gelentopic);
+  Serial.println(Gelenmsg);
+
+  if(Gelentopic.indexOf(esphostname)>-1 || Gelentopic.indexOf("ALLDEV")>-1)
     mqttisyap(payload);
   }
   // Note: Do not use the client in the callback to publish, subscribe or
@@ -81,8 +97,7 @@ void mqttsend(String mqyol , String mqdata)
 {
   String mqpat=mqyol;
   // mqdata = "/"+YOL + "/" + esphostname + "=" + degisenler;
-  mqsenddataold=mqdata;
-  mqttclient.publish(mqpat, mqdata);
+    mqttclient.publish(mqpat, mqdata);
   //if(mqdata.indexOf("BUZ>")>-1)delay(100);
   //else{delay(4);}
 }
@@ -143,6 +158,15 @@ Serial.print("mqgonderen:");Serial.print(mqgonderen);Serial.print(" pnm:");Seria
                                         break;
                                       }
                                 }
+
+
+                                if(pnm=="ACL")
+                                {
+                                  ACL=pns;
+                                  Serial.println("acil durum 1 ilan edildi..");
+                                }
+
+                                
                                 if(rslttmp.length()<2)break;
                             }
 

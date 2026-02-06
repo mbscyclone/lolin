@@ -1,5 +1,5 @@
-String urLL="";
 
+String urLL="";
 void httpheader(WiFiClient xilent) {
   xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>");
   xilent.println("<head><meta name=\"viewport\" xo=\"width=device-width, initial-scale=1\">");
@@ -34,6 +34,18 @@ void httpheader(WiFiClient xilent) {
 }
 
 void htpcl() {
+
+if(WiFi.status()==WL_CONNECTED){
+
+if(kimdir>0) {
+  if(millis() - taratimer > sayfayenile*1000)
+  {
+    if(millis() - taratimer > (sayfayenile+1)*1000) taratimer = millis();
+  }
+  else return;
+  }
+}
+
   WiFiClient xilent = httpserver.available();
   header = "";
   if (xilent) {
@@ -1061,12 +1073,13 @@ void htpcl() {
 
             creator += "T";
             if (kimdir < 1 && header.indexOf(" /agtara") > -1) {
+              server.stop();
               kimdir = 1;
               kimdirsonyeri = 1;
               espv4sayac = 1;
             }
-            if (kimdir < 1 && header.indexOf(" /agtard") > -1) { kimdir = kimdirsonyeri; }
-            if (kimdir > 1 && header.indexOf(" /agtdur") > -1) { kimdir = -2; }
+            if (kimdir < 1 && header.indexOf(" /agtard") > -1) { kimdir = kimdirsonyeri;server.stop();}
+            if (kimdir > 1 && header.indexOf(" /agtdur") > -1) { kimdir = -2; server.begin();}
             if (header.indexOf((" /rr120")) > -1) sayfayenile = 120;
             if (header.indexOf((" /rr30")) > -1) sayfayenile = 30;
             if (header.indexOf((" /rr10")) > -1) sayfayenile = 10;
@@ -1173,7 +1186,8 @@ void htpcl() {
             xilent.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
             xilent.println("<meta charset=\"UTF-8\">");
 
-            if (sayfayenile > 0) xilent.println("<script> setTimeout(function(){window.location.href = \"\";}, " + String(sayfayenile * 1000) + ");</script>");
+            if(kimdir>0)sayfayenile=30;
+            if (sayfayenile > 0) xilent.println("<script> setTimeout(function(){window.location.href = \"/\";}, " + String(sayfayenile * 1000) + ");</script>");
 
             xilent.println("<link rel=\"icon\" href=\"data:,\">");
             // CSS to style the on/off buttons
@@ -1440,9 +1454,12 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
               if (WiFi.status() == WL_CONNECTED) {
                 if (kimdir > 0) {
                   xilent.println("<td width=\"300\" align=\"center\" style='vertical-align: top;border:2px solid black;'>");
+                  xilent.println("<img src='https://cdn.pixabay.com/animation/2025/11/11/02/19/02-19-36-889_512.gif' width='32' height='16'>&ensp;");
                   xilent.println("<label style='font-size: 12px;'>Ağ taraması " + String((int)((kimdir * 100) / 255)) + " %</label>");
                   xilent.println("<a href='/agtdur'><label style='font-size: 12px;' type='submit'>Taramayı durdur</label></a><br>");
                   int vif = (int)(((kimdirsonyeri * 100) / 255) / 3);
+                  yield();
+                  
                   String susluce = "[";
                   for (int progresbar = 1; progresbar < vif; progresbar++) {
                     susluce += "■";

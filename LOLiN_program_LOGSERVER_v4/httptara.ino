@@ -32,7 +32,7 @@ void httptara()
     String testserver = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(kimdir);
             String esphostnamegec = esphostname;
             esphostnamegec.toUpperCase();
-            if (esphostnamegec.indexOf("LOGSERVER") < 0) {testserver="http://" + testserver + ":8080/ser:"+ lipStr;}
+            if (esphostnamegec.indexOf("LOGSERVER") > -1) {testserver="http://" + testserver + ":8080/ser:"+ lipStr;}
             else {testserver="http://" + testserver + ":8080/";}
     kimdirsonyeri=kimdir;
 
@@ -95,6 +95,7 @@ void httptara()
             if(kimdir>255){
             kimdir=-2;kimdirsonyeri=-2;
             esplerikaydet();
+            server.begin();
             }
 
           }

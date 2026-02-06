@@ -292,6 +292,7 @@ void htpcl() {
             xilent.println(".button { background-color: #" + butonactcol + "; border: 5px solid yellow; border-radius: 10px 10px 10px 10px; color: white; padding: 10px 10px;text-decoration: none; font-size:12px; margin: 1px; cursor: pointer;}");
             xilent.println(".butoff {background-color: #" + butonpascol + "; border: 5px solid gray; border-radius: 10px 10px 10px 10px; color: white; padding: 10px 10px;text-decoration: none; font-size:12px; margin: 1px; cursor: pointer;}");
             xilent.println(".butayr {background-color: #" + butonayrcol + "; border: 5px solid gray; border-radius: 6px 6px 20px 15px; color: black; padding: 10px 10px;text-decoration: none; font-size:12px; margin: 1px; cursor: pointer;}");
+            xilent.println(".butmnu {background-color: #ffffff; border: 2px solid gray; border-radius: 6px 20px 20px 6px; color: black; padding: 8px 8px;text-decoration: none; font-size:12px; margin: 1px; cursor: pointer;}");
             xilent.println("</style>");
             xilent.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: left;}");
             //xilent.println("</style><style>");
@@ -307,7 +308,10 @@ void htpcl() {
             String hostNtmp = hostN;
             String hostN1 = hostNtmp.substring(0, hostNtmp.indexOf("."));
             hostNtmp = hostNtmp.substring(hostNtmp.indexOf(".") + 1, hostNtmp.length());
-            hostN1 = hostN1 + "." + hostNtmp.substring(hostNtmp.indexOf(".") + 1, hostNtmp.length());
+            hostN1 = hostN1 + "." + hostNtmp.substring(0,hostNtmp.indexOf("."))+""; // +""; nokta koyarsan [ "";  =>  "."; ] iç test biter 
+            Serial.println("hostn1 ve lipstrn2");
+            Serial.println(hostN1);
+            Serial.println(lipstrN2);
 
             if (hostN1 != lipstrN2) {
 
@@ -326,14 +330,24 @@ void htpcl() {
                 if (bulunanespv4[i] != "") {
                   String urLL = bulunanespv4[i].substring(bulunanespv4[i].indexOf("]") + 1, bulunanespv4[i].length());
                   String bulunanespv4name = bulunanespv4[i].substring(bulunanespv4[i].indexOf("[") + 1, bulunanespv4[i].indexOf("]"));
-                  if (bulunanespv4name.indexOf("ESP32-CAM") > -1) komuta = ":8080/";
-                  String bulunanespurldata = "<a href='/GTP:http://" + urLL + komuta + "' ><label style='font-size:12px;' type='submit'>" + bulunanespv4name + "</label></a><br>";
+                  
+                  String bulunanespurldata;
+                  
+                  if (bulunanespv4name.indexOf("E32CAM") > -1)
+                  { 
+                    komuta = ":8080/";
+                    bulunanespurldata = "<a href='/GTP:http://" + urLL + komuta + "' ><button class=\"button butoff\" style='align:center;'>"+ bulunanespv4name +"</button></a> &nbsp; <br>";
+                  }
+                  else 
+                  {
+                  bulunanespurldata = "<a href='/GTP:http://" + urLL + komuta + "' ><button class=\"button butmnu\" style='align:center;'>"+ bulunanespv4name +"</button></a> &nbsp; <br>";
+                  }
                   xilent.println(bulunanespurldata);
                   xilent.println("<br><br>");
                 } else break;
               }
               xilent.println("</td>");
-              xilent.println("<td style='border:1px solid black ;width:600px; height:100%; vertical-align:center; align:center; background-color: #" + butonpbgcol + ";'>");
+              xilent.println("<td style='border:1px solid black ;width:600px; height:100%; background-color: #" + butonpbgcol + ";'>");
               //urLL = bulunanespv4[1].substring(bulunanespv4[1].indexOf("]") + 1, bulunanespv4[1].length());
               //Serial.println(urLL);
 
@@ -344,9 +358,12 @@ void htpcl() {
                 String htpServerip = "";
                 htpServerip = header.substring(header.indexOf("/GTP:") + 5, header.indexOf(" HTTP/1.1"));
                 getpserver80(htpServerip + "SPAYPIN");
-                Serial.println(payload2);
-                xilent.println(payload2);
-
+                //Serial.println(payload2);
+                String loadedesphostname = payload2.substring(0,payload2.length());
+                xilent.println("<div style='align:center; text-align: center;'>"); 
+                xilent.println("<label style='font-size:24px; text-align: center;'>" + loadedesphostname + "</label><br>");
+                xilent.println("<label style='font-size:24px; text-align: center;'>" + htpServerip + "</label><br>");
+                xilent.println("</div>");
                 if (payload2 != "404") {
                   /*
 D2|INP|HCE|D1|3|180|hcecho|277
@@ -380,6 +397,12 @@ EndText
                     String pinmx = satr.substring(0, satr.indexOf("|"));
                     satr = satr.substring(satr.indexOf("|") + 1, satr.length());
 
+                    String aclsev = satr.substring(0, satr.indexOf("|"));
+                    satr = satr.substring(satr.indexOf("|") + 1, satr.length());
+                    
+                    String acldeg = satr.substring(0, satr.indexOf("|"));
+                    satr = satr.substring(satr.indexOf("|") + 1, satr.length());
+
                     String pinlb = satr.substring(0, satr.indexOf("|"));
                     satr = satr.substring(satr.indexOf("|") + 1, satr.length());
 
@@ -404,7 +427,7 @@ EndText
                         if (pinst == "") pinst = "0";
                         if (pinst.toInt() == 0) {
                           String lin = "<br><label style='font-size:12px;'>" + pinnm + "</label><br>";
-                          lin += "<a href=\"http://" + lipStr + "/SEND>http://" + seciliespurldata + ",data:" + pinnm + ":1,SPAYPIN\" method=\"GET\"><button class=\"button butoff\">-0-</button></a>";
+                          lin += " &emsp;&emsp; <a href=\"http://" + hostN + "/SEND>http://" + seciliespurldata + ",data:" + pinnm + ":1,SPAYPIN\" method=\"GET\"><button class=\"button butoff\">-0-</button></a>";
                           lin += " &emsp;&emsp; " + pinlb;
                           Serial.print("seciliespurldata  >>-");
                           Serial.println(seciliespurldata);
@@ -416,7 +439,7 @@ EndText
 
                         if (pinst.toInt() == 1) {
                           String lin = "<br><label style='font-size:12px;'>" + pinnm + "</label><br>";
-                          lin += "<a href=\"http://" + lipStr + "/SEND>http://" + seciliespurldata + ",data:" + pinnm + ":0,SPAYPIN\" method=\"GET\"><button class=\"button button\">-0-</button></a>";
+                          lin += " &emsp;&emsp; <a href=\"http://" + hostN + "/SEND>http://" + seciliespurldata + ",data:" + pinnm + ":0,SPAYPIN\" method=\"GET\"><button class=\"button button\">-0-</button></a>";
                           lin += " &emsp;&emsp; " + pinlb;
                           Serial.print("seciliespurldata  >>-");
                           Serial.println(seciliespurldata);
@@ -430,7 +453,7 @@ EndText
 
                       if (pinsg == "PWM") {
 yield();
-                  String linx = "http://" + lipStr + "/SEND>http://" + seciliespurldata + ",data:" + pinnm;
+                  String linx = "http://" + hostN + "/SEND>http://" + seciliespurldata + ",data:" + pinnm;
 
 const char* liter = R"lite1(<div class='slidecontainer'>
   <form method='get' id='formĞname' action='Ğurl'>Ğlabel [Ğname]<input type='range' min='Ğmin' max='Ğmax' value='Ğstate' class='slider' name='pwm' id='myRangeĞname'>
@@ -461,7 +484,7 @@ sliderĞname.onmouseup = function () {
                         dizgiorj.replace("Ğstate", pinst);
                         dizgiorj.replace("Ğurl", linx);
                         Serial.println(dizgiorj);
-                        xilent.println("<br>" +  dizgiorj);
+                        xilent.println("<br>&emsp;&emsp;" +  dizgiorj);
                         xilent.println("&emsp;&emsp;&emsp; <label style='font-size:12px;'> &emsp;&emsp;&emsp; min: " + pinmn + "&emsp;&emsp;-&emsp;&emsp;max: " + pinmx + "</label><br>");
 
                       }
@@ -1230,7 +1253,7 @@ sliderĞname.onmouseup = function () {
               kimdirsonyeri = 1;
               espv4sayac = 1;
             }
-            if (kimdir < 1 && header.indexOf(" /agtard") > -1) { kimdir = kimdirsonyeri; }
+            if (kimdir < 1 && header.indexOf(" /agtard") > -1) { kimdir = kimdirsonyeri;}
             if (kimdir > 1 && header.indexOf(" /agtdur") > -1) { kimdir = -2; }
             if (header.indexOf((" /rr120")) > -1) sayfayenile = 120;
             if (header.indexOf((" /rr30")) > -1) sayfayenile = 30;
@@ -1337,8 +1360,9 @@ sliderĞname.onmouseup = function () {
 
             xilent.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
             xilent.println("<meta charset=\"UTF-8\">");
+            if(kimdir>0)sayfayenile=30;
 
-            if (sayfayenile > 0) xilent.println("<script> setTimeout(function(){window.location.href = \"\";}, " + String(sayfayenile * 1000) + ");</script>");
+            if (sayfayenile > 0) xilent.println("<script> setTimeout(function(){window.location.href = \"/\";}, " + String(sayfayenile * 1000) + ");</script>");
 
             xilent.println("<link rel=\"icon\" href=\"data:,\">");
             // CSS to style the on/off buttons
@@ -1429,13 +1453,13 @@ sliderĞname.onmouseup = function () {
 
             if (pinayar.length() < 2) {
               xilent.println("<p> Pinler Ayarları Yok</p>");
-              xilent.println("<br><br><br><br><p><a href=\"/Menu1\"><button class=\"button butayr\">Ayarlar</button></a></p>");
-              xilent.println("</body></html>");
+              //xilent.println("<br><br><br><br><p><a href=\"/Menu1\"><button class=\"button butayr\">Ayarlar</button></a></p>");
+              //xilent.println("</body></html>");
               // The HTTP response ends with another blank line
-              xilent.println("HTTP/1.1 200 OK");
-              xilent.println("Content-type:text/html");
-              xilent.println("Connection: close");
-              xilent.println();
+              //xilent.println("HTTP/1.1 200 OK");
+              //xilent.println("Content-type:text/html");
+              //xilent.println("Connection: close");
+              //xilent.println();
               ////xilent.abort();;
               //return;
             }
@@ -1588,14 +1612,19 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
             }
             yield();
 
-            xilent.println("<div align=\"left\">");
-            xilent.println("<table><td style=\"border:2px solid black;align:center; \">");
-            if (high_low_invert == true) xilent.println("<label style='font-size:10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label><br>");
-            if (progmsg != "") xilent.println("<label style='font-size:10px;'>" + progmsg + "</label><br>");
-      //     if (errorlog != "") xilent.println("<br>Hata: " + errorlog + "<br>");
+            xilent.println("<div align=\"center\">");
+            xilent.println("<table>");
+            
+
             esphostnamegec = esphostname;
             esphostnamegec.toUpperCase();
             if (esphostnamegec.indexOf("WANSERVER") > -1) {
+
+            //      xilent.println("<td style=\"border:2px solid black;align:center; \">");
+            //      if (high_low_invert == true) xilent.println("<label style='font-size:10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label><br>");
+            //      if (progmsg != "") xilent.println("<label style='font-size:10px;'>" + progmsg + "</label><br>");
+            //      if (errorlog != "") xilent.println("<br>Hata: " + errorlog + "<br>");
+
             //  xilent.println("<label style='font-size:12px;vertical-align: top;' title='Tamamı SD karta yazılı'>İşlem kayıtları (Son 10 işlem)</label></a><br>");
             //  xilent.println("<textarea name='is' id='id' cols='40' rows='20' >");
             //  xilent.println(SERVERlogbuf);  //xilent.println(SERVERlogbuf);
@@ -1605,6 +1634,7 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
               if (WiFi.status() == WL_CONNECTED) {
                 if (kimdir > 0) {
                   xilent.println("<td width=\"300\" align=\"center\" style='vertical-align: top;border:2px solid black;'>");
+                  xilent.println("<img src='https://cdn.pixabay.com/animation/2025/11/11/02/19/02-19-36-889_512.gif' width='32' height='32'><br>");
                   xilent.println("<label style='font-size:12px;'>Ağ taraması " + String((int)((kimdir * 100) / 255)) + " %</label>");
                   xilent.println("<a href='/agtdur'><label style='font-size:12px;' type='submit'>Taramayı durdur</label></a><br>");
                   int vif = (int)(((kimdirsonyeri * 100) / 255) / 3);
@@ -1679,16 +1709,18 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                     xilent.println("<p><form action=\"/Menu3\" method=\"POST\"><input type=\"submit\" value=\"Cihazlar\"></form></p></td>");
                   }
 
-                  xilent.println("</td>");
+                  xilent.println("</td></table></div>");
                 }
               }
             }
-            xilent.println("</table></div><p><a href=\"/Menu1\"><button class=\"button butayr\">Ayarlar</button></a></p>");
+            xilent.println("<p><a href=\"/Menu1\"><button class=\"button butayr\">Ayarlar</button></a></p>");
 
 
 
             // The HTTP response ends with another blank line
             xilent.println("coded by " + creator + ". ESP control  (ver:01__01.09.2025)<br><br><br>");
+            
+            if(kimdir<1){
             //String butonactcol = "#d1ca03";
             //String butonpascol = "#A3A3A3";
             //String butonayrcol = "#20d3c8";
@@ -1715,7 +1747,8 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
             //Serial.print("butonpbgcol:");
             //Serial.println(butonpbgcol);
             xilent.println("><input type='submit'>");
-            xilent.println("ffb12a</form></td>");
+            xilent.println("ffb12a</form></div>");
+          }
             /*                        butonactcol butonpascol butonayrcol butonpbgcol
             xilent.println(".button { background-color: #d1ca03; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size:10px; margin: 1px; cursor: pointer;}");
             xilent.println(".butoff {background-color: #A3A3A3; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size:10px; margin: 1px; cursor: pointer;}");

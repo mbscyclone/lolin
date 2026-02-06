@@ -2,7 +2,6 @@
 
 void httptara()
 {
-
             if(millis()-otuzsaniye > 29000)
             {
                 tarazamani=millis();

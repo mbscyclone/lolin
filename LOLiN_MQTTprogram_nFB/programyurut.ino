@@ -50,13 +50,13 @@ void programrun() {
   for (int sta = 0; sta < 11; sta++) {
     PinState[sta] = degdeg[sta];
     //Serial.print(pinname[sta] + " pinstate:");Serial.println(PinStatetmp[sta]);
+    if(ACL.toInt() > acilseviyesi[sta].toInt()) PinState[sta] = acildeger[sta];
   }
   ////////////////////////////////////////////////////////
 
   // fbde başka cihaza gonderilecek varmı bak ////////////////
 
-
-
+  
 
 
   ////////////////////////////////////////////////////////////
@@ -434,8 +434,8 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
       yapilacakis = yapilacaklar.substring(0, yapilacaklar.indexOf(";"));
       yapilacakisn = yapilacaklarn.substring(0, yapilacaklarn.indexOf(";"));
       yapilacaklarislemsayisi = i;
-      //Serial.print("yapılacak ");
-      //Serial.println(yapilacakis);
+      Serial.print("yapılacak ");
+      Serial.println(yapilacakis);
       //Serial.print("yapilacaklarislemsayisi ");
       //Serial.println(yapilacaklarislemsayisi);
       // tam burada yapılacak hesabına git
@@ -443,10 +443,54 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
       yais.toUpperCase();
       if(yais.indexOf("MQTT:")==0)
       { if(habp>0){
-        mqyol=yapilacakis.substring(5,yapilacakis.indexOf("="));
-        mdegisenler=yapilacakis.substring(yapilacakis.indexOf("=")+1,yapilacakis.length());
-        degisenmq=YOL + "/" + esphostname + "=" + mdegisenler+",";
-        if(mqsenddataold != degisenmq ) mqsendbayrak=true;
+        
+          int hane=0;
+        if(yapilacakis.indexOf("=")>-1)
+        {
+
+          String mqyoltmp=yapilacakis.substring(5,yapilacakis.indexOf("="));
+          String mdegisenlertmp=yapilacakis.substring(yapilacakis.indexOf("=")+1,yapilacakis.length());
+          String degisenmqtmp=YOL + "/" + esphostname + "=" + mdegisenlertmp+",";
+
+
+          String ACLtmp="";
+          if(degisenmqtmp.indexOf("ACL:")>-1)
+          {
+            Serial.println(degisenmqtmp);
+            ACLtmp=degisenmqtmp.substring(degisenmqtmp.indexOf("ACL:")+4,degisenmqtmp.length());
+            if(ACLtmp.indexOf(",")>0)ACLtmp=ACLtmp.substring(0,ACLtmp.indexOf(","));
+            if(ACLtmp.indexOf(";")>0)ACLtmp=ACLtmp.substring(0,ACLtmp.indexOf(";"));
+            if(ACLtmp.toInt()!=ACL.toInt()) {ACL=ACLtmp;}
+          }
+
+
+            for (int y=1;y<13;y++)
+            {
+              if(mqyol[y]==""){hane=y;break;}
+              if(mqyoltmp==mqyol[y])
+              {
+                if(degisenmq[y] != "" && degisenmqtmp == degisenmq[y])
+                {
+                  Serial.println(degisenmqtmp + "   EŞİT ÇIKTI  " + degisenmq[y]);
+                  Serial.println("EŞİT ÇIKTI");
+                  //hane=y;break;
+                  return;
+                }
+                else
+                          {
+                            Serial.println(degisenmqtmp + "   -----------   " + degisenmq[y]);
+                            Serial.println(y);
+                            
+                            hane=y;break;
+                          }
+              }
+            }
+
+                            if(habp == 1 || habp == 3) mqttsend(mqyoltmp, degisenmqtmp);
+                            mqyol[hane]=mqyoltmp;
+                            degisenmq[hane]=degisenmqtmp;
+                            delay(2);
+        }
         }
       }
       else 

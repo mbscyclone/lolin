@@ -71,7 +71,7 @@ String header;
 String creator;
 
 String esphostnameOnek = "";
-String esphostname = "esp-bos";
+String esphostname = "esp-sMQTT-bos";
 bool high_low_invert = false;
 String progmsg;
 unsigned int zamanfark;
@@ -950,7 +950,7 @@ void connectWifi(void) {
     Serial.println("Connected!!!");
     Serial.println(WiFi.localIP());
     Serial.println(WiFi.gatewayIP());
-    WiFi.softAP(esphostname, "12345678");  // bağlanınca ap kalksın için // koyabiliriz.
+    WiFi.softAP(esphostname, pass);  // bağlanınca ap kalksın için // koyabiliriz.
 
   IPAddress lip = WiFi.localIP();
   String mylocalip = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
@@ -963,7 +963,7 @@ void connectWifi(void) {
     Serial.println("HotSpot On");
     //                                wifiscan();
     //                                lookAP();// S etup HotSpot
-    WiFi.softAP("Esp01-bos-v3", "12345678");
+    WiFi.softAP("Esp01-sMQTT-bos-v3", "12345678");
     //delay(100);
     Serial.println(WiFi.localIP());
     Serial.println(WiFi.gatewayIP());
@@ -1381,9 +1381,11 @@ httpserver.setNoDelay(true);
       Serial.println("Web server Lunched.");
 
     const unsigned short mqttPort=1883;
-    broker.init(mqttPort);
-
-
+    bool brin = broker.init(mqttPort);
+    if(brin==true)
+    {Serial.println("Broker init ok");}
+    else
+    {Serial.println("Broker init failed");}
 }
 
 

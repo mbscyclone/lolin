@@ -61,6 +61,10 @@ void htpcl() {
           header += c;
         }
 
+        String Hosttmp=header.substring(header.indexOf("Host:")+5,header.length());
+        Host= Hosttmp.substring(0,Hosttmp.indexOf("\n"));
+
+
         if (header.indexOf("favicon.ico")>-1){header="";return;}
 
         if (header.indexOf(" HTTP/1.1") > -1) {
@@ -267,8 +271,8 @@ void htpcl() {
               xilent.println(lipStr+"=");
               for (int x=0;x<pinsayisi+1;x++)
               {
-                if(pinname[x].length()>0){
-                String gonrd=pinname[x] + "|" + pinmode[x] + "|" + pinsignaltype[x] + "|" + pinminvalue[x] + "|" + pinval[x] + "|" + pinmaxvalue[x] + "|" + pinlabel[x] + "|" + PinState[x] + "<br>";
+                if(pinlabel[x].length()>2 && pinmode[x].length()>2){
+                String gonrd=pinname[x] + "|" + pinmode[x] + "|" + pinsignaltype[x] + "|" + pinminvalue[x] + "|" + pinval[x] + "|" + pinmaxvalue[x] + "|" + acilseviyesi[x] + "|" + acildeger[x] + "|" + pinlabel[x] + "|" + PinState[x] + "<br>";
                 xilent.println(gonrd);
                 }
               }
@@ -1110,10 +1114,6 @@ void htpcl() {
 
 
 
-
-
-
-
             creator += "T";
 
             if (header.indexOf((" /rr120")) > -1) sayfayenile = 120;
@@ -1522,17 +1522,26 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
 //            if (fben == 1) xilent.println("<form action=\"/firebaseset?fireb=Off\" method=\"POST\">Firebase Açık<input type=\"submit\" value=\"FB Kapat\">! Reset çekilir !</form></label>");
 //            if (fben == 0) xilent.println("<form action=\"/firebaseset?fireb=On\" method=\"POST\">Firebase Kapalı<input type=\"submit\" value=\"FB Aç\">! Reset çekilir !</form></label>");
 
-
-
+/*
+for(int v=1;v<10;v++)
+{
+  xilent.println(String(v) + " mqyol:");xilent.println(mqyol[v]+" -- ");
+  xilent.println("degmq:");xilent.println(degisenmq[v]+" <br>");
+}
+*/
             // The HTTP response ends with another blank line
             //xilent.println("<br>hcsrloopvar:" + (String)hcsrloopvar + "<br>");
             xilent.println("<br>habp:" + (String)habp + "<br><br>");
+            //xilent.println("<br>ACL:" + ACL + "<br><br>");
             xilent.println("coded by " + creator + ". ESP kontrol (v4");
             xilent.println("<label style='font-size:1px;'>" + WiFi.macAddress() + "</label>04.01.2026)<br><br>");
             //String butonactcol = "#d1ca03";
             //String butonpascol = "#A3A3A3";
             //String butonayrcol = "#20d3c8";
             //String butonpbgcol = "#ffb12a";
+
+            xilent.println("istemci: " + Host + "<br>");
+
             xilent.println("<div align=\"left\">");
             xilent.println("<form method='get' action='/butonactcol'><label>Acik konumundaki buton rengi. #</label><input name='is' length=6 style=\"width:50px\" value=");
             xilent.println(butonactcol);

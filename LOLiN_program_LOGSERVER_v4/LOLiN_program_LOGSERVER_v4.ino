@@ -188,7 +188,7 @@ String programdata;
 
 String payload2;
 
-
+unsigned long taratimer;
 
 int webstart=0;
 int fben;
@@ -216,7 +216,7 @@ ESP8266WebServer server(8080);
 
 unsigned long otuzsaniye=millis();
 unsigned long tarazamani=millis();
-int http2setTimeout=1000;
+int http2setTimeout=800;
 
 
 void handleRoot() {
@@ -1580,10 +1580,9 @@ broker.update();
 if(WiFi.status()==WL_CONNECTED)
 {
   if(kimdir>-1)
-      if(millis()-tarazamani > 1200)
+      if(millis()-tarazamani > 1000)
       {
-
-        httptara();
+        if(millis()-taratimer < (sayfayenile-2)*1000) httptara();
       }
 }
 
@@ -2082,3 +2081,4 @@ String Karakterduzeltfunc(String gelent) {
   Serial.println(gelent);
   return gelent;
 }
+ 

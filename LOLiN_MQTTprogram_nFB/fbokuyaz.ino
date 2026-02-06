@@ -3,7 +3,6 @@ String esayacyani="";
 void fbsayacoku()
 {
 yield();
-          firebaseyegirdim=true;
 
 //if(fbpinayaryaz==true){fbpinayaryaz=false;fbpinayarlariyaz();}
 
@@ -33,7 +32,7 @@ Serial.print("response code ");Serial.println(fetchResponseCode);
                             }
                             if(resul.toInt()==90){return;}
 
-                            if(resul.toInt()==9 || resul.toInt()==19)fbpinstatelerioku();
+                            if(resul.toInt()==9 || resul.toInt()==19){fbpinstatelerioku();fbsayacguncelle();}
                             
                             if(resul.toInt()==10){resul="-1";fbpinstateleriyaz();}
                               else                         
@@ -153,7 +152,7 @@ Serial.print("yol3 ");Serial.println(yol3);
 }
 
 void fbsayacguncelle()
-{  if(bestursay!=0)return;
+{  
                             String setpath="/" + YOL + "/r/"+esphostname;
                             fbsayac+=1;
                             if(fbsayac>7)fbsayac=0;
@@ -343,7 +342,15 @@ void fbpinstateleriyaz()
                                   //if(pinname[h].indexOf("|")>-1)break;
                                   //Serial.print(pinname[h] + " ");Serial.println(PinState[h]);
                                   if(PinState[h]=="")PinState[h]="0";
-                                  if(pinname[h].length()>0) dats+=pinname[h] + ":" + PinState[h] + ",";
+
+                                  int b=pinname[h].length()+1;
+                                  char cvc[b];
+                                  pinname[h].toCharArray(cvc, b);
+                                  Serial.print(">");
+                                  Serial.print((int)cvc[0]);
+                                  Serial.println("<");
+
+                                  if(pinname[h].length()>0 && (int)cvc[0]!=10) dats+=pinname[h] + ":" + PinState[h] + ",";
                                 }
                                 
 //                            String resul=Firebase.RTDB.setString(&fbdo, setpath, dats) ? "ok" : fbdo.errorReason().c_str();

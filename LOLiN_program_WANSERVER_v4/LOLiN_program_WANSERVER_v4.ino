@@ -104,8 +104,6 @@ sMQTTBroker broker;
 
 //int sayac=0;
 
-
-
 bool WiFiAP = true;  // Do yo want the ESP as AP?
 WiFiServer httpserver(80);
 String hostN;
@@ -1574,7 +1572,6 @@ if(WiFi.status()==WL_CONNECTED)
   if(kimdir>-1)
       if(millis()-tarazamani > 1000)
       {
-
         httptara();
       }
 }
