@@ -1167,6 +1167,7 @@ void htpcl() {
               }
             }
 
+            programrun();
 
 
 
@@ -1174,8 +1175,7 @@ void htpcl() {
 
 
 
-
-
+/*
             for (int x = 0; x < sizeof(Pin) + 1; x++) {
 
               if (pinmode[x] == "OUT" & pinsignaltype[x] == "DIG") {
@@ -1202,7 +1202,7 @@ void htpcl() {
               }
             }
 
-
+*/
 
 
 
@@ -1323,9 +1323,9 @@ void htpcl() {
             }
             for (int x = 0; x < pindolusay; x++) {
 
-
-              if (pinname[x] != "") {
-                xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
+              //xilent.println("<br>pinname" + (String)x + " >" + pinname[x] + "<");
+              if (pinlabel[x].length()>1) {
+                 xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
                 //xilent.println(pinsignaltype[x] + "<br>");
                 if (pinmode[x] == "OUT" && pinsignaltype[x] == "DIG") {
                   // Display current state, and ON/OFF buttons for GPIO x
@@ -1334,17 +1334,28 @@ void htpcl() {
                   if (PinState[x] == "") PinState[x] = "0";  //                    v--- " + pinlabel[x] + " [" +  pinname[x] + "]= " + PinState[x] + "
 
                   if (PinState[x] == "0") {  //                    v--- " + pinlabel[x] + " [" +  pinname[x] + "]= " + PinState[x] + "
-                    xilent.println("<a href=\"/" + pinname[x] + ":1\"><button class=\"button butoff\">-0-</button></a>");
-                    if (high_low_invert == true) xilent.println(" Çıkış [1]");
-                  }
+                    if (high_low_invert == false) 
+                    { xilent.println("<a href=\"/" + pinname[x] + ":1\"><button class=\"button butoff\">-0-</button></a>");
+                      xilent.println(" Çıkış [0]");
+                    }else
+                    { xilent.println("<a href=\"/" + pinname[x] + ":1\"><button class=\"button butoon\">-1-</button></a>");
+                      xilent.println(" Çıkış [1]");
+                    }                  }
 
                   if (PinState[x] == "1") {
-                    xilent.println("<a href=\"/" + pinname[x] + ":0\"><button class=\"button button\">-1-</button></a>");
-                    if (high_low_invert == true) xilent.println(" Çıkış [0]");
+                    if (high_low_invert == false) 
+                    { xilent.println("<a href=\"/" + pinname[x] + ":0\"><button class=\"button button\">-1-</button></a>");
+                      xilent.println(" Çıkış [1]");
+                    }else
+                    { xilent.println("<a href=\"/" + pinname[x] + ":0\"><button class=\"button butoff\">-0-</button></a>");
+                      xilent.println(" Çıkış [0]");
+                    }
                   }
                 }
 
-
+                if (pinmode[x] == "OUT" && pinsignaltype[x] == "BUZ") {
+                xilent.println("<label style='color: #0A4A4A;'>Ses frekansı çıkış - " + pinlabel[x] + " [" + pinname[x] + "] .·oO  Buzzer pini<br></label>");
+                }
 
                 if (pinmode[x] == "OUT" && pinsignaltype[x] == "PWM") {
 
@@ -1436,7 +1447,7 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                 if (pinmode[x] == "INP" && pinsignaltype[x] == "ANG") {
                   pinMode(Pin[x], INPUT);
                   PinState[x] = analogRead(Pin[x]);
-                  xilent.println("<br> Analog ölçüm - " + pinlabel[x] + " [" + pinname[x] + "]= " + PinState[x] + "<br>");
+                  xilent.println("<label style='color: #3A3A00;'> Analog ölçüm - " + pinlabel[x] + " [" + pinname[x] + "]= " + PinState[x] + "</label><br>");
                 }
 
                 if (pinmode[x] == "INP" && pinsignaltype[x] == "DIG") {
@@ -1454,7 +1465,7 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                     pstmp = pstmp.substring(pstmp.indexOf("h") + 1, pstmp.length());
                     h = pstmp;
                   }
-                  xilent.println("<br> Sıcaklık ve Nem - " +  pinlabel[x] + " [" + pinname[x] + "]= " + t + " C° " + h + "0% <br>");
+                  xilent.println("<label style='color: #9A3A00;'> Sıcaklık</label> ve <label style='color: #002A9A;'> Nem </label>- " +  pinlabel[x] + " [" + pinname[x] + "]= " + t + " C° " + h + "0% <br>");
                 }
 
                 if (pinmode[x] == "INP" && pinsignaltype[x] == "HCE") {
@@ -1466,6 +1477,7 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
             xilent.println("<hr style=\"height:5px;border-width:1;color:black;background-color:black\">");
             xilent.println("<div align=\"left\">");
             xilent.println("<table><td style=\"border:2px solid black;width:400p; align:center; \">");
+            if (progmsg != "") xilent.println("<label style='font-size: 12px;'>Program müdahalesi ile olanlar aşağıdadır</label><br>");
             if (high_low_invert == true) xilent.println("<label style='font-size: 10px;'>PIN_INVERT komutu çıkışı ters çalıştırılıyor.</label><br>");
             if (progmsg != "") xilent.println("<label style='font-size: 10px;'>" + progmsg + "</label><br>");
             if (errorlog != "") xilent.println("<br>Hata: " + errorlog + "<br>");
