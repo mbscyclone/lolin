@@ -166,6 +166,58 @@ void htpcl() {
           //////////////////
           //////////////////
 
+
+if(header.indexOf("/pinayarsil")>-1)
+{
+pinayar="";
+dosyaYazpinayar();
+header="/ HTTP/1.1";
+}
+
+if(header.indexOf("/programsil")>-1)
+{
+programdata="";
+dosyaYazprogram(programdata);
+header="/ HTTP/1.1";
+}
+
+if(header.indexOf("/nevarsasil")>-1)
+{
+      LittleFS.remove("/program.txt");
+      delay(10);
+      LittleFS.remove("/pinayar.txt");
+      delay(10);
+      LittleFS.remove("/ssidpass.txt");
+      delay(10);
+      LittleFS.remove("/users.txt");
+      delay(10);
+      LittleFS.remove("/usrpass.txt");
+      delay(10);
+      LittleFS.remove("/httpserverip.txt");
+      delay(10);
+      LittleFS.remove("/mqttip.txt");
+      delay(10);
+      LittleFS.remove("/myssidname.txt");
+      delay(10);
+      LittleFS.remove("/fben.txt");
+      delay(10);
+      LittleFS.remove("/fburl.txt");
+      delay(10);
+      LittleFS.remove("/fbapi.txt");
+      delay(10);
+      LittleFS.remove("/fbyol.txt");
+      delay(10);
+      LittleFS.remove("/fbusername.txt");
+      delay(10);
+      LittleFS.remove("/fbuserpass.txt");
+      delay(10);
+      LittleFS.remove("/habp.txt");
+      delay(10);
+      ESP.reset();
+}
+
+
+
           creator += "ur";
 
 
@@ -308,7 +360,6 @@ void htpcl() {
             dosyayazhabp();
             delay(1000);
             ESP.reset();
-
             }
 
 
@@ -353,7 +404,7 @@ void htpcl() {
               xilent.println("<label style='font-size:14px;'>");
               xilent.println("Altta bir ornek verilmistir.<br>");
               xilent.println("<a href=\"https://mbscyclone.github.io/lolin/Help/Turkce/lolin_tr.pdf\" target=\"_blank\">Yardım [TR]</a>");
-              xilent.println("D1|OUT|DIG|0|0|1|Sarj1_pirizi<br>");
+              xilent.println("D1|OUT|DIG|0|0|1|0|0|Sarj1_pirizi<br>");
               xilent.println("</label><br>");
 
 
@@ -1575,6 +1626,18 @@ for(int v=1;v<10;v++)
             //Serial.println(butonpbgcol);
             xilent.println("><input type='submit'>");
             xilent.println("ffb12a</form></td><br><br><br>");
+
+            
+xilent.println("<div><table><td style=\"border:2px solid black;width:400p; align:center; \">");
+            if (progmsg != "") xilent.println("<label style='font-size: 12px;'>Hata ile kaşılaşıyorsanız ilgili kayıtları silmek için aşağıdaki urlleri girin</label><br>");
+            xilent.println("<label style='font-size: 10px;'>Pin ayarı hatalı oldu pinayarlarını sil diyorsanız &emsp; http://" + lipStr + "/pinayarsil</label><br>");
+            xilent.println("<label style='font-size: 10px;'>Program ayarı hatalı oldu program sil diyorsanız &emsp; http://" + lipStr + "/programsil</label><br>");
+            xilent.println("<label style='font-size: 10px;'>Haberleşme protokolü hatalı diyorsanız &emsp; http://" + lipStr + "/habp=Off</label><br>");
+            xilent.println("<label style='font-size: 10px;'>Tüm kayıtları sil diyorsanız &emsp; http://" + lipStr + "/nevarsasil</label><br>");
+            xilent.println("</td></table></div>");
+
+
+
             /*                        butonactcol butonpascol butonayrcol butonpbgcol
             xilent.println(".button { background-color: #d1ca03; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;}");
             xilent.println(".butoff {background-color: #A3A3A3; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;}");
