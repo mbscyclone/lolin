@@ -4,6 +4,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using System.Text;
+using System.Text.RegularExpressions;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -12,7 +14,7 @@ using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class Programcs : MonoBehaviour
 {
@@ -62,14 +64,14 @@ public class Programcs : MonoBehaviour
 
 
 
-/*
-    private void Awake()
-    {
-        DestroyImmediate(GameObject.Find("FirebaseSettingsObj"));
-        GameObject firebaseSettingsObj = Instantiate(fbprefab);
-        firebaseSettingsObj.name = "FirebaseSettingsObj";
-    }
-*/
+    /*
+        private void Awake()
+        {
+            DestroyImmediate(GameObject.Find("FirebaseSettingsObj"));
+            GameObject firebaseSettingsObj = Instantiate(fbprefab);
+            firebaseSettingsObj.name = "FirebaseSettingsObj";
+        }
+    */
 
     private void Start()
     {
@@ -150,7 +152,7 @@ public class Programcs : MonoBehaviour
                         {
                             querysayac += Time.fixedDeltaTime;
                         }
-                        
+
                     }
 
 
@@ -170,7 +172,7 @@ public class Programcs : MonoBehaviour
                     {
                         querysayac += Time.fixedDeltaTime;
                     }
-                    
+
                 }
 
 
@@ -241,8 +243,8 @@ public class Programcs : MonoBehaviour
 
         GameObject.Find("CHZtext").GetComponent<Text>().text = ""; ekran = "";
 
-        GameObject.Find("payim").GetComponent<Text>().text="";
-        GameObject.Find("pinim").GetComponent<Text>().text="";
+        GameObject.Find("payim").GetComponent<Text>().text = "";
+        GameObject.Find("pinim").GetComponent<Text>().text = "";
 
         for (int psatirsay = 1; psatirsay < 11; psatirsay++)
         {
@@ -341,7 +343,7 @@ public class Programcs : MonoBehaviour
         rtmp = rtmp.Substring(rtmp.IndexOf("{\"") + 2, rtmp.Length - (rtmp.IndexOf("{\"") + 2));
         for (int i = 1; i < 9; i++)
         {
- //           Debug.Log("rtmp baþ: " + rtmp);
+            //           Debug.Log("rtmp baþ: " + rtmp);
             chzname[i] = rtmp.Substring(0, rtmp.IndexOf("\""));
             GameObject.Find("chzpan" + i.ToString() + "/name").GetComponent<Text>().text = chzname[i];
             GameObject.Find("CHZlertext").GetComponent<Text>().text += chzname[i] + " ";
@@ -514,6 +516,7 @@ public class Programcs : MonoBehaviour
 
     public void payoku()
     {
+        asd = Regex.Unescape(asd);
         String paytmp = "";
         String kesilecekolan = "\"";
         paytmp = asd.Substring(asd.IndexOf(kesilecekolan) + kesilecekolan.Length, asd.Length - (asd.IndexOf(kesilecekolan) + kesilecekolan.Length + 1));
@@ -524,6 +527,7 @@ public class Programcs : MonoBehaviour
 
     public void pinoku()
     {
+        asd = Regex.Unescape(asd);
         String pintmp = asd;
         Debug.Log("pintmp baþý: " + pintmp);
         Debug.Log("asd baþý: " + asd);
@@ -535,6 +539,7 @@ public class Programcs : MonoBehaviour
 
     public void totalgorunumguncelle()
     {
+        asd = Regex.Unescape(asd);
         String paystmp = "";
         if (asd.IndexOf("\"pays\":") > -1)
         {
@@ -1002,5 +1007,6 @@ public class Programcs : MonoBehaviour
     {
         SceneManager.LoadScene("main");
     }
-
 }
+
+
