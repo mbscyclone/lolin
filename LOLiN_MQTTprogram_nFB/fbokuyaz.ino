@@ -376,7 +376,10 @@ void fbpinstateleriyaz()
 
 }
 
-
+void fbdeletesayac()
+{
+  int deleteResponseCode = firebaseRealtime.remove("/" + YOL + "/r/" , esphostname);
+}
 
 
 
@@ -464,4 +467,9 @@ void fbpinstateleriyaz()
   Serial.println("\nFetch - response code: " + String(fetchResponseCode));
   Serial.println("Name: " + name + ", Temp: " + String(temp) + ", Lat: " + String(lat) + ", Lon: " + String(lon));
   fetchDoc.clear();
+
+
+    // delete
+  // int deleteResponseCode = remove("devices", "1");
+  // Serial.println("\nDelete response code: " + String(deleteResponseCode));
 */

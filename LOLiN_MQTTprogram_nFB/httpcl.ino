@@ -330,8 +330,8 @@ void htpcl() {
                 dosyaYazprogram(programdatatm);
               }
               if (header.indexOf("/pnayar?is=") > -1) {
-                pinayar = header.substring((header.indexOf("?is=") + 4), (header.indexOf(" HTTP/1.1")));
-                Serial.println(pinayar);
+                pinayartmp = header.substring((header.indexOf("?is=") + 4), (header.indexOf(" HTTP/1.1")));
+                Serial.println(pinayartmp);
                 dosyaYazpinayar();
                 dosyaOkupinayar();
               }

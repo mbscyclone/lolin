@@ -131,6 +131,7 @@ String humstr = "";
 Servo myservo[9];
 
 String pinayar;
+String pinayartmp;
 String Program;
 
 // PROGRAM İÇİN ////////////////////////
@@ -383,22 +384,27 @@ void dosyaOkupinayar() {
   }
 }
 
-bool fbpinayaryaz = false;
+//bool fbpinayaryaz = false;
 void dosyaYazpinayar() {
   reConnectsayac = millis();
-  pinayar = Karakterduzeltfunc(pinayar);
-  dosya.close();
+  pinayartmp = Karakterduzeltfunc(pinayartmp);
+  if(pinayartmp != pinayar){
+    pinayar=pinayartmp;
+    dosya.close();
   LittleFS.remove("/pinayar.txt");
-
   dosya = LittleFS.open("/pinayar.txt", "w+");
   //pinayarYuzdeliifadesil();
+
   dosya.print(pinayar);
   dosya.close();
   Serial.println(pinayar);
-
-  dosyaokufbyol();
-  fbpinayaryaz = true;
+  
+  // int deleteResponseCode = firebaseRealtime.remove("/" + YOL + "/r/" , esphostname);
+    fbdeletesayac();
+    //fbpinayaryaz = true;
   setup2();
+  }
+
 }
 
 
