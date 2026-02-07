@@ -189,9 +189,12 @@ bool paranteziciislem(String parantezi) {
   }
 
 
-  if (aktifpinno == -10000) { perlog += "if içi soldaki tanımlı değil " + sol + " Satır:" + (String)satirsayisip + "\n"; }
+  if(sol=="ACL")solstate = ACL;
+  else{
+    if (aktifpinno == -10000) { perlog += "if içi soldaki tanımlı değil " + sol + " Satır:" + (String)satirsayisip + "\n"; }
 
-  if (perlog != "") return false;
+    if (perlog != "") return false;
+}
 
 /*
   Serial.println("PARANTEZ İÇİ");

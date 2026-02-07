@@ -163,9 +163,7 @@ void updatefbvirtual()
 
 void updateoutput()
 {
-       
-
-
+      
         for(int x=0;x<pinsayisi;x++){
                   if(pinmode[x]=="OUT"){
                         if(pinsignaltype[x]=="PWM"){

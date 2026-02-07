@@ -64,6 +64,7 @@ String htyolla;
 String esphostnameOnek = "";
 String esphostname = "esp-bos";
 bool high_low_invert = false;
+bool ehigh_low_invert = false;
 String progmsg;
 
 
@@ -457,11 +458,24 @@ void setup2() {
   dosyaOkupinayar();
   String strtmp = programdata;
   strtmp.toUpperCase();
-  if (strtmp.indexOf("//PIN_INVERT;") < 0)
-    if (strtmp.indexOf("PIN_INVERT;") > -1) high_low_invert = true;
-    else high_low_invert = false;
 
+  if (programdata.indexOf("//PIN_INVERT;") < 0){
+    if (programdata.indexOf("PIN_INVERT;") > -1) {
+      high_low_invert = true;
 
+      for (int x = 0; x < pinsayisi + 1; x++) {
+        if (pinmode[x] == "OUT" & pinsignaltype[x] == "DIG") {
+          if (PinState[x] == "0.00" || PinState[x] == "0" || PinState[x] == "LOW" || PinState[x] == "OFF" || PinState[x] == "") {
+            if (high_low_invert == false) digitalWrite(Pin[x], LOW);
+            else digitalWrite(Pin[x], HIGH);
+          } else if (PinState[x] == "1.00" || PinState[x] == "1" || PinState[x] == "HIGH" || PinState[x] == "ON") {
+            if (high_low_invert == false) digitalWrite(Pin[x], HIGH);
+            else digitalWrite(Pin[x], LOW);
+          }
+        }
+      }
+    } else high_low_invert = false;
+  } else high_low_invert = false;
   //Serial.println("sorunyok");
   //Serial.println("sorunyok2");
   //DHT DHTA(D7, DHT11);
@@ -946,7 +960,7 @@ void setup() {
   //dosyaokupindurum();
   dosyaOkuprogram();
 
-  if (programdata.indexOf("//PIN_INVERT;") < 0)
+  if (programdata.indexOf("//PIN_INVERT;") < 0){
     if (programdata.indexOf("PIN_INVERT;") > -1) {
       high_low_invert = true;
 
@@ -961,7 +975,8 @@ void setup() {
           }
         }
       }
-    }
+    } else high_low_invert = false;
+  } else high_low_invert = false;
 
   //dosyaokuhabp();
 

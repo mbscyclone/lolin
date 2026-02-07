@@ -1140,12 +1140,10 @@ void htpcl() {
 
               if (pinkomut == "1" || pinkomut == "HIGH" || pinkomut == "ON") {
                 PinState[pinismiint] = "1";
-                //Programtakip(programdata);
               }
 
               if (pinkomut == "0" || pinkomut == "LOW" || pinkomut == "OFF") {
                 PinState[pinismiint] = "0";
-                //Programtakip(programdata);
               }
             }
 
@@ -1154,7 +1152,7 @@ void htpcl() {
               int PWMdegerint = PWMdeger.toInt();
               PinState[pinismiint] = PWMdeger;
               if (PinState[pinismiint] != ePinState[pinismiint]) {
-                Outpwm(pinismi, PWMdegerint);
+                //Outpwm(pinismi, PWMdegerint);
                 //Programtakip(programdata);
               }
             }
@@ -1164,7 +1162,7 @@ void htpcl() {
               if (PWMdegerint > 180) PWMdegerint = 180;
               PinState[pinismiint] = String(PWMdegerint);
               if (PinState[pinismiint] != ePinState[pinismiint]) {
-                myservo[pinismiint].write(PWMdegerint);
+                //myservo[pinismiint].write(PWMdegerint);
                 //Programtakip(programdata);
               }
             }
@@ -1182,25 +1180,25 @@ void htpcl() {
 
               if (pinmode[x] == "OUT" & pinsignaltype[x] == "DIG") {
                 if (PinState[x] == "0.00" || PinState[x] == "0" || PinState[x] == "LOW" || PinState[x] == "OFF") {
-                  if (high_low_invert == false) digitalWrite(Pin[x], LOW);
-                  else digitalWrite(Pin[x], HIGH);
+                  //if (high_low_invert == false) digitalWrite(Pin[x], LOW);
+                  //else digitalWrite(Pin[x], HIGH);
                 }
 
                 if (PinState[x] == "1.00" || PinState[x] == "1" || PinState[x] == "HIGH" || PinState[x] == "ON") {
-                  if (high_low_invert == false) digitalWrite(Pin[x], HIGH);
-                  else digitalWrite(Pin[x], LOW);
+                  //if (high_low_invert == false) digitalWrite(Pin[x], HIGH);
+                  //else digitalWrite(Pin[x], LOW);
                 }
               }
 
 
               if (pinmode[x] == "OUT" && pinsignaltype[x] == "PWM") {
-                int PWMdegerint = PinState[x].toInt();
-                Outpwm(pinname[x], PWMdegerint);
+                //int PWMdegerint = PinState[x].toInt();
+                //Outpwm(pinname[x], PWMdegerint);
               }
 
               if (pinmode[x] == "OUT" && pinsignaltype[x] == "SER") {
-                int PWMdegerint = PinState[x].toInt();
-                myservo[x].write(PWMdegerint);
+                //int PWMdegerint = PinState[x].toInt();
+                //myservo[x].write(PWMdegerint);
               }
             }
 
