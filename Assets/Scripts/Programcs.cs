@@ -16,6 +16,16 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
+
+/// <summary>
+/// /////////////////////////////////////////////////////
+//  using System.Text.RegularExpressions;
+//  asd = Regex.Unescape(asd);  //// JSON içindeki \uXXXX kodlarýný gerçek karakterlere çevirir.
+/// </summary>
+
+
+
+
 public class Programcs : MonoBehaviour
 {
     public GameObject fbprefab;
