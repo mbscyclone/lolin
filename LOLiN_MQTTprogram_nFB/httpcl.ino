@@ -1387,6 +1387,15 @@ if(header.indexOf("/nevarsasil")>-1)
                  xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
                 //xilent.println(pinsignaltype[x] + "<br>");
                 if (pinmode[x] == "OUT" && pinsignaltype[x] == "DIG") {
+
+                  String pinstatesakla;
+                  if(acildeyim[x]==true)
+                    {
+                      pinstatesakla=PinState[x];
+                      PinState[x]=acildeger[x];
+                      xilent.println("Bu pin Acil durum etkisinde");
+                    }
+
                   // Display current state, and ON/OFF buttons for GPIO x
                   xilent.println("Dijital çıkış - " + pinlabel[x] + " [" + pinname[x] + "]= " + PinState[x] + " ");
                   // If the Pin0State is off, it displays the ON button
@@ -1397,19 +1406,26 @@ if(header.indexOf("/nevarsasil")>-1)
                     { xilent.println("<a href=\"/" + pinname[x] + ":1\"><button class=\"button butoff\">-0-</button></a>");
                       xilent.println(" Çıkış [0]");
                     }else
-                    { xilent.println("<a href=\"/" + pinname[x] + ":1\"><button class=\"button butoon\">-1-</button></a>");
-                      xilent.println(" Çıkış [1]");
+                    { xilent.println("<a href=\"/" + pinname[x] + ":1\"><button class=\"button butoff\">-0-</button></a>");
+                      xilent.println(" invert [1]");
                     }                  }
 
                   if (PinState[x] == "1") {
                     if (high_low_invert == false) 
-                    { xilent.println("<a href=\"/" + pinname[x] + ":0\"><button class=\"button button\">-1-</button></a>");
+                    { xilent.println("<a href=\"/" + pinname[x] + ":0\"><button class=\"button buton\">-1-</button></a>");
                       xilent.println(" Çıkış [1]");
                     }else
-                    { xilent.println("<a href=\"/" + pinname[x] + ":0\"><button class=\"button butoff\">-0-</button></a>");
-                      xilent.println(" Çıkış [0]");
+                    { xilent.println("<a href=\"/" + pinname[x] + ":0\"><button class=\"button buton\">-1-</button></a>");
+                      xilent.println(" invert [0]");
                     }
                   }
+
+                  if(acildeyim[x]==true)
+                    {
+                      PinState[x]=pinstatesakla;
+                    }
+
+
                 }
 
                 if (pinmode[x] == "OUT" && pinsignaltype[x] == "BUZ") {
@@ -1450,6 +1466,14 @@ sliderĞname.onmouseup = function () {
                   dizgiorj.replace("Ğmax", pinmaxvalue[x]);
                   dizgiorj.replace("Ğstate", PinState[x]);
 
+                  String pinstatesakla;
+                  if(acildeyim[x]==true)
+                    {
+                      pinstatesakla=PinState[x];
+                      PinState[x]=acildeger[x];
+                      xilent.println("Bu pin Acil durum etkisinde");
+                    }
+
                   //Serial.print(dizgiorj);Serial.println();
                   xilent.println("<label style='font-size: 12px;'> min: " + pinminvalue[x] + "-max: " + pinmaxvalue[x] + "</label><br>");
                   xilent.println("PWM çıkışı - " + dizgiorj);
@@ -1473,12 +1497,25 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                   //xilent.println( buraya slider formu yapacağım)
 
                   Outpwm(pinname[x], PinState[x].toInt());
+
+                  if(acildeyim[x]==true)
+                    {
+                      PinState[x]=pinstatesakla;
+                    }
                 }
 
 
 
 
                 if (pinmode[x] == "OUT" && pinsignaltype[x] == "SER") {
+
+                  String pinstatesakla;
+                  if(acildeyim[x]==true)
+                    {
+                      pinstatesakla=PinState[x];
+                      PinState[x]=acildeger[x];
+                      xilent.println("Bu pin Acil durum etkisinde");
+                    }
 
                   xilent.println("<br><br><form method='get' action='/" + pinname[x] + "'><label>Servo sinyali - " + pinlabel[x] + " [" + pinname[x] + "] </label><input name='ser' length=4 value=");
                   xilent.println(PinState[x]);
@@ -1488,6 +1525,12 @@ xilent.println("<form method='get' id='form" + pinname[x] + "' action='/" + pinn
                   myservo[x].write(PinState[x].toInt());
                   Serial.print("myservo[x].write(PinState[x].toInt());     :");
                   Serial.println(PinState[x].toInt());
+
+                  if(acildeyim[x]==true)
+                    {
+                      PinState[x]=pinstatesakla;
+                      PinState[x]=acildeger[x];
+                    }
                 }
 
 

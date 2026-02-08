@@ -165,7 +165,16 @@ void updateoutput()
 {
       
         for(int x=0;x<pinsayisi;x++){
+                  
                   if(pinmode[x]=="OUT"){
+                    String pinstatesakla;
+
+                    if(acildeyim[x]==true)
+                    {
+                      pinstatesakla=PinState[x];
+                      PinState[x]=acildeger[x];
+                    }
+
                         if(pinsignaltype[x]=="PWM"){
                           int PWMdegerint=PinState[x].toInt();
                           Outpwm(pinname[x], PWMdegerint);
@@ -182,7 +191,6 @@ void updateoutput()
                         }
 
 
-
           if(ePinState[x]!=PinState[x])
           {
               //Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
@@ -195,6 +203,11 @@ void updateoutput()
                          degisenler += pinname[x] + ":" + PinState[x]+ "|" + pinlabel[x] + ",";
                        }
           }
+
+                    if(acildeyim[x]==true)
+                    {
+                      PinState[x]=pinstatesakla;
+                    }
 
         }
 /*

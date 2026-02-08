@@ -46,20 +46,31 @@ void programrun() {
   }
 
 
-  // en son işlem burası //////////////////////////////////
-  for (int sta = 0; sta < 11; sta++) {
-    PinState[sta] = degdeg[sta];
-    //Serial.print(pinname[sta] + " pinstate:");Serial.println(PinStatetmp[sta]);
-    if(ACL.toInt() > acilseviyesi[sta].toInt()) PinState[sta] = acildeger[sta];
+
+// en son işlem burası //////////////////////////////////
+
+  if (eACL.toInt() != ACL.toInt()) {
+    for (int sta = 0; sta < 11; sta++) {
+      if(acilseviyesi[sta]!=" "){
+      String pinmodesta = pinmode[sta];
+      pinmodesta.toUpperCase();
+      if (pinmodesta.indexOf("OU") == 0) {
+        if (ACL.toInt() > acilseviyesi[sta].toInt()) {
+            acildeyim[sta]=true;
+        } else acildeyim[sta]=false;
+      }
+    }
+    }
+    eACL = ACL;
   }
-  ////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 
-  // fbde başka cihaza gonderilecek varmı bak ////////////////
-
-  
+// fbde başka cihaza gonderilecek varmı bak ////////////////
 
 
-  ////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
 }
 
 void satirislem() {
@@ -72,7 +83,7 @@ void satirislem() {
   if (satiruppercase.indexOf("FBC ") == 0) firebasecihaztanitimi();
   if (satiruppercase.indexOf("IF") == 0) gotoif();
   if (satiruppercase.indexOf("BOOL") == 0) gotobool();
-    if (satiruppercase.indexOf("BOOL") == 0) gotobool();
+  if (satiruppercase.indexOf("BOOL") == 0) gotobool();
   // ????????????????????????????????????????????? sonra ne yaparız bilmem
 }
 
@@ -189,14 +200,14 @@ bool paranteziciislem(String parantezi) {
   }
 
 
-  if(sol=="ACL")solstate = ACL;
-  else{
+  if (sol == "ACL") solstate = ACL;
+  else {
     if (aktifpinno == -10000) { perlog += "if içi soldaki tanımlı değil " + sol + " Satır:" + (String)satirsayisip + "\n"; }
 
     if (perlog != "") return false;
-}
+  }
 
-/*
+  /*
   Serial.println("PARANTEZ İÇİ");
   Serial.print("sol ");
   Serial.print(sol);
@@ -442,70 +453,64 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
       //Serial.print("yapilacaklarislemsayisi ");
       //Serial.println(yapilacaklarislemsayisi);
       // tam burada yapılacak hesabına git
-      String yais=yapilacakis;
+      String yais = yapilacakis;
       yais.toUpperCase();
-      if(yais.indexOf("MQTT:")==0)
-      { if(habp>0){
-        
-          int hane=0;
-        if(yapilacakis.indexOf("=")>-1)
-        {
+      if (yais.indexOf("MQTT:") == 0) {
+        if (habp > 0) {
 
-          String mqyoltmp=yapilacakis.substring(5,yapilacakis.indexOf("="));
-          String mdegisenlertmp=yapilacakis.substring(yapilacakis.indexOf("=")+1,yapilacakis.length());
-          String degisenmqtmp=YOL + "/" + esphostname + "=" + mdegisenlertmp+",";
+          int hane = 0;
+          if (yapilacakis.indexOf("=") > -1) {
 
-
-          String ACLtmp="";
-          if(degisenmqtmp.indexOf("ACL:")>-1)
-          {
-            Serial.println(degisenmqtmp);
-            ACLtmp=degisenmqtmp.substring(degisenmqtmp.indexOf("ACL:")+4,degisenmqtmp.length());
-            if(ACLtmp.indexOf(",")>0)ACLtmp=ACLtmp.substring(0,ACLtmp.indexOf(","));
-            if(ACLtmp.indexOf(";")>0)ACLtmp=ACLtmp.substring(0,ACLtmp.indexOf(";"));
-            if(ACLtmp.toInt()!=ACL.toInt()) {ACL=ACLtmp;}
-          }
+            String mqyoltmp = yapilacakis.substring(5, yapilacakis.indexOf("="));
+            String mdegisenlertmp = yapilacakis.substring(yapilacakis.indexOf("=") + 1, yapilacakis.length());
+            String degisenmqtmp = YOL + "/" + esphostname + "=" + mdegisenlertmp + ",";
 
 
-            for (int y=1;y<13;y++)
-            {
-              if(mqyol[y]==""){hane=y;break;}
-              if(mqyoltmp==mqyol[y])
-              {
-                if(degisenmq[y] != "" && degisenmqtmp == degisenmq[y])
-                {
+            String ACLtmp = "";
+            if (degisenmqtmp.indexOf("ACL:") > -1) {
+              Serial.println(degisenmqtmp);
+              ACLtmp = degisenmqtmp.substring(degisenmqtmp.indexOf("ACL:") + 4, degisenmqtmp.length());
+              if (ACLtmp.indexOf(",") > 0) ACLtmp = ACLtmp.substring(0, ACLtmp.indexOf(","));
+              if (ACLtmp.indexOf(";") > 0) ACLtmp = ACLtmp.substring(0, ACLtmp.indexOf(";"));
+              if (ACLtmp.toInt() != ACL.toInt()) { ACL = ACLtmp; }
+            }
+
+
+            for (int y = 1; y < 13; y++) {
+              if (mqyol[y] == "") {
+                hane = y;
+                break;
+              }
+              if (mqyoltmp == mqyol[y]) {
+                if (degisenmq[y] != "" && degisenmqtmp == degisenmq[y]) {
                   Serial.println(degisenmqtmp + "   EŞİT ÇIKTI  " + degisenmq[y]);
                   Serial.println("EŞİT ÇIKTI");
                   //hane=y;break;
                   return;
+                } else {
+                  Serial.println(degisenmqtmp + "   -----------   " + degisenmq[y]);
+                  Serial.println(y);
+
+                  hane = y;
+                  break;
                 }
-                else
-                          {
-                            Serial.println(degisenmqtmp + "   -----------   " + degisenmq[y]);
-                            Serial.println(y);
-                            
-                            hane=y;break;
-                          }
               }
             }
 
-                            if(habp == 1 || habp == 3) mqttsend(mqyoltmp, degisenmqtmp);
-                            mqyol[hane]=mqyoltmp;
-                            degisenmq[hane]=degisenmqtmp;
-                            delay(2);
+            if (habp == 1 || habp == 3) mqttsend(mqyoltmp, degisenmqtmp);
+            mqyol[hane] = mqyoltmp;
+            degisenmq[hane] = degisenmqtmp;
+            delay(2);
+          }
         }
-        }
-      }
-      else 
-      if(yais.indexOf("HTTP:")==0)
-      { 
-        htyolla=yapilacakis.substring(0,yapilacakis.indexOf(";"));
+      } else if (yais.indexOf("HTTP:") == 0) {
+        htyolla = yapilacakis.substring(0, yapilacakis.indexOf(";"));
         //Serial.println(htyolla);
         httpgonder();
         delay(50);
         Serial.println("programyurut > httpgonder ");
       } else
-      yap(yapilacakisn, yapilacaklarislemsayisi);
+        yap(yapilacakisn, yapilacaklarislemsayisi);
 
       yapilacaklar = yapilacaklar.substring(yapilacaklar.indexOf(";") + 1, yapilacaklar.length());
       yapilacaklarn = yapilacaklarn.substring(yapilacaklarn.indexOf(";") + 1, yapilacaklarn.length());

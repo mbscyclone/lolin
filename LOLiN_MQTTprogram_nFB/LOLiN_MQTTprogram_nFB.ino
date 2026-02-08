@@ -106,14 +106,14 @@ String pinmode[10];
 String pinsignaltype[10];
 String pinminvalue[10];
 String pinval[10];
-String PinState[10];
-String ePinState[10];
+String PinState[10];String ePinState[10];
+bool acildeyim[10];
 String fbPinState[10];
 String pinmaxvalue[10];
 String acilseviyesi[10];
 String acildeger[10];
 String pinlabel[10];
-String ACL="0";
+String ACL="0";String eACL="0";
 
 
 String Abonelik;
