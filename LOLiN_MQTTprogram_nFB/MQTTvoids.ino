@@ -7,6 +7,7 @@ String mdegisen;
 void MQTTConnect() {
 
   if (mqttconnectsayac == 0) {
+    mqtterror=true;
     //dosyaOkuusers();
     //dosyaOkuMQTTip();
     const char* ipAdres = MQTTip.c_str();
@@ -18,19 +19,18 @@ void MQTTConnect() {
     mqttclient.onMessage(messageReceived);
     Serial.println("\nTry connect! " + String(ipAdres));
     mqttconnectsayac = 1;
-
-    while(!mqttclient.connected() || mqttconnectsayac < 2000)
-    {
-      if (mqttconnectsayac % 1000 == 0) Serial.print("*");
-      mqttconnectsayac += 1;
-    }
-  } else {
-    if (mqttconnectsayac % 100 == 0) Serial.print("*");
-    mqttconnectsayac += 1;
-    if (mqttconnectsayac > 6000) mqttconnectsayac = 0;
   }
 
-  if (mqttclient.connected()) {
+  if (mqttconnectsayac>0 && mqttconnectsayac<5001)
+  {
+    mqttconnectsayac += 1;
+    if(mqttconnectsayac % 1000 == 0) Serial.println("*");
+     if(mqttconnectsayac>=5000){mqtterror=true;}
+  }
+
+  if (mqttclient.connected() == true) {
+    mqttconnectsayac = 0;
+    mqtterror=false;
     Serial.println("\nconnected!");
     mqttclient.subscribe("/"+YOL+"/#");
     // client.unsubscribe("/hello");

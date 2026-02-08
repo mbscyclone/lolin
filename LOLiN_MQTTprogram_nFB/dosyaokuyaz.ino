@@ -41,6 +41,7 @@ void mqttipkaydet(String MQTTip)
                 dosya = LittleFS.open("/mqttip.txt", "w+");
                 if (dosya) {
                   dosya.println(String(MQTTip));
+                   if(MQTTip.length()>0)mqttconnectsayac=0;
                 }
                 dosya.close();
                 mqttipoku();

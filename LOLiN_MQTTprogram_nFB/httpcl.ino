@@ -391,7 +391,7 @@ if(header.indexOf("/nevarsasil")>-1)
               xilent.println("Pin ayar sayfası <table> <caption>PIN AYARLARI</caption> <tr> <td scope=\"col\">pin ayarları:</td><td scope=\"col\">Pin Hata</td></tr>");
               xilent.println("<td><form method='get' action='pnayar'>");
               xilent.println("<textarea name='is' id='id' cols='40' rows='10' >");
-              xilent.println(pinayar);
+              xilent.println(pinayartmp);
               xilent.println("</textarea><br>");
               //xilent.println("<br>ESP ye bağlı Cihazları kapatın.<br>");
               xilent.println("<input type='submit' value='Pinayar Kaydet'>");
@@ -1328,7 +1328,6 @@ if(header.indexOf("/nevarsasil")>-1)
             xilent.println("<form action='/rr0' method=\"POST\"><input type=\"submit\" value=\" Yenile\" style='width:80px;'></form>");
             //xilent.println("<form action='/' method=\"POST\"><input type=\"submit\" value=\" Yenile\" style='width:80px;'></form>");
             xilent.println("</td></table></div>");
-
             xilent.println("<label style='font-size: 20px;'>" + sonek + "</label> &emsp;&emsp;");
             //xilent.println("> Device_ident: ");
             //xilent.println(esphostname + "<br>");
@@ -1338,7 +1337,11 @@ if(header.indexOf("/nevarsasil")>-1)
             if (String(lip[0]) != "0") {
               xilent.println("<label style='font-size: 15px;'>  Ipadr: ");
               xilent.println(lipStr + "</label>");
+
+            if (habp>0 && mqtterror==true) xilent.println("<br><label style='font-size: 15px;'>  MQTT bağlantı sorunu!"+ MQTTip + "</label>");
+
             }
+            
             if (header.indexOf("fireb=On") > -1) {
               fben = 1;
               dosyayazfben();
@@ -1353,6 +1356,8 @@ if(header.indexOf("/nevarsasil")>-1)
             }
 
             //xilent.println("<br>");
+            
+
 
             int pindolusay = -1;
             for (int m = 9; m > 0; m--) {
@@ -1362,7 +1367,10 @@ if(header.indexOf("/nevarsasil")>-1)
               }
             }
             if (pindolusay == -1) {
-              xilent.println("<p>Pin Ayarları Yok</p>");
+              
+              if(pinayartmp.length()>0)xilent.println("<p>Pin Ayarları hatalı.</p>");
+              else xilent.println("<p>Pin Ayarları Yok</p>");
+              
               xilent.println("<br><br><br><br><p><a href=\"/Menu1\"><button class=\"button butayr\">Ayarlar</button></a></p>");
               // The HTTP response ends with another blank line
               xilent.println("HTTP/1.1 200 OK");
@@ -1678,3 +1686,4 @@ if (uri.indexOf("?") > 0) {
   }
   header="";
 }
+

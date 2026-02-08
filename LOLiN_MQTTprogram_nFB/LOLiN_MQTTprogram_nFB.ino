@@ -180,15 +180,10 @@ String edegisenler;
 String degisenler;
 
 
-
-
-
-
-
-
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 ESP8266WebServer server(8080);
+
 
 void handleRoot() {
 
@@ -256,9 +251,26 @@ void dosyaOkupinayar() {
   dosya = LittleFS.open("/pinayar.txt", "r");
   if (dosya) {
     String gecicipinayar = dosya.readString();
-    pinayar = gecicipinayar.substring(0, gecicipinayar.length());
-    //Serial.println("gecicipinayar v ");
-    //Serial.println(gecicipinayar);
+    pinayartmp = gecicipinayar.substring(0, gecicipinayar.length());
+
+
+int contpih = 0;
+int n = 0;
+
+while ((n = pinayartmp.indexOf('|', n)) != -1)
+{
+   n++;
+   contpih++;
+}
+    if(contpih % 8 != 0 ){
+      erlog="pinayar hatalı";
+      pinayar="";
+      return;
+      }
+      else pinayar=pinayartmp;
+
+
+
     dosya.close();
     strtmp = pinayar;
   Serial.println("dosyaokupinayar.");
@@ -388,6 +400,22 @@ void dosyaOkupinayar() {
 void dosyaYazpinayar() {
   reConnectsayac = millis();
   pinayartmp = Karakterduzeltfunc(pinayartmp);
+
+int contpih = 0;
+int n = 0;
+
+while ((n = pinayartmp.indexOf('|', n)) != -1)
+{
+   n++;
+   contpih++;
+}
+
+    if(contpih % 8 != 0 ){
+      erlog="pinayar hatalı";
+      pinayar="";
+      return;
+      }
+
   if(pinayartmp != pinayar){
     pinayar=pinayartmp;
     dosya.close();
@@ -873,7 +901,7 @@ void dosyaYazprogram(String programdatat) {
   dosya.print(programdata);
   dosya.close();
   setup2();
-  programrun();
+  if(pinayar.length()>0 && programdata.length()>0)programrun();
   //ESP.reset();
 }
 
@@ -896,6 +924,7 @@ int sayPtakipicin = 0;
 unsigned long lastMillis;
 
 int mqttconnectsayac;
+bool mqtterror;
 
 int sil = 0;
 
@@ -1051,6 +1080,7 @@ void setup() {
     if(habp == 1 || habp == 3){
       mqttipoku();
       MQTTConnect();
+      if(MQTTip.length()>2) MQTTConnect();
     }
   }
 
@@ -1059,7 +1089,7 @@ void setup() {
 
   if (WiFi.status() == WL_CONNECTED && fben != 0)
   { if(habp==-2)dosyaokuhabp();
-    if(habp == 2 || habp == 3)connectfb();
+        if(habp == 2 || habp == 3) {if(fben!=0)connectfb();}
   }
 }
 
@@ -1116,9 +1146,11 @@ void loop() {
     if(habp==-2)dosyaokuhabp();
     if (habp == 1 || habp == 3) {
       // <- fixes some issues with WiFi stability
-      if (!mqttclient.connected()) {
-        MQTTConnect();
-      } else mqttclient.loop();
+      if(MQTTip.length()>1){
+        if (mqttclient.connected()==false) {
+          MQTTConnect();
+        } else mqttclient.loop();
+      }
     }
 
     if (fben == 1) {
@@ -1163,7 +1195,7 @@ void loop() {
       if (zamanfark % upd == 0) {
         headerold="";
         if (pinayar.length() > 0) updateinput();
-        if (programdata.length() > 0) programrun();
+        if (pinayar.length()>0 && programdata.length()>0)programrun();
         if (pinayar.length() > 0) updateoutput();
         if (pinayar.length() > 0) vrkontrol();
 //        mqsay+=1;
@@ -1204,8 +1236,8 @@ void loop() {
           zamanbasi = millis() - 1001;
           
           Serial.println(fben);
-          updatefbvirtual();
-          fbsayacoku();
+          if (fben!=0 && pinayar.length()>0)updatefbvirtual();
+          if (fben!=0 && pinayar.length()>0)fbsayacoku();
       }
     }
 
@@ -1226,8 +1258,8 @@ void loop() {
       connectWifi();
       if (WiFi.status() == WL_CONNECTED)
       { 
-        if(habp == 1 || habp == 3) MQTTConnect();
-        if(habp == 2 || habp == 3) connectfb();
+        if(habp == 1 || habp == 3) {if(MQTTip.length()>2) MQTTConnect();}
+        if(habp == 2 || habp == 3) {if(fben!=0)connectfb();}
       }
     }
   }
