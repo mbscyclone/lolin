@@ -1,5 +1,7 @@
 /*
 // menu ☰  PLL
+
+
 https://mikro.aksam.com.tr/emojiler/suratlar-hisler
 Suratlar,Hisler
 🧪 deney tüpü
@@ -1233,4 +1235,11 @@ https://mikro.aksam.com.tr/emojiler/semboller-isaretler
 🎌 Çapraz bayraklar
 🚩 Üçgen bayrak
 🏁 Damalı bayrak
+
+
+
+
+
+
+
 */

@@ -505,12 +505,14 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
             if (habp == 1 || habp == 3) mqttsend(mqyoltmp, degisenmqtmp);
             mqyol[hane] = mqyoltmp;
             degisenmq[hane] = degisenmqtmp;
+            delay(1);
           }
         }
       } else if (yais.indexOf("HTTP:") == 0) {
         htyolla = yapilacakis.substring(0, yapilacakis.indexOf(";"));
         //Serial.println(htyolla);
         httpgonder();
+        delay(50);
         Serial.println("programyurut > httpgonder ");
       } else
         yap(yapilacakisn, yapilacaklarislemsayisi);

@@ -128,6 +128,7 @@ void updateinput()
           {
              if (pinsignaltype[x].indexOf("DH")>-1)
                       {
+                          psci=true;
                           
                           ePinState[x] = PinState[x];
                               degisenler += pinname[x] + ":" + PinState[x] + "|" + pinlabel[x] + ",";
@@ -137,7 +138,7 @@ void updateinput()
 
                          if(pinsignaltype[x]=="HCE" && PinState[x].toInt()>2)
                          {
-
+                          psci=true;
                           ePinState[x] = PinState[x];
                               degisenler += pinname[x] + ":" + PinState[x] + "|" + pinlabel[x] + ",";
                          } else
@@ -150,13 +151,14 @@ void updateinput()
 
                                 if(abs(epinstate-pinstate)>10){
                                   //Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
+                                  psci=true;
                                   ePinState[x] = PinState[x];
                                   degisenler += pinname[x] + ":" + PinState[x] + "|" + pinlabel[x] + ",";
                                 }
 
                               } else
                               {
-
+                              psci=true;
                               ePinState[x] = PinState[x];
                               degisenler += pinname[x] + ":" + PinState[x] + "|" + pinlabel[x] + ",";
                               }
@@ -171,6 +173,22 @@ void updateinput()
         }
 }
 
+
+void updatefbvirtual()
+{
+                for (int fbg=0;fbg<11;fbg++)
+                {
+                  if(fbc[fbg].length()>0)
+                  {
+                    //Serial.println("fbcyol: " + fbcyol[fbg]);
+                    //Serial.println("fbtd[fbg] " + fbtd[fbg] + "     efbtd[fbg]" +efbtd[fbg] );
+                    if(fbtd[fbg]!=efbtd[fbg])
+                    {
+                      fbbaskacihazagonder(fbcyol[fbg], fbtd[fbg], fbg);
+                    }
+                  }
+                }
+}
 
 
 void updateoutput()
@@ -210,6 +228,7 @@ void updateoutput()
 
                        if(pinmode[x]=="OUT")
                        {
+                         psco=true;
                          //pindurumrecyap=true;
                          ePinState[x] = PinState[x];
                          degisenler += pinname[x] + ":" + PinState[x]+ "|" + pinlabel[x] + ",";

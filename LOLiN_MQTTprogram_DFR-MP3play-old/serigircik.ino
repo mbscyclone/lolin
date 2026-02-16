@@ -1,3 +1,4 @@
+
 void serin()
 { 
   if(Serial.available())
@@ -57,6 +58,37 @@ void serin()
 
 
 
+///// firebase başlangıç /////////////////////////////////////////////////////////
+
+      if(sergel.indexOf("fburl=")==0)
+      {
+        DATABASE_URL = sergel.substring((6,sergel.length()));
+        Serial.println( DATABASE_URL + " [FIREBASE DATABASE URL] güncellendi," + "\n Şimdi apikey i giriniz. fbapi=......");
+      }
+
+      if(sergel.indexOf("fbapi=")==0)
+      {
+        API_KEY = sergel.substring((6,sergel.length()));
+        Serial.println( API_KEY + " [API_KEY] güncellendi," + "\n Şimdi yolu giriniz. (path) fbyol=.....");
+      }
+
+      if(sergel.indexOf("fbyol=")==0)
+      {
+        YOL = sergel.substring((6,sergel.length()));
+        Serial.println( YOL + " [YOL] güncellendi," + "\n FB user e-mail fbeml=.......");
+      }
+
+      if(sergel.indexOf("fbeml=")==0)
+      {
+        USER_EMAIL = sergel.substring((6,sergel.length()));
+        Serial.println( USER_EMAIL + " [USER_EMAIL] güncellendi," + "\n FB user şifresini giriniz. (password) fbupw=......");
+      }
+
+      if(sergel.indexOf("fbupw=")==0)
+      {
+        USER_PASSWORD = sergel.substring((6,sergel.length()));
+        Serial.println( USER_PASSWORD + " [USER_PASSWORD] güncellendi," + "\n FB bilgileri güncellendi. Kayıt için fbset yazınız.");
+      }
 
       if(sergel.indexOf("pl ")==0)
       {
@@ -64,32 +96,32 @@ void serin()
         play(mel);
       }
 
-
-
-      if(sergel.indexOf("kacmp3")==0)
+      if(sergel.indexOf("fbset")==0)
       {
-
-
-      int fileCounts = 0;
-
-          myDFPlayer.readFileCounts();
-          fileCounts = myDFPlayer.readFileCountsInFolder(0);
-
-          Serial.println(fileCounts);
-
-            myDFPlayer.volume(24);  //Set volume value. From 0 to 30
-            myDFPlayer.play(1);     //Play the first mp3
+        dosyayazfburl();
+        dosyayazfbapi();
+        dosyayazfbyol();
+        dosyayazfbusername();
+        dosyayazfbuserpass();
+        Serial.println( "Reset için 'reset' gerekli. \n ESP resetlenecektir.");
       }
 
+      if(sergel.indexOf("fben=1")==0)
+      {
+        fben=1;
+        dosyayazfben();
+        Serial.println("Firebase açıldı.");
+        fbresulsay=3001;
+      }
 
+      if(sergel.indexOf("fben=0")==0)
+      {
+        fben=0;
+        dosyayazfben();
+        Serial.println("Firebase kapatıldı.");
+      }
 ///////////////////////////////////////////////////////////// firebase bitti
-      if(sergel.indexOf("d=")==0)
-      { String flnm=sergel.substring(sergel.indexOf("d=")+2,sergel.length());
-        dosya = LittleFS.open(flnm, "r");
-        Serial.println(flnm +"dosya içeriği");
-        Serial.println(dosya.readString());
-        dosya.close();
-      }
+
 
       if(sergel.indexOf("habp0")>-1) 
       {
@@ -103,6 +135,11 @@ void serin()
         delay(100); ESP.reset();
       }
 
+      if(sergel.indexOf("habp2")>-1) 
+      {
+        habp = 2; dosyayazhabp();
+        delay(100); ESP.reset();
+      }
 
       if(sergel.indexOf("htpcd")>-1) 
       {
@@ -123,6 +160,8 @@ void serin()
             Serial.println("wifitara   - wifi taramak için");
             Serial.println("ssid=      - ssid ayarları başlatmak için.");
             Serial.println("ismim=     - Cihaza isim vermek için.");
+            Serial.println("fburl=     - Firebase ayarları başlatmak için.");
+            Serial.println("fben=      - Firebase açmak için. fben=1, kapatmak için fben=0");
             Serial.println("htserverip - Httpserver ip gösterir");
             Serial.println("habpX      - X=0 kapali 1 MQTT 2 Firebase  resetler");
             Serial.println("htpcldis   - htpclye git kapali htpcldis=T");
@@ -134,6 +173,7 @@ void serin()
 
       if(sergel.indexOf("durum")==0)
       {
+            Serial.println("firebase Açık  : "+ String(fben));
 //            if(Firebase.ready())Serial.println("Firebase durumu: Bağlı" );
 //            if(!Firebase.ready())Serial.println("Firebase durumu: Bağlı değil" );
             Serial.println("reset  - Cihazı resetler. ");

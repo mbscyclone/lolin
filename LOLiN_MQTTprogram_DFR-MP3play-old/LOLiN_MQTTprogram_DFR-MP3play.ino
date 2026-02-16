@@ -6,7 +6,8 @@
 #define ENABLE_DATABASE
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
-
+//#include <FirebaseRealtime.h>
+//#include <WiFiClient.h>
 //#include <EEPROM.h>
 //#include <DHT.h>
 #include <ESP8266WiFi.h>
@@ -23,13 +24,31 @@ String MQTTip = "";
 //#include <WebSocketsServer.h>
 //#include <ESP8266WebServer.h>
 
+#include "FirebaseRealtime.h"
+FirebaseRealtime firebaseRealtime;
+
+String USER_EMAIL1 = "";  // "asd"     @ işareti sonradan eklenecek
+String USER_EMAIL2 = "";  //"gmail.com"
+
+/* 2. Define the API Key */
+String API_KEY = "";  // "AIzaSyDTMhGs_ISD4WKmJrCxw35rqv-bo34ZdYI";
+
+/* 3. Define the RTDB URL */
+String DATABASE_URL = "";  // "https://esp-v4-default-rtdb.firebaseio.com"; //<databaseName>.firebaseio.com or <databaseName>.<region>.firebasedatabase.app
 String YOL = "";
+/* 4. Define the user Email and password that alreadey registerd or added in your project */
+String USER_EMAIL = "";     // "asadafag@gmail.com";
+String USER_PASSWORD = "";  // "bebedede14";
 
 
+
+
+int fbresulsay = 0;
 
 String errorlog;
 int CHZz;
-
+bool psco;
+bool psci;
 
 
 #include "Arduino.h"
@@ -44,6 +63,8 @@ SoftwareSerial softSerial(/*rx =*/D1, /*tx =*/D2);
 #endif
 
 DFRobotDFPlayerMini myDFPlayer;
+void printDetail(uint8_t type, int value);
+
 
 
 unsigned long reConnectsayac = millis();
@@ -55,8 +76,8 @@ String header;
 String headerold;
 String creator;
 String htyolla;
-String esphostnameOnek = "EspMP3v04-";
-String esphostname = "bos";
+String esphostnameOnek = "";
+String esphostname = "esp-bos";
 
 String progmsg;
 
@@ -132,7 +153,9 @@ bool mp3loopvar;
 int toplammp3sayisi;
 
 String emp3mesaj;
-int mp3pageilkindex=1;
+
+
+
 
 String pinayar;
 String pinayartmp;
@@ -451,6 +474,7 @@ while ((n = pinayartmp.indexOf('|', n)) != -1)
   Serial.println(pinayar);
   
   // int deleteResponseCode = firebaseRealtime.remove("/" + YOL + "/r/" , esphostname);
+    fbdeletesayac();
     //fbpinayaryaz = true;
   setup2();
   }
@@ -711,7 +735,7 @@ void connectWifi(void) {
     Serial.println("Connected!!!");
     Serial.println(WiFi.localIP());
     Serial.println(WiFi.gatewayIP());
-    WiFi.softAP(esphostnameOnek + esphostname, "12345678");  // bağlanınca ap kalksın için // koyabiliriz.
+    WiFi.softAP(esphostname, "12345678");  // bağlanınca ap kalksın için // koyabiliriz.
 
     IPAddress lip = WiFi.localIP();
     String mylocalip = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
@@ -720,12 +744,11 @@ void connectWifi(void) {
     //buzzercal(3000, 2); delay(10);
   } else {
 
-    WiFi.hostname(esphostnameOnek + esphostname);
+    WiFi.hostname(esphostname);
     Serial.println("HotSpot On");
     //                                wifiscan();
     //                                lookAP();// S etup HotSpot
-    
-    WiFi.softAP(esphostnameOnek + esphostname, "12345678");
+    WiFi.softAP("Esp-bos-v3", "12345678");
     //delay(100);
     Serial.println(WiFi.localIP());
     Serial.println(WiFi.gatewayIP());
@@ -954,7 +977,6 @@ bool mqtterror;
 
 int sil = 0;
 
-//void printDetail(uint8_t type, int value);
 
 void setup() {
   // initialize LED_BUILTIN as an output pin.
@@ -1083,8 +1105,10 @@ void setup() {
               }
             }
             Serial.println(F("DFPlayer Mini online."));
+
             myDFPlayer.volume(24);  //Set volume value. From 0 to 30
             myDFPlayer.play(1);     //Play the first mp3
+            
       }
     }
 
@@ -1097,8 +1121,13 @@ void setup() {
 
   dosyaokuhabp();
 
-  yoloku();
-  
+  dosyaokufbyol();
+  dosyaokufben();
+  dosyaokufburl();
+  dosyaokufbapi();
+  dosyaokufbusername();
+  dosyaokufbuserpass();
+
 
     httpserver.begin();
     butonactcoloku();
@@ -1129,15 +1158,34 @@ void setup() {
     if(habp==-2)dosyaokuhabp();
     if(habp == 1 || habp == 3){
       mqttipoku();
-      yoloku();
       if(MQTTip.length()>2) MQTTConnect();
     }
   }
 
   if (WiFi.status() == WL_CONNECTED) htserveroku();
 
+
+  if (WiFi.status() == WL_CONNECTED && fben != 0)
+  { if(habp==-2)dosyaokuhabp();
+        if(habp == 2 || habp == 3) {if(fben!=0)connectfb();}
+  }
 }
 
+
+
+
+void connectfb() {
+  //dosyaokufben();
+  if (fben == 1) {
+
+    //dosyaokufburl();dosyaokufbapi();dosyaokufbyol();dosyaokufbusername();dosyaokufbuserpass();
+
+    IPAddress lip = WiFi.localIP();
+    if (WiFi.status() == WL_CONNECTED) {
+      firebaseRealtime.begin(DATABASE_URL, API_KEY);
+    }
+  }
+}
 
 
 
@@ -1176,17 +1224,28 @@ void loop() {
     rescanwifi = 0;
   }
 
-  if (mqtterror==true && MQTTip.length()>1) {
+
   if (WiFi.status() == WL_CONNECTED) {
     if(habp==-2)dosyaokuhabp();
     if (habp == 1 || habp == 3) {
-      MQTTConnect();
+      // <- fixes some issues with WiFi stability
+      if(MQTTip.length()>1){
+        if (mqttclient.connected()==false) {
+          MQTTConnect();
+        } else mqttclient.loop();
       }
     }
-  
 
-  if(mqttclient.connected())mqttclient.loop();
-
+    if (fben == 1) {
+      if(habp==-2)dosyaokuhabp();
+      if(habp == 2 || habp == 3){
+        fbresulsay += 1;
+        if (fbresulsay > 4000) {
+          fbresulsay = 0;
+          connectfb();
+        }
+      }
+    }
   }
 
 
@@ -1201,13 +1260,17 @@ void loop() {
 
     int upd;
     if(habp > 2){
-    if (habp <= 0) upd = 4;
-    if (habp == 1) upd = 4;
+    if (habp <= 0) upd = 1;
+    if (habp == 1) upd = 1;
+    if (habp == 2) upd = 4;
+    if (habp == 3) upd = 1;
     }
 
     if(habp < 3){
     if (habp <=  0) upd = 5;
     if (habp == 1) upd = 5;
+    if (habp == 2) upd = 300;
+    if (habp == 3) upd = 200;
     }
 
       if (zamanfark % upd == 0) {
@@ -1248,6 +1311,16 @@ void loop() {
     
 
 
+    //Serial.println(zamanfark);
+    if (habp > 1) {
+      if (zamanfark >= 900 && zamanfark <= 1000) {
+          zamanbasi = millis() - 1001;
+          
+          Serial.println(fben);
+          if (fben!=0 && pinayar.length()>0)updatefbvirtual();
+          if (fben!=0 && pinayar.length()>0)fbsayacoku();
+      }
+    }
 
     if (zamanfark > 1300) {zamanbasi = millis(); zamanfark=millis();}
 
@@ -1261,7 +1334,8 @@ void loop() {
       connectWifi();
       if (WiFi.status() == WL_CONNECTED)
       { 
-        if(habp == 1) {if(MQTTip.length()>2) MQTTConnect();}
+        if(habp == 1 || habp == 3) {if(MQTTip.length()>2) MQTTConnect();}
+        if(habp == 2 || habp == 3) {if(fben!=0)connectfb();}
       }
     }
   }
@@ -1279,13 +1353,6 @@ aut=1; // silinecek
   if (millis() - ledsay > 880) {
     if (millis() - ledsay == 881) {
       digitalWrite(LED_BUILTIN, LOW);
-
-  //if (myDFPlayer.available()) {
-    //printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-  //}
-
-
-
     }
     if (millis() - ledsay > 1000) {
       ledsay = millis();
@@ -1382,91 +1449,6 @@ if(userstmp.length()<1) break;
 */
 
 
-/*
-void printDetail(uint8_t type, int value){
-  switch (type) {
-    case TimeOut:
-      Serial.println(F("Time Out!"));
-      break;
-    case WrongStack:
-      Serial.println(F("Stack Wrong!"));
-      break;
-    case DFPlayerCardInserted:
-      {Serial.println(F("Card Inserted!"));
-      delay(1000);
-
-            //!myDFPlayer.begin(FPSerial, isACK =  true, doReset =  true)
-            if (!myDFPlayer.begin(FPSerial, true, true)) {  //Use serial to communicate with mp3.
-              Serial.println(F("Unable to begin:"));
-              Serial.println(F("1.Please recheck the connection!"));
-              Serial.println(F("2.Please insert the SD card!"));
-              while (true) {
-                delay(0);  // Code to compatible with ESP8266 watch dog.
-              }
-            }
-            Serial.println(F("DFPlayer Mini online."));
-                                int fileCounts=0;
-          myDFPlayer.readFileCounts();
-          fileCounts = myDFPlayer.readFileCountsInFolder(0);
-
-          Serial.println(fileCounts);
-                                toplammp3sayisi=fileCounts;
-                                Serial.println(toplammp3sayisi);
-      break;}
-    case DFPlayerCardRemoved:
-      {Serial.println(F("Card Removed!"));
-      toplammp3sayisi=0;
-      break;}
-    case DFPlayerCardOnline:
-      Serial.println(F("Card Online!"));
-      break;
-    case DFPlayerUSBInserted:
-      Serial.println("USB Inserted!");
-      break;
-    case DFPlayerUSBRemoved:
-      Serial.println("USB Removed!");
-      break;
-    case DFPlayerPlayFinished:
-      Serial.print(F("Number:"));
-      Serial.print(value);
-      Serial.println(F(" Play Finished!"));
-      break;
-    case DFPlayerError:
-      Serial.print(F("DFPlayerError:"));
-      switch (value) {
-        case Busy:
-          Serial.println(F("Card not found"));
-          break;
-        case Sleeping:
-          Serial.println(F("Sleeping"));
-          break;
-        case SerialWrongStack:
-          Serial.println(F("Get Wrong Stack"));
-          break;
-        case CheckSumNotMatch:
-          Serial.println(F("Check Sum Not Match"));
-          break;
-        case FileIndexOut:
-          Serial.println(F("File Index Out of Bound"));
-          break;
-        case FileMismatch:
-          Serial.println(F("Cannot Find File"));
-          break;
-        case Advertise:
-          Serial.println(F("In Advertise"));
-          break;
-        default:
-          break;
-      }
-      break;
-    default:
-      break;
-  }
-  
-}
-*/
-
-
 
 String Karakterduzeltfunc(String gelent) {
   Serial.println("Karakterduzelte girdim");
@@ -1516,8 +1498,6 @@ String Karakterduzeltfunc(String gelent) {
   Serial.println(gelent);
   return gelent;
 }
-
-
 
 /*
 String Karakterduzeltfunc(String gelent){

@@ -11,11 +11,7 @@ void MQTTConnect() {
     
     //dosyaOkuusers();
     //dosyaOkuMQTTip();
-    String MQTTiptmp = MQTTip;
-    String MQTTiptmpuppercase=MQTTiptmp;
-    MQTTiptmpuppercase.toUpperCase();
-    if(MQTTiptmpuppercase.indexOf("HTTP:")>-1)MQTTiptmp=MQTTiptmp.substring(MQTTiptmp.indexOf("//")+2,MQTTiptmp.length());
-    const char* ipAdres = MQTTiptmp.c_str();
+    const char* ipAdres = MQTTip.c_str();
     mqttclient.begin(ipAdres, mqttnet);
     String capt = String(random(1000, 9999));
     String Client_IDm = esphostname +"-"+ capt;
@@ -33,7 +29,7 @@ void MQTTConnect() {
     if(mqttconnectsayac>=5000){mqtterror=true;}
   }
 
-  if (mqttclient.connected()) {
+  if (mqttclient.connected() == true) {
     mqtterror=false;
     Serial.println("\n connected!");
     mqttclient.subscribe("/"+YOL+"/#");
@@ -155,6 +151,9 @@ Serial.print("mqgonderen:");Serial.print(mqgonderen);Serial.print(" pnm:");Seria
                                             if(pns!=PinState[hh] && PinState[hh]==ePinState[hh])
                                             {
                                               PinState[hh] =pns;
+                                              //ePinState[hh] = pns;
+                                              //fbPinState[hh] = pns;
+                                              //pindurumrecyap=true;
                                             }
                                         break;
                                       }
