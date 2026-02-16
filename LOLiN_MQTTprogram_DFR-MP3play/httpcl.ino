@@ -371,6 +371,66 @@ if(header.indexOf("/nevarsasil")>-1)
 
             httpheader(xilent);
 
+            
+    if(toplammp3sayisi<1)toplammp3sayisi=10;
+    if (toplammp3sayisi>0 && pinayar.indexOf("|OUT|MP3|") > -1 && (header.indexOf("/mp3ar") > -1 || header.indexOf("mp3dinle=")>-1)) {
+    xilent.println("<br>Mp3 ayar sayfası &emsp;&emsp;Mp3 Çalmak için Kod en fazla 4, Açıklama Notu 8 harftir<br>");
+    xilent.println("<hr style=\"height:10px;border-width:3;color:black;background-color:black\">");
+    String mp3ler="";
+    if(toplammp3sayisi>-1){
+      xilent.println("<table>");
+    dosya = LittleFS.open("/mp3ler.txt", "r");
+    if (dosya) {
+    // dosya başarı ile açıldı;
+    String mp3satirlar = dosya.readString();
+    xilent.println("<hr style=\"height:5px;border-width:2;color:red;background-color:blue\">");
+    for(int m=1;m<2000;m++){
+    if(mp3satirlar.indexOf('\n')>-1)
+      {
+        String mp3kod = mp3satirlar.substring(0, mp3satirlar.indexOf('|'));
+        mp3satirlar = mp3satirlar.substring(mp3satirlar.indexOf('|')+1, mp3satirlar.length());
+        String mp3ack = mp3satirlar.substring(0, mp3satirlar.indexOf('\n'));
+        mp3satirlar = mp3satirlar.substring(mp3satirlar.indexOf('\n')+1, mp3satirlar.length());
+        String Stringm;
+        if(m<100)Stringm="0"+(String)m;
+        if(m<10)Stringm="00"+(String)m;
+        xilent.println("<tr><form autocomplete=\"off\" action=\"/mp3kodlar\"" + (String)m +" method=\"get\">");
+        xilent.println("<label>" + Stringm + ". Kod:</label><input name='mp3kod' style=\"width:50px;\" value='"+ mp3kod +"' length=4>");
+        xilent.println("<label>..Not:</label><input name='mp3ack' style=\"width:80px;\" value='"+ mp3ack +"' length=8><input type='submit'value='💾'></form>");
+        xilent.println("<form action=\"/mp3dinle" + (String)m +" method=\"get\">&emsp;&emsp;<input type='submit'value='🎧'></form>");
+        xilent.println("<hr style=\"height:5px;border-width:2;color:blue;background-color:blue\"></tr>");
+      }else break;
+    }
+
+
+    dosya.close();
+  }
+  xilent.println("<hr style=\"height:5px;border-width:2;color:red;background-color:red\">");
+for(int m=1;m<6;m++)
+{
+        String mp3kod = "";
+        String mp3ack = "";
+        String Stringm;
+        if(m<100)Stringm="00"+(String)m;
+        if(m<10)Stringm="000"+(String)m;
+        xilent.println("<tr><form autocomplete=\"off\" action=\"/mp3kodlar\"" + (String)m +" method=\"get\">");
+        xilent.println("<label>" + Stringm + ". Kod:</label><input name='mp3kod' style=\"width:50px;\" value='"+ mp3kod +"' length=4>");
+        xilent.println("<label>..Not:</label><input name='mp3ack' style=\"width:80px;\" value='"+ mp3ack +"' length=8><input type='submit'value='💾'></form>");
+        xilent.println("<form action=\"/mp3dinle=" + (String)m +"\" method=\"get\">&emsp;&emsp;<input type='submit'value='🎧'></form>");
+        xilent.println("<hr style=\"height:5px;border-width:2;color:red;background-color:red\"></tr>");
+
+}
+ xilent.println("</table><br><br><br><br>");
+
+if(header.indexOf("mp3dinle=")>-1)
+{
+String parca=header.substring(header.indexOf("=")+1,header.indexOf("?"));
+int parcano=parca.toInt();
+myDFPlayer.play(parcano);
+}
+header="";
+}
+}
 
 
             if (header.indexOf("/pnayar") > -1 || header.indexOf("/programkayit") > -1) {
@@ -399,6 +459,12 @@ if(header.indexOf("/nevarsasil")>-1)
               xilent.println("<input type='submit' value='Pinayar Kaydet'>");
               xilent.println("</form>");
 
+              if(toplammp3sayisi>0 && pinayar.indexOf("|OUT|MP3|")>-1)
+              {
+                xilent.println("<br><form action=\"/mp3ar\" method=\"POST\">📻<input type=\"submit\" value=\"MP3 kod ayar\"></form>");
+
+              }
+
               xilent.println("</td><td style='font-size:12px;vertical-align:top;'>");
               xilent.println(erlog);
               xilent.println("</td></tr></table>");
@@ -425,8 +491,8 @@ if(header.indexOf("/nevarsasil")>-1)
                 xilent.println(perlog);
                 xilent.println("</td>");
               }
-              xilent.println("</tr><br></table><br><br><br><br>");
-
+              xilent.println("</tr><br></table><br><br><br><br><br><br><br><br><br><br><br><br>");
+              header="";
 
 
               // Clear the header variable
@@ -909,7 +975,7 @@ if(header.indexOf("/nevarsasil")>-1)
               else xilent.println("<br>Kayıtlı Wifi  :" + ssid + "  bağlanılamadı.");
               if (pinayar.length() < 2) xilent.println("<br>Pin ayarları yapılmamış!");
               else xilent.println("<br>Pin ayarları tamam");
-              xilent.println("<br>Bağlanılacak MQTT server ip:" + MQTTip);
+              xilent.println("<br>Bağlanılacak MQTT server ip: http://" + MQTTip);
               xilent.println("<br>Firebase data yolu:" + YOL);
               xilent.println("<br>Firebase url     :" + DATABASE_URL);
               xilent.println("<br>FB RTD kullanıcısı:" + USER_EMAIL);
@@ -1440,6 +1506,11 @@ if(header.indexOf("/nevarsasil")>-1)
 
                 if (pinmode[x] == "OUT" && pinsignaltype[x] == "BUZ") {
                   xilent.println("<label style='color: #0A4A4A;'>Ses frekansı çıkış - " + pinlabel[x] + " [" + pinname[x] + "] .·oO  Buzzer pini<br></label>");
+                }
+
+                if (pinmode[x] == "OUT" && pinsignaltype[x] == "MP3") 
+                {
+                  xilent.println("<label style='color: #0A4AFF;'>MP3 çalar - " + pinlabel[x] + " [" + pinname[x] + "] MP3_RX pini - " + pinminvalue[x] + " MP3_TX pini<br></label>");  
                 }
 
                 if (pinmode[x] == "OUT" && pinsignaltype[x] == "PWM") {

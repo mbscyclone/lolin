@@ -13,6 +13,11 @@
 #include <ESP8266WiFi.h>
 #include "LittleFS.h"
 #include <MQTT.h>
+WiFiClient mqttnet;
+MQTTClient mqttclient;
+String MQTTip = "";
+
+
 #include <Servo.h>
 #include <DHT.h>
 #include "Melody.h"
@@ -21,13 +26,6 @@
 
 #include "FirebaseRealtime.h"
 FirebaseRealtime firebaseRealtime;
-
-
-WiFiClient mqttnet;
-MQTTClient mqttclient;
-String MQTTip = "";
-
-
 
 String USER_EMAIL1 = "";  // "asd"     @ işareti sonradan eklenecek
 String USER_EMAIL2 = "";  //"gmail.com"
@@ -51,6 +49,23 @@ String errorlog;
 int CHZz;
 bool psco;
 bool psci;
+
+
+#include "Arduino.h"
+#include "DFRobotDFPlayerMini.h"
+
+#if (defined(ARDUINO_AVR_UNO) || defined(ESP8266))  // Using a soft serial port
+#include <SoftwareSerial.h>
+SoftwareSerial softSerial(/*rx =*/D1, /*tx =*/D2);
+#define FPSerial softSerial
+#else
+#define FPSerial Serial1
+#endif
+
+DFRobotDFPlayerMini myDFPlayer;
+void printDetail(uint8_t type, int value);
+
+
 
 unsigned long reConnectsayac = millis();
 
@@ -128,6 +143,18 @@ String tempstr = "";
 String humstr = "";
 
 Servo myservo[10];
+
+int mp3RX[10];
+int mp3TX[10];
+int mp3Vol;
+int mp3EQ;
+bool playfirst;
+bool mp3loopvar;
+int toplammp3sayisi;
+
+String emp3mesaj;
+
+
 
 
 String pinayar;
@@ -293,10 +320,13 @@ while ((n = pinayartmp.indexOf('|', n)) != -1)
         acildeger[x]="";
         hcsrT[x] = -1;
         hcsrE[x] = -1;
+        mp3RX[x] =-1;
+        mp3TX[x] =-1;
       }
 
       erlog = "";
       hcsrloopvar = false;
+      mp3loopvar = false;
       yield();
 
       for (int x = 0; x < 1000; x++) {
@@ -362,6 +392,20 @@ while ((n = pinayartmp.indexOf('|', n)) != -1)
               if (pinminvalue[x] == "A0") hcsrT[x] = Pin[9];
             }
 
+            if (pinsignaltype[x] == "MP3") {
+              mp3RX[x] = Pin[x];
+              mp3loopvar = true;
+              if (pinminvalue[x] == "D0") mp3TX[x] = Pin[0];
+              if (pinminvalue[x] == "D1") mp3TX[x] = Pin[1];
+              if (pinminvalue[x] == "D2") mp3TX[x] = Pin[2];
+              if (pinminvalue[x] == "D3") mp3TX[x] = Pin[3];
+              if (pinminvalue[x] == "D4") mp3TX[x] = Pin[4];
+              if (pinminvalue[x] == "D5") mp3TX[x] = Pin[5];
+              if (pinminvalue[x] == "D6") mp3TX[x] = Pin[6];
+              if (pinminvalue[x] == "D7") mp3TX[x] = Pin[7];
+              if (pinminvalue[x] == "D8") mp3TX[x] = Pin[8];
+              if (pinminvalue[x] == "A0") mp3TX[x] = Pin[9];
+            }
           }
         }
 
@@ -566,8 +610,6 @@ void setup2() {
       myservo[c].attach(Pin[c]);
       //
     }
-
-
   }
 }
 
@@ -605,7 +647,7 @@ bool testWifi(void) {
     else digitalWrite(LED_BUILTIN, HIGH);
 
     c1++;
-    serin();
+
   }
   Serial.println("");
   Serial.println("ConWifi timeout,open AP");
@@ -939,14 +981,13 @@ int sil = 0;
 void setup() {
   // initialize LED_BUILTIN as an output pin.
   // starttime=millis();
-  Serial.begin(115200);
+  Serial.begin(57600);
   // dosya setup kısmı ////////////////
 
             for (int y=1;y<13;y++)
             {
               mqyol[y]="";
             }
-
 
   if (LittleFS.begin()) {
     Serial.println();
@@ -1000,6 +1041,8 @@ void setup() {
   espLolin();
 
   dosyaOkupinayar();
+
+
   //dosyaokupindurum();
   dosyaOkuprogram();
 
@@ -1037,6 +1080,39 @@ void setup() {
   macadr.toUpperCase();
 
   if (WiFi.status() != WL_CONNECTED) connectWifi();
+
+
+
+
+
+
+    if (pinayar.indexOf("|OUT|MP3|")>-1) {
+      if(pinayar.indexOf("D1|OUT|MP3|")<0) errorlog="MP3-player RX=D1, TX=D2 olmalıdır.";
+      else{
+
+
+            FPSerial.begin(9600);
+            Serial.println();
+            Serial.println(F("DFRobot DFPlayer Mini Demo"));
+            Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
+
+            if (!myDFPlayer.begin(FPSerial, /*isACK = */ true, /*doReset = */ true)) {  //Use serial to communicate with mp3.
+              Serial.println(F("Unable to begin:"));
+              Serial.println(F("1.Please recheck the connection!"));
+              Serial.println(F("2.Please insert the SD card!"));
+              while (true) {
+                delay(0);  // Code to compatible with ESP8266 watch dog.
+              }
+            }
+            Serial.println(F("DFPlayer Mini online."));
+
+            myDFPlayer.volume(24);  //Set volume value. From 0 to 30
+            myDFPlayer.play(1);     //Play the first mp3
+            
+      }
+    }
+
+
 
 
   //delay(10);
@@ -1082,7 +1158,6 @@ void setup() {
     if(habp==-2)dosyaokuhabp();
     if(habp == 1 || habp == 3){
       mqttipoku();
-      MQTTConnect();
       if(MQTTip.length()>2) MQTTConnect();
     }
   }
@@ -1136,8 +1211,9 @@ void loop() {
     if (zamanfark % 240 == 0) {
       server.handleClient();
       MDNS.update();
-      serin();
     }
+
+    if(zamanfark % 1000 ==0 ) serin();
 
   //geciktirmee //yavaşlatma
   //if(macadr!=WiFi.macAddress()){delay(1000);}
@@ -1197,7 +1273,6 @@ void loop() {
     if (habp == 3) upd = 200;
     }
 
-    
       if (zamanfark % upd == 0) {
         headerold="";
         if (pinayar.length() > 0) updateinput();
@@ -1251,11 +1326,6 @@ void loop() {
 
 
 
-
-
-
-
-  serin();
 
 
   if (WiFi.status() != WL_CONNECTED) {
