@@ -13,7 +13,7 @@ void httpheader(WiFiClient xilent) {
   xilent.println("</style>");
   xilent.println("</head>");
   xilent.println("<body>");
-  xilent.println("<font size=\"3\" color=\"#FF0000\">" + esphostnameOnek + esphostname + "</font>");
+  xilent.println("<font size=\"3\" color=\"#FF0000\">" + esphostname + "</font>");
   xilent.println("<br><table style=\"border:5px solid black;width:500px\"><tr>");
   xilent.println("<td style=\"border:1px solid black;width:250p; align:center; \">");
   xilent.println("<p><form action=\"/Menu0\" method=\"POST\"><input type=\"submit\" value=\"Anasayfa\"></form></p></td>");
@@ -74,7 +74,7 @@ void htpcl() {
         Host= Hosttmp.substring(0,Hosttmp.indexOf("\n"));
 
 
-        if (header.indexOf("favicon.ico")>-1){header="";}
+        if (header.indexOf("favicon.ico")>-1){header="";return;}
 
         if (header.indexOf(" HTTP/1.1") > -1) {
           header = header.substring(0, header.indexOf(" HTTP/1.1")+9);
@@ -82,7 +82,7 @@ void htpcl() {
           if(header!=headerold)
           {
             headerold=header;
-          }else {header="";}
+          }else {header="";return;}
 
           reConnectsayac = millis();
 
@@ -332,16 +332,16 @@ if(header.indexOf("/nevarsasil")>-1)
           }
 
 //////////////////////////////////////////
-            ehabp=habp;
 
-            if (header.indexOf("habp=Off") > -1) habp = 0;
+
+            if (header.indexOf("habp=off") > -1) habp = 0;
 
             if (header.indexOf("habp=mqt") > -1) habp = 1;
 
 
             if(ehabp != habp)
             {
-            xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html><html><head><title>" + esphostnameOnek + esphostname + "  -> " + lipStr + " - ESP8266-Pro.v4</title>");
+            xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html><html><head><title>" + esphostname + "  -> " + lipStr + " - ESP8266-Pro.v4</title>");
             xilent.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
             xilent.println("<meta charset=\"UTF-8\">");
             if (sayfayenile > 0) xilent.println("<script> setTimeout(function(){window.location.href = \"/\";}, 10000);</script>");
@@ -351,6 +351,7 @@ if(header.indexOf("/nevarsasil")>-1)
             xilent.println("</body></html>");
             delay(1000);
             xilent.abort();
+            Serial.println("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
             dosyayazhabp();
             delay(1000);
             ESP.reset();
@@ -881,7 +882,7 @@ header="";
               xilent.println(ipStr);
 
               xilent.println("<br>");
-              xilent.println("<br>Wifi ismim       :" + esphostnameOnek + esphostname);
+              xilent.println("<br>Wifi ismim       :" +  esphostname);
               if (WiFi.status() == WL_CONNECTED) xilent.println("<br>Bağlanılan Wifi  :" + ssid + "  Sinyal gücü : " + WiFi.RSSI());
               else xilent.println("<br>Kayıtlı Wifi  :" + ssid + "  bağlanılamadı.");
               if (pinayar.length() < 2) xilent.println("<br>Pin ayarları yapılmamış!");
@@ -1232,7 +1233,7 @@ if(MQTTip.length()>3){
             IPAddress lip = WiFi.localIP();
             String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
 
-            xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html><html><head><title>" + esphostnameOnek + esphostname + "  -> " + lipStr + " - ESP8266-Pro.v4</title>");
+            xilent.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html><html><head><title>" + esphostname + "  -> " + lipStr + " - ESP8266-Pro.v4</title>");
 
             xilent.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
             xilent.println("<meta charset=\"UTF-8\">");
@@ -1264,7 +1265,7 @@ if(MQTTip.length()>3){
             xilent.println("</head>");
 
             // Web Page Heading
-            String sonek = esphostname.substring(esphostname.indexOf("-") + 1, esphostname.length());
+            //String sonek = esphostname.substring(esphostname.indexOf("-") + 1, esphostname.length());
 
             xilent.println("<body><div align=\"center\">");
             xilent.println("<label style='font-size: 10px;'>Sayfayı yenileme için alttaki düğmeyi kullanabilirsiniz</label>");
@@ -1300,7 +1301,8 @@ if(MQTTip.length()>3){
             xilent.println("<form action='/rr0' method=\"POST\"><input type=\"submit\" value=\" Yenile\" style='width:80px;'></form>");
             //xilent.println("<form action='/' method=\"POST\"><input type=\"submit\" value=\" Yenile\" style='width:80px;'></form>");
             xilent.println("</td></table></div>");
-            xilent.println("<label style='font-size: 20px;'>" + sonek + "</label> &emsp;&emsp;");
+            xilent.println("<label style='font-size: 20px;'>" + esphostname + "</label> &emsp;&emsp;");
+            //xilent.println("<label style='font-size: 20px;'>" + sonek + "</label> &emsp;&emsp;");
             //xilent.println("> Device_ident: ");
             //xilent.println(esphostname + "<br>");
             lip = WiFi.localIP();
@@ -1646,7 +1648,7 @@ xilent.println("<div><table><td style=\"border:2px solid black;width:400p; align
             if (progmsg != "") xilent.println("<label style='font-size: 12px;'>Hata ile kaşılaşıyorsanız ilgili kayıtları silmek için aşağıdaki urlleri girin</label><br>");
             xilent.println("<label style='font-size: 10px;'>Pin ayarı hatalı oldu pinayarlarını sil diyorsanız &emsp; http://" + lipStr + "/pinayarsil</label><br>");
             xilent.println("<label style='font-size: 10px;'>Program ayarı hatalı oldu program sil diyorsanız &emsp; http://" + lipStr + "/programsil</label><br>");
-            xilent.println("<label style='font-size: 10px;'>Haberleşme protokolü hatalı diyorsanız &emsp; http://" + lipStr + "/habp=Off</label><br>");
+            xilent.println("<label style='font-size: 10px;'>Haberleşme protokolü hatalı diyorsanız &emsp; http://" + lipStr + "/habp=off</label><br>");
             xilent.println("<label style='font-size: 10px;'>Tüm kayıtları sil diyorsanız &emsp; http://" + lipStr + "/nevarsasil</label><br>");
             xilent.println("</td></table></div>");
 

@@ -37,7 +37,8 @@ void MQTTConnect() {
     mqtterror=false;
     Serial.println("\n connected!");
     mqttclient.subscribe("/"+YOL+"/#");
-    // client.unsubscribe("/hello");
+    //mqttclient.subscribe("#");
+
     mqttconnectsayac = 0;
   }
 
@@ -52,7 +53,7 @@ String publishmesaj;
 
 
 void messageReceived(String& topic, String& payload) {
-  Serial.println("incoming: " + topic + " - " + payload);
+  //Serial.println("incoming: " + topic + " - " + payload);
 
   if (payload.indexOf("!") == 0) return;
   //if (payload==mqsenddataold) return;
@@ -77,8 +78,8 @@ void messageReceived(String& topic, String& payload) {
     eTopic = Gelentopic;
     ePayload = Gelenmsg;
 
-  Serial.println(Gelentopic);
-  Serial.println(Gelenmsg);
+  //Serial.println(Gelentopic);
+  //Serial.println(Gelenmsg);
 
   if(Gelentopic.indexOf(esphostname)>-1 || Gelentopic.indexOf("ALLDEV")>-1)
     mqttisyap(payload);
@@ -167,9 +168,9 @@ Serial.print("mqgonderen:");Serial.print(mqgonderen);Serial.print(" pnm:");Seria
                                   Serial.println("acil durum 1 ilan edildi..");
                                 }
 
-                                
+
                                 if(rslttmp.length()<2)break;
                             }
-
+//  Serial.println("mqttişyap  void sonu");
 }
 ///// MQTT İŞLEMLERİ BİTİŞ /////////////////////////

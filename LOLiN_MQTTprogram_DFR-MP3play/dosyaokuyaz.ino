@@ -179,7 +179,7 @@ void dosyaokumyssidname() {
     yazili = gecicimyssidname.length();
     dosya.close();
     if (yazili < 1) { myssidyazilimi = "-bos"; }
-         esphostname = "" + myssidyazilimi;
+         esphostname = "MP3_" + myssidyazilimi;
   }
 }
 
