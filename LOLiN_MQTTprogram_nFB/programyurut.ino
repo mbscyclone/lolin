@@ -15,7 +15,7 @@ String ptm;
 void programrun() {
   for (int i = 0; i < 11; i++)  // İLK 10 SAYI 10 PİN İSİM VE DEĞERLERİNİ AL degis degdeg e yaz
   {
-    if (programdata.substring(0, 1) == "\n") programdata.substring(1, programdata.length());  //arada programdata için temizlik yap
+    if (programdata.substring(0, 1) == "\n") programdata = programdata.substring(1, programdata.length());  //arada programdata için temizlik yap
     degis[i] = pinname[i];
     bool yildizli; if(pinlabel[i].indexOf("*")+1==pinlabel[i].length())yildizli=true;else yildizli=false;
     if(yildizli==false)degdeg[i] = PinState[i];

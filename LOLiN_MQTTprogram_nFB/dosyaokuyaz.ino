@@ -69,7 +69,7 @@ void dosyayazssidpass()
 }
 
 void dosyaokussidpass() {
-
+  dosya.close();
   dosya = LittleFS.open("/ssidpass.txt", "r");
   if (dosya) {
     // dosya başarı ile açıldı;
@@ -103,15 +103,14 @@ Serial.println(myssidyazilimi);
 }
 
 
-void dosyayazusrvepass(int usrno)
+void dosyaYazusers()
 {
-                  reConnectsayac=millis();
                 dosya.close();
-                LittleFS.remove("/usrpass.txt");
-                dosya = LittleFS.open("/usrpass.txt", "w+");
+                LittleFS.remove("/usrnamepass.txt");
+                dosya = LittleFS.open("/usrnamepass.txt", "w+");
                 if (dosya) {
-                  dosya.println(usrnam[usrno]);
-                  dosya.println(usrpass[usrno]);
+                  dosya.println(unme);
+                  dosya.println(pwrd);
                   dosya.close();
                   Serial.println("Write bitti");
                 }
@@ -119,24 +118,38 @@ void dosyayazusrvepass(int usrno)
 
 }
 
-void dosyaokuusrvepass(int usrno) {
+void dosyaOkuusers() {
 
-  dosya = LittleFS.open("/usrpass.txt", "r");
+  dosya = LittleFS.open("/usrnamepass.txt", "r");
   if (dosya) {
     // dosya başarı ile açıldı;
-    String ssidoc = dosya.readStringUntil('\n');
-    usrnam[usrno] = ssidoc.substring(0, ssidoc.length() - 1);
-    //Serial.println(ssid);
 
-    String passoc = dosya.readStringUntil('\n');
-    usrpass[usrno] = passoc.substring(0, passoc.length() - 1);
-    //Serial.println(pass);
+    String unmetmp = dosya.readStringUntil('\n');
+
+    for(int sil=0;sil<4;sil++){
+    if(unmetmp.indexOf('\r')==0) unmetmp=unmetmp.substring(1,unmetmp.length()); 
+    if(unmetmp.indexOf('\n')==0) unmetmp=unmetmp.substring(1,unmetmp.length()); 
+    if(unmetmp.indexOf('\r')>2) unmetmp=unmetmp.substring(0,unmetmp.length()-1);
+    if(unmetmp.indexOf('\n')>2) unmetmp=unmetmp.substring(0,unmetmp.length()-1);
+    }
+    unme=unmetmp;
+    String pwrdtmp = dosya.readStringUntil('\n');
+    for(int sil=0;sil<4;sil++){
+    if(pwrdtmp.indexOf('\r')==0) pwrdtmp=pwrdtmp.substring(1,pwrdtmp.length()); 
+    if(pwrdtmp.indexOf('\n')==0) pwrdtmp=pwrdtmp.substring(1,pwrdtmp.length());
+    if(pwrdtmp.indexOf('\r')>2) pwrdtmp=pwrdtmp.substring(0,pwrdtmp.length()-1);
+    if(pwrdtmp.indexOf('\n')>2) pwrdtmp=pwrdtmp.substring(0,pwrdtmp.length()-1);
+    }
+
+    pwrd=pwrdtmp;
     dosya.close();
     //Serial.println("read bitti");
   }else
   {
-    usrnam[usrno] = "admin";
-    usrpass[usrno] = "1234";
+    unme = "admin";
+    pwrd = "1111";
+  dosyaYazusers();
+
   }
   dosya.close();
 }
@@ -203,8 +216,7 @@ void dosyaokuhabp()
                 ehabp = habp;
                 //Serial.print("fben:");
                 //Serial.println(fben);
-                }else habp=-1;
-                if(habp==-2)habp=-1;
+                }else habp=0;
                 dosya.close();
 }
 

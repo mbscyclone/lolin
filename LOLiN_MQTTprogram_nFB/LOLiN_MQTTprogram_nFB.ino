@@ -63,7 +63,7 @@ String creator;
 String htyolla;
 String esphostnameOnek = "";
 String esphostname = "esp-bos";
-
+unsigned long harcananzaman;
 String progmsg;
 
 
@@ -79,13 +79,18 @@ int rescanwifi = 0;
 
 bool htpcldis=false;
 
-int aut = 0;
-int autcode;
-int logintimeout;
-int logintimeoutmax=240000;
+
+
+//bool aut[5]=false;
+String unme;
+String pwrd;
 String capt;
-String unme="admin";
-String pwrd="1234";
+unsigned long logintimeout;
+int aut;
+int logintimeoutmax=240000;
+
+
+
 int PIN_TONE;
 String Host;
 
@@ -95,8 +100,7 @@ String VRP[5];
 int pinsayisi = 10;
 // pin Adı|pinmode|pin baslangic degeri|pin değeri|pin degerleri|Pin label"
 
-String usrnam[3];
-String usrpass[3];
+
 
 
 //String pinsatir[10];
@@ -165,7 +169,7 @@ String programdata;
 
 
 
-int habp=-2;
+int habp = -2;
 int ehabp;
 int fben;
 
@@ -233,7 +237,7 @@ void handleNotFound() {
 }
 
 
-
+bool LED_BUILTIN_devredisi=false;
 
 //String macadr1="8"; // SALON
 String macadr1 = "5";  // BAHCE
@@ -490,8 +494,12 @@ void espLolin() {
 }
 
 void setup2() {
-  dosyaOkuprogram();
+
   dosyaOkupinayar();
+
+if(pinayar.length()>3)
+{
+  dosyaOkuprogram();
   String strtmp = programdata;
   strtmp.toUpperCase();
 
@@ -514,6 +522,7 @@ void setup2() {
         }
       }
     }else pinlerterslendi=false;
+
 
   //Serial.println("sorunyok");
   //Serial.println("sorunyok2");
@@ -567,7 +576,7 @@ void setup2() {
       //
     }
 
-
+  }
   }
 }
 
@@ -601,11 +610,11 @@ bool testWifi(void) {
     }
     delay(1000);
     Serial.print("*");
+    if(LED_BUILTIN_devredisi==false){
     if (LED_BUILTIN == HIGH) digitalWrite(LED_BUILTIN, LOW);
     else digitalWrite(LED_BUILTIN, HIGH);
-
+    }
     c1++;
-    serin();
   }
   Serial.println("");
   Serial.println("ConWifi timeout,open AP");
@@ -938,6 +947,7 @@ int sil = 0;
 
 void setup() {
   // initialize LED_BUILTIN as an output pin.
+  pinMode(LED_BUILTIN,OUTPUT);
   // starttime=millis();
   Serial.begin(115200);
   // dosya setup kısmı ////////////////
@@ -961,7 +971,7 @@ void setup() {
       delay(10);
       LittleFS.remove("/httpserverip.txt");
       delay(10);
-      LittleFS.remove("/usrpass.txt");
+      LittleFS.remove("/usrnamepass.txt");
       delay(10);
       LittleFS.remove("/mqttip.txt");
       delay(10);
@@ -994,15 +1004,15 @@ void setup() {
 
   Serial.println(ESP.getResetReason());
   Serial.println(ESP.getResetInfo());
-  pinMode(LED_BUILTIN, OUTPUT);
 
 
   espLolin();
 
   dosyaOkupinayar();
   //dosyaokupindurum();
-  dosyaOkuprogram();
 
+if(pinayar.length()>3){
+    dosyaOkuprogram();
       for (int x = 0; x < pinsayisi + 1; x++) {
         if (pinmode[x] == "OUT" & pinsignaltype[x] == "DIG") {
           bool yildizli; if(pinlabel[x].indexOf("*")+1==pinlabel[x].length())yildizli=true;else yildizli=false;
@@ -1017,9 +1027,7 @@ void setup() {
       }
   pinlerterslendi=true;
   //dosyaokuhabp();
-
-
-
+}
 
 
 
@@ -1073,8 +1081,6 @@ void setup() {
 
 
 
-
-
   setup2();
   otasetup();
 
@@ -1094,6 +1100,20 @@ void setup() {
   { if(habp==-2)dosyaokuhabp();
         if(habp == 2 || habp == 3) {if(fben!=0)connectfb();}
   }
+
+
+
+/*
+  dosyaOkuusers();
+Serial.println("usrname okudurm:" + usrname);
+Serial.println("usrpaz okudurm:" + usrpaz);
+if(usrname.length()<2 || usrpaz.length()<2)
+{
+  usrname="admin";
+  usrpaz="1111";
+}
+*/
+dosyaOkuusers();
 }
 
 
@@ -1125,18 +1145,23 @@ void loop() {
 
   // put your main code here, to run repeatedly:
   otaloop();
-
+  harcananzaman=millis();
   htpcl();
-
+  if(millis() - harcananzaman> 100)Serial.println("htpclde vaik uzadı: ms>" + (String)(millis()-harcananzaman));
 
 /* zamanfark % 240 içine aldık
   server.handleClient();
   MDNS.update();
 */
     if (zamanfark % 240 == 0) {
+
+      harcananzaman=millis();
       server.handleClient();
       MDNS.update();
+      if(millis() - harcananzaman> 100)Serial.println("MSDNUPDATEde vaik uzadı: ms>" + (String)(millis()-harcananzaman));
+      harcananzaman=millis();
       serin();
+      if(millis() - harcananzaman> 100)Serial.println("serinde vaik uzadı: ms>" + (String)(millis()-harcananzaman));
     }
 
   //geciktirmee //yavaşlatma
@@ -1148,9 +1173,8 @@ void loop() {
     rescanwifi = 0;
   }
 
-
+harcananzaman=millis();
   if (WiFi.status() == WL_CONNECTED) {
-    if(habp==-2)dosyaokuhabp();
     if (habp == 1 || habp == 3) {
       // <- fixes some issues with WiFi stability
       if(MQTTip.length()>1){
@@ -1159,9 +1183,10 @@ void loop() {
         } else mqttclient.loop();
       }
     }
+if(millis() - harcananzaman> 100)Serial.println("mqttclient.loop vaik uzadı: ms>" + (String)(millis()-harcananzaman));
+
 
     if (fben == 1) {
-      if(habp==-2)dosyaokuhabp();
       if(habp == 2 || habp == 3){
         fbresulsay += 1;
         if (fbresulsay > 4000) {
@@ -1200,10 +1225,12 @@ void loop() {
     
       if (zamanfark % upd == 0) {
         headerold="";
+        harcananzaman=millis();
         if (pinayar.length() > 0) updateinput();
         if (pinayar.length()>0 && programdata.length()>0)programrun();
         if (pinayar.length() > 0) updateoutput();
         if (pinayar.length() > 0) vrkontrol();
+        if(millis() - harcananzaman> 100)Serial.println("update vr prog vaik uzadı: ms>" + (String)(millis()-harcananzaman));
 //        mqsay+=1;
 //        if(mqsay>50)
 //        {
@@ -1251,13 +1278,6 @@ void loop() {
 
 
 
-
-
-
-
-  serin();
-
-
   if (WiFi.status() != WL_CONNECTED) {
     if (millis() - reConnectsayac > 60000) {
       reConnectsayac = millis();
@@ -1270,15 +1290,8 @@ void loop() {
     }
   }
 
-  /*
-  if(aut==1 & logintimeout>0){
-    // delay 4 ve 60 saniye için 60000 / a;
-    logintimeout-= 4;
-  }
-  if(logintimeout<=0)aut=0;
 
-aut=1; // silinecek
-*/
+
 
   if (millis() - ledsay > 880) {
     if (millis() - ledsay == 881) {
@@ -1296,6 +1309,14 @@ aut=1; // silinecek
     }
   }
 
+  if(aut==1)
+  {
+    if(millis()-logintimeout>logintimeoutmax)
+    {
+      aut=0;
+    }
+  }
+  
 }
 
 

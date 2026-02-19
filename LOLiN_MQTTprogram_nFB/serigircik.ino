@@ -173,6 +173,9 @@ void serin()
 
       if(sergel.indexOf("durum")==0)
       {
+        IPAddress lip = WiFi.localIP();
+            String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
+        Serial.print("Local ip  : "); Serial.println(lipStr);
             Serial.println("firebase Açık  : "+ String(fben));
 //            if(Firebase.ready())Serial.println("Firebase durumu: Bağlı" );
 //            if(!Firebase.ready())Serial.println("Firebase durumu: Bağlı değil" );
