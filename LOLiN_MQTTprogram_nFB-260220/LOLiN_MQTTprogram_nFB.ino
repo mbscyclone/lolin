@@ -1065,7 +1065,6 @@ if(pinayar.length()>3){
     butonactcoloku();
     butonpascoloku();
     butonayrcoloku();
-    menutxtcoloku();
     butonpbgcoloku();
     Serial.println("Web server Lunched.");
 

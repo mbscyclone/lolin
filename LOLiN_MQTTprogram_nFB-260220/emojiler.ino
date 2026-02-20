@@ -9,25 +9,6 @@
 - 👍 I2C arayüzü — yalnızca 2 pin ile kolay bağlantı.
 - 🌡 Geniş çalışma sıcaklığı aralığı (-30°C ~ +70°C) — zorlu ortamlarda güvenilir performans.
 
-
-
-🟢
-🔴
-⏺
-🟩
-🟥
-⬛
-🔊
-📼
-🎹
-⚙️
-🏠︎ homepage 🏠
-𓇲 pins     📌🔧
-☰ menu
-MENU ☰ menu
-⩩
-status için 🧐
-
 https://mikro.aksam.com.tr/emojiler/suratlar-hisler
 Suratlar,Hisler
 🧪 deney tüpü
