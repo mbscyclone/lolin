@@ -1,5 +1,33 @@
 /*
 // menu ☰  PLL
+✨ Özellikler:
+- ✅ Kendinden ışıklı OLED ekran — arka aydınlatmaya ihtiyaç duymaz, net görüntü sağlar.
+- 📐 Yüksek çözünürlük (128x64) — detaylı ve okunaklı grafikler için.
+- 👀 Geniş izleme açısı (>160°) — farklı açılardan rahat görüntüleme.
+- 🔌 Ultra düşük güç tüketimi (0.08W) — enerji tasarrufu sağlar.
+- 🧩 Geniş platform uyumluluğu — Arduino, STM32, MSP430 ve daha fazlasıyla çalışır.
+- 👍 I2C arayüzü — yalnızca 2 pin ile kolay bağlantı.
+- 🌡 Geniş çalışma sıcaklığı aralığı (-30°C ~ +70°C) — zorlu ortamlarda güvenilir performans.
+
+
+
+🟢
+🔴
+⏺
+🟩
+🟥
+⬛
+🔊
+📼
+🎹
+⚙️
+🏠︎ homepage 🏠
+𓇲 pins     📌🔧
+☰ menu
+MENU ☰ menu
+⩩
+status için 🧐
+
 https://mikro.aksam.com.tr/emojiler/suratlar-hisler
 Suratlar,Hisler
 🧪 deney tüpü
@@ -1233,4 +1261,11 @@ https://mikro.aksam.com.tr/emojiler/semboller-isaretler
 🎌 Çapraz bayraklar
 🚩 Üçgen bayrak
 🏁 Damalı bayrak
+
+
+
+
+
+
+
 */

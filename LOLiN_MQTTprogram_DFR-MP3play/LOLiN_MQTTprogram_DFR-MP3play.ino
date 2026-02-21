@@ -1,6 +1,12 @@
 // ESP8266 LOLİN
 // Flash size 4M(FS:1MB OTA:~1019KB)
-// MMU 32KBCHACE, ^'KB IRAM(balanced)
+// MMU: "32KB cache + 32KB IRAM(balanced)"
+//***************************************
+// (LOLİN) D1 RX, D2 TX  >>>>> MP3 PLAYER RX TX
+//          |      |______________________|  |
+//          |________________________________|
+//
+
 
 #define ENABLE_USER_AUTH
 #define ENABLE_DATABASE
@@ -75,13 +81,15 @@ int rescanwifi = 0;
 
 bool htpcldis = false;
 
-int aut = 0;
-int autcode;
-int logintimeout;
-int logintimeoutmax = 240000;
+String unme;
+String pwrd;
 String capt;
-String unme = "admin";
-String pwrd = "1234";
+unsigned long logintimeout;
+int aut;
+int logintimeoutmax=240000;
+
+
+
 int PIN_TONE;
 String Host;
 
@@ -960,7 +968,7 @@ int sil = 0;
 void setup() {
   // initialize LED_BUILTIN as an output pin.
   // starttime=millis();
-  Serial.begin(57600);
+  Serial.begin(115200);
   // dosya setup kısmı ////////////////
 
   for (int y = 1; y < 13; y++) {
@@ -1067,7 +1075,7 @@ void setup() {
 
 
   if (pinayar.indexOf("|OUT|MP3|") > -1) {
-    if (pinayar.indexOf("D1|OUT|MP3|") < 0) errorlog = "MP3-player RX=D1, TX=D2 olmalıdır.";
+    if (pinayar.indexOf("D1|OUT|MP3|D2") < 0) errorlog = "MP3-player RX=D1, TX=D2 olmalıdır.";
     else {
 
 
@@ -1106,6 +1114,7 @@ void setup() {
   butonactcoloku();
   butonpascoloku();
   butonayrcoloku();
+  menutextcoloku();
   butonpbgcoloku();
   Serial.println("Web server Lunched.");
 
@@ -1137,6 +1146,10 @@ void setup() {
   }
 
   if (WiFi.status() == WL_CONNECTED) htserveroku();
+
+
+
+  dosyaOkuusers();
 }
 
 
@@ -1344,6 +1357,9 @@ void vrkontrol() {
 
           if (kodtextise == true)  // text kodu gelmiş
           {
+              myDFPlayer.readFileCounts();
+              toplammp3sayisi = myDFPlayer.readFileCountsInFolder(0);
+
             dosya.close();
             dosya = LittleFS.open("/mp3ler.txt", "r");
             String mp3satirlar;
