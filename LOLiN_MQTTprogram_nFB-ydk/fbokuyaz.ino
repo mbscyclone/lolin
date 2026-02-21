@@ -45,7 +45,7 @@ void fbsayacyanioku(String rsltt)
 { 
 
 String rslttmp = rsltt;
-Serial.print("fbsayacyanı: "); Serial.println(rslttmp);
+Serial.println(rslttmp);
                             for(int k=0;k<5;k++){
                               String pnm;
                               String pns;

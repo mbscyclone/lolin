@@ -473,7 +473,7 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
 
             String ACLtmp = "";
             if (degisenmqtmp.indexOf("ACL:") > -1) {
-              Serial.println("program yurut MQTT:"); Serial.println(degisenmqtmp);
+              Serial.println(degisenmqtmp);
               ACLtmp = degisenmqtmp.substring(degisenmqtmp.indexOf("ACL:") + 4, degisenmqtmp.length());
               if (ACLtmp.indexOf(",") > 0) ACLtmp = ACLtmp.substring(0, ACLtmp.indexOf(","));
               if (ACLtmp.indexOf(";") > 0) ACLtmp = ACLtmp.substring(0, ACLtmp.indexOf(";"));
@@ -488,13 +488,13 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
               }
               if (mqyoltmp == mqyol[y]) {
                 if (degisenmq[y] != "" && degisenmqtmp == degisenmq[y]) {
-                  //Serial.println(degisenmqtmp + "   EŞİT ÇIKTI  " + degisenmq[y]);
-                  //Serial.println("EŞİT ÇIKTI");
+                  Serial.println(degisenmqtmp + "   EŞİT ÇIKTI  " + degisenmq[y]);
+                  Serial.println("EŞİT ÇIKTI");
                   //hane=y;break;
                   return;
                 } else {
                   Serial.println(degisenmqtmp + "   -----------   " + degisenmq[y]);
-                  Serial.println("program yürütteki mqyol sayac: "); Serial.println(y);
+                  Serial.println(y);
 
                   hane = y;
                   break;

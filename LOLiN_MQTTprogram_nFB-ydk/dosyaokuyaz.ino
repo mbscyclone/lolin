@@ -460,7 +460,7 @@ String butonactcol = "d1ca03";
 String butonpascol = "A3A3A3";
 String butonayrcol = "20d3c8";
 String butonpbgcol = "ffb12a";
-String menutextcol = "000000";
+String menutxtcol = "000000";
 
 void butonactcoloku() {
   dosya.close();
@@ -534,26 +534,26 @@ void butonayrcolyaz() {
 
 
 
-void menutextcoloku() {
+void menutxtcoloku() {
   dosya.close();
-  dosya = LittleFS.open("/menutextcol.txt", "r");
+  dosya = LittleFS.open("/menutxtcol.txt", "r");
   if (dosya) {
-    String menutextcol1 = dosya.readStringUntil('\n');
-    menutextcol = menutextcol1.substring(0, menutextcol1.length() - 1);
+    String menutxtcol1 = dosya.readStringUntil('\n');
+    menutxtcol = menutxtcol1.substring(0, menutxtcol1.length() - 1);
     dosya.close();
   } else {
-    menutextcol = "000000";
+    menutxtcol = "ffb12a";
   }
 }
 
-void menutextcolyaz() {
+void menutxtcolyaz() {
   dosya.close();
-  LittleFS.remove("/menutextcol.txt");
+  LittleFS.remove("/menutxtcol.txt");
   //Serial.println(butonpbgcol);
-  dosya = LittleFS.open("/menutextcol.txt", "w+");
-  dosya.println(menutextcol);
+  dosya = LittleFS.open("/menutxtcol.txt", "w+");
+  dosya.println(menutxtcol);
   dosya.close();
-  menutextcoloku();
+  menutxtcoloku();
 }
 
 

@@ -12,42 +12,41 @@ void httpheader(WiFiClient xilent) {
   xilent.println(".butmenbs{background-color:#0000;border:none;color:white; padding:4px 4px;font-size:22px; margin:2px;cursor:pointer;}");
   //xilent.println(".button2{background-color:#77878A;border:none;color:white; padding:16px 40px;font-size:10px; margin:2px;cursor:pointer;}");
   //xilent.println(".button3{background-color:#77878A;border:none;color:black; padding:16px 40px;font-size:10px; margin:2px;cursor:pointer;}");
-  //xilent.println("body {background-color: #" + butonpbgcol + ";}");
   xilent.println("</style>");
   xilent.println("</head>");
-  xilent.println("<body bgcolor='#" + butonpbgcol + "'>");
+  xilent.println("<body>");
 
   if(kucukmenu==false){
   //xilent.println("<td height='25%'>navbar</td>");
   //xilent.println("<td height='75%'>content</td>");
   xilent.println("<br><table><tr><td  style=\"border:2px solid black;color:black\">");
-  xilent.println("<table><tr><td bgcolor='" + butonpbgcol+ "' style='vertical-align: top;'><table  bgcolor='" + butonpbgcol + "' style='border:1px solid #" + menutextcol + ";'><td style=\"border:0px solid black;height:100p; align:center; width:%10; \">");
+  xilent.println("<table><tr><td  bgcolor='" + butonpbgcol+ "' valing=\"top\"><table  bgcolor='" + butonpbgcol + "' style='border:0px solid " + butonpbgcol+ ";'><td style=\"border:0px solid black;height:100p; align:center; width:%10; \">");
 
-  xilent.println("<a href=\"/kucukmenu\"><button class=\"button butmen\">&ensp;<font color='" + menutextcol + "'>☰ </font><font size='3' color='" + menutextcol + "'>MENU</font></button></a>");
+  xilent.println("<a href=\"/kucukmenu\"><button class=\"button butmen\">&ensp;<font color='" + menutxtcol + "'>☰ </font><font size='3' color='" + menutxtcol + "'>MENU</font></button></a>");
 
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
 
   //<a href=\"/" + pinname[x] + ":1\"><button class=\"button butmen\">🟥</button></a>
 
-  xilent.println("<a href=\"/Menu0\"><button class=\"button butmen\">🏠 <font size='3' color='" + menutextcol + "'>Anasayfa</font></button></a></td></tr>");
+  xilent.println("<p><a href=\"/Menu0\"><button class=\"button butmen\">🏠 <font size='3' color='" + menutxtcol + "'>Anasayfa</font></button></a></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<a href=\"/\"><button class=\"button butmen\">🧐 <font size='3' color='" + menutextcol + "'>Durum</font></button></a></td></tr>");
+  xilent.println("<p><a href=\"/\"><button class=\"button butmen\">🧐 <font size='3' color='" + menutxtcol + "'>Durum</font></button></a></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<a href=\"/pnayar\"><button class=\"button butmen\">🧮<font size='3' color='" + menutextcol + "'>Pin ayar</font></button></a></td></tr>");
+  xilent.println("<p><a href=\"/pnayar\"><button class=\"button butmen\">🧮<font size='3' color='" + menutxtcol + "'>Pin ayar</font></button></a></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<a href=\"/ssidset\"><button class=\"button butmen\">🛜 <font size='3' color='" + menutextcol + "'>Wifi ayar</font></button></a></td></tr>");
+  xilent.println("<p><a href=\"/ssidset\"><button class=\"button butmen\">🛜 <font size='3' color='" + menutxtcol + "'>Wifi ayar</font></button></a></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<a href=\"/myssidnameayar\"><button class=\"button butmen\">📓 <font size='3' color='" + menutextcol + "'>Cihaz adı</font></button></a></td></tr>");
+  xilent.println("<p><a href=\"/myssidnameayar\"><button class=\"button butmen\">📓 <font size='3' color='" + menutxtcol + "'>Cihaz adı</font></button></a></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<a href=\"/serveripayar\"><button class=\"button butmen\">💻 <font size='3' color='" + menutextcol + "'>Server ayar</font></button></a></td></tr>");
+  xilent.println("<p><a href=\"/serveripayar\"><button class=\"button butmen\">💻 <font size='3' color='" + menutxtcol + "'>Server ayar</font></button></a></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<a href=\"/mqttipayar\"><button class=\"button butmen\">🦟 <font size='3' color='" + menutextcol + "'>MQTT ayar</font></button></a></td></tr>");
+  xilent.println("<p><a href=\"/mqttipayar\"><button class=\"button butmen\">🦟 <font size='3' color='" + menutxtcol + "'>MQTT ayar</font></button></a></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<a href=\"/firebaseset\"><button class=\"button butmen\">🔥 <font size='3' color='" + menutextcol + "'>Firebase ayar</font></button></a></td></tr>");
+  xilent.println("<p><a href=\"/firebaseset\"><button class=\"button butmen\">🔥 <font size='3' color='" + menutxtcol + "'>Firebase ayar</font></button></a></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<a href=\"/kulupayr\"><button class=\"button butmen\">👨🏻‍💻 <font size='3' color='" + menutextcol + "'>Şifre ayar</font></button></a></td></tr>");
+  xilent.println("<p><a href=\"/kulupayr\"><button class=\"button butmen\">👨🏻‍💻 <font size='3' color='" + menutxtcol + "'>Şifre ayar</font></button></a></p></td></tr>");
   xilent.println("</td></tr></table><br><br><br><br><br><br><br><br><br><br><br><br></td>");
-  
+  xilent.println("<td bgcolor='white' style=\"border:2px solid white;height:200p; vertical-align:top; width:%8; \"> </td> <td style=\"border:2px solid " + butonpbgcol+ ";height:180p; vertical-align:top; width:%90; \">");
   //xilent.println("<td bgcolor='" + butonpbgcol+ "' style=\"border:2px solid orange;height:200p; vertical-align:top; width:%8; \"> </td> <td style=\"border:2px solid " + butonpbgcol+ ";height:180p; vertical-align:top; width:%90; \">");
 
 
@@ -58,31 +57,31 @@ void httpheader(WiFiClient xilent) {
   {
 
   xilent.println("<br><table><tr><td  style=\"border:2px solid black;color:black\">");
-  xilent.println("<table><tr><td bgcolor='" + butonpbgcol+ "' style='vertical-align: top;'><table bgcolor='" + butonpbgcol + "' style='border:1px solid #" + menutextcol + ";'><td style=\"border:1px solid " + butonpbgcol+ ";height:200p; align:center; width:%8; \">");
+  xilent.println("<table><tr><td valing=\"top\"><table  bgcolor='" + butonpbgcol+ "' style='border:0px solid " + butonpbgcol+ ";'><td style=\"border:1px solid " + butonpbgcol+ ";height:200p; align:center; width:%8; \">");
 
   // büyük menü için düğme
-  xilent.println("<span title='Menüyü genişletir butonların etiketleri görünür.'><a href=\"/buyukmenu\"><button class=\"button butmen\">&ensp;<font color='" + menutextcol + "'>☰ </font></button></a></span>");
+  xilent.println("<span title='Menüyü genişletir butonların etiketleri görünür.'><a href=\"/buyukmenu\"><button class=\"button butmen\">&ensp;<font color='" + menutxtcol + "'>☰ </font></button></a></span>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
 
-  xilent.println("<span title='Ana sayfaya dön'><a href=\"/Menu0\"><button class=\"button butmen\">🏠</button></a></span></td></tr>");
+  xilent.println("<p><span title='Ana sayfaya dön'><a href=\"/Menu0\"><button class=\"button butmen\">🏠</button></a></span></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<span title='Durum sayfası'><a href=\"/\"><button class=\"button butmen\">🧐</button></a></span></td></tr>");
+  xilent.println("<p><span title='Durum sayfası'><a href=\"/\"><button class=\"button butmen\">🧐</button></a></span></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<span title='Pin ve program ayarları'><a href=\"/pnayar\"><button class=\"button butmen\">🧮</button></a></span></td></tr>");
+  xilent.println("<p><span title='Pin ve program ayarları'><a href=\"/pnayar\"><button class=\"button butmen\">🧮</button></a></span></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<span title='Wifi`ye bağlanma ayarları'><a href=\"/ssidset\"><button class=\"button butmen\">🛜</button></a></span></td></tr>");
+  xilent.println("<p><span title='Wifi`ye bağlanma ayarları'><a href=\"/ssidset\"><button class=\"button butmen\">🛜</button></a></span></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<span title='Benim SSID adım'><a href=\"/myssidnameayar\"><button class=\"button butmen\">📓</button></a></span></td></tr>");
+  xilent.println("<p><span title='Benim SSID adım'><a href=\"/myssidnameayar\"><button class=\"button butmen\">📓</button></a></span></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<span title='Wanserver ip girişi'><a href=\"/serveripayar\"><button class=\"button butmen\">💻</button></a></span></td></tr>");
+  xilent.println("<p><span title='Wanserver ip girişi'><a href=\"/serveripayar\"><button class=\"button butmen\">💻</button></a></span></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<span title='MQTT ile bağlanılacak server ip girişi'><a href=\"/mqttipayar\"><button class=\"button butmen\">🦟</button></a></span></td></tr>");
+  xilent.println("<p><span title='MQTT ile bağlanılacak server ip girişi'><a href=\"/mqttipayar\"><button class=\"button butmen\">🦟</button></a></span></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<span title='Firebase bağlantı ayarları'><a href=\"/firebaseset\"><button class=\"button butmen\">🔥</button></a></span></td></tr>");
+  xilent.println("<p><span title='Firebase bağlantı ayarları'><a href=\"/firebaseset\"><button class=\"button butmen\">🔥</button></a></span></p></td></tr>");
   xilent.println("<tr><td bgcolor='" + butonpbgcol+ "' style=\"border:1px solid " + butonpbgcol+ ";\">");
-  xilent.println("<span title='admin, kullanıcı şifre değiştirme sayfası'><a href=\"/kulupayr\"><button class=\"button butmen\">👨🏻‍💻</button></a></span></td></tr>");
+  xilent.println("<p><span title='admin, kullanıcı şifre değiştirme sayfası'><a href=\"/kulupayr\"><button class=\"button butmen\">👨🏻‍💻</button></a></span></p></td></tr>");
   xilent.println("</td></tr></table><br><br><br><br><br><br><br><br><br><br><br><br></td>");
-  
+  xilent.println("<td bgcolor='white' style=\"border:2px solid white;height:200p; vertical-align:top; width:%8; \"> </td> <td style=\"border:2px solid " + butonpbgcol+ ";height:180p; vertical-align:top; width:%90; \">");
   //xilent.println("<td bgcolor='" + butonpbgcol+ "' style=\"border:2px solid orange;height:200p; vertical-align:top; width:%8; \"> </td> <td style=\"border:2px solid " + butonpbgcol+ ";height:180p; vertical-align:top; width:%90; \">");
 
   //xilent.println("<font size=\"2\" color=\"#FFDDDD\">");
@@ -91,10 +90,9 @@ void httpheader(WiFiClient xilent) {
 
 
   }
-  xilent.println("<td bgcolor='#" + butonpbgcol + "' style=\"border:4px solid #" + butonpbgcol+ ";height:200p; vertical-align:top; width:%8; \"> </td> <td style=\"border:2px solid " + butonpbgcol+ ";height:180p; vertical-align:top; width:%90; \">");
 
-  //xilent.println("<hr style=\"height:8px;border-width:1;color: #" + menutextcol+ ";background-color: #" + menutextcol+ "\">");
-  xilent.println("&emsp; <font size=\"6\" align='center' color=\"#" + menutextcol + "\">" + esphostname + "</font>&emsp; - &emsp;");
+  xilent.println("<hr style=\"height:8px;border-width:1;color: #" + butonpbgcol+ ";background-color: #" + butonpbgcol+ "\">");
+  xilent.println("&emsp; <font size=\"6\" align='center' color=\"" + menutxtcol + "\">" + esphostname + "</font>&emsp; - &emsp;");
   
   if(header.indexOf("/Menu1")>-1 || (Menu == 1 && header.indexOf("/ HTTP/1.1")>-1))xilent.println("Durum sayfası");
   if(header.indexOf("/pnayar")>-1)xilent.println("Pin ayar sayfası");
@@ -105,7 +103,7 @@ void httpheader(WiFiClient xilent) {
   if(header.indexOf("/firebaseset")>-1)xilent.println("Firebase ayar sayfası");
   if(header.indexOf("/kulupayr")>-1)xilent.println("Kullanıcılar sayfası");
   
-  xilent.println("<hr style=\"height:8px;border-width:1;color: #" + menutextcol+ ";background-color: #" + menutextcol+ "\">");
+  xilent.println("<hr style=\"height:4px;border-width:1;color: #" + butonpbgcol+ ";background-color: #" + butonpbgcol+ "\">");
 
 
 }
@@ -177,9 +175,6 @@ void htpcl() {
           //           http://192.168.2.138/auth:?capt=2046&unme=admin&pwrd=1111
           Serial.println(header);
 
-          if (header.indexOf("/Menu0") > -1){ Menu = 0; }
-          //if (header.indexOf("/Menu0") > -1){ Menu = 0;aut=0}
-          if (header.indexOf("/Menu1") > -1) Menu = 1;
 
 aut=1;
           if(header.indexOf("/logcancel")>-1)aut=0;
@@ -361,6 +356,12 @@ aut=1;
           int headerset = 1;
           // if the current line is blank, you got two newline characters in a row.
           // that's the end of the xilent HTTP request, so send a response:  /*
+
+          if (header.indexOf("/Menu0") > -1) Menu = 0;
+          if (header.indexOf("/Menu1") > -1) Menu = 1;
+
+
+
 
 
 
@@ -1124,34 +1125,33 @@ aut=1;
             //String butonactcol = "#d1ca03";
             //String butonpascol = "#A3A3A3";
             //String butonayrcol = "#20d3c8";
-            //String menutextcol = "000000";
             //String butonpbgcol = "#ffb12a";
 
 
-            if (Headerparcala.indexOf("/butonactcol?is=") > -1) {
-              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/butonactcol?is=") + 16, Headerparcala.length());
+            if (Headerparcala.indexOf(" /butonactcol") > -1) {
+              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/butonactcol") + 16, Headerparcala.length());
               butonactcol = Headerparcala.substring(0, Headerparcala.indexOf(" HTTP"));
               butonactcolyaz();
             }
 
-            if (Headerparcala.indexOf("/butonpascol?is=") > -1) {
-              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/butonpascol?is=") + 16, Headerparcala.length());
+            if (Headerparcala.indexOf(" /butonpascol") > -1) {
+              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/butonpascol") + 16, Headerparcala.length());
               butonpascol = Headerparcala.substring(0, Headerparcala.indexOf(" HTTP"));
               butonpascolyaz();
             }
 
-            if (Headerparcala.indexOf("/butonayrcol?is=") > -1) {
-              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/butonayrcol?is=") + 16, Headerparcala.length());
+            if (Headerparcala.indexOf(" /butonayrcol") > -1) {
+              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/butonayrcol") + 16, Headerparcala.length());
               butonayrcol = Headerparcala.substring(0, Headerparcala.indexOf(" HTTP"));
               butonayrcolyaz();
             }
 
 
 
-            if (Headerparcala.indexOf("/menutextcol?is=") > -1) {
-              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/menutextcol?is=") + 16, Headerparcala.length());
-              menutextcol = Headerparcala.substring(0, Headerparcala.indexOf(" HTTP"));
-              menutextcolyaz();
+            if (Headerparcala.indexOf(" /menutxtcol") > -1) {
+              Headerparcala = Headerparcala.substring(Headerparcala.indexOf("/menutxtcol") + 16, Headerparcala.length());
+              menutxtcol = Headerparcala.substring(0, Headerparcala.indexOf(" HTTP"));
+              menutxtcolyaz();
             }
 
 
@@ -1804,7 +1804,6 @@ for(int v=1;v<10;v++)
             //String butonactcol = "#d1ca03";
             //String butonpascol = "#A3A3A3";
             //String butonayrcol = "#20d3c8";
-            // String menutextcol = "#000000";
             //String butonpbgcol = "#ffb12a";
 
             xilent.println("istemci: " + remoteip + "<br>");
@@ -1827,10 +1826,10 @@ for(int v=1;v<10;v++)
             xilent.println("20d3c8</form><br>");
 
 
-            xilent.println("<form method='get' action='/menutextcol'><label>Ayar sayfası menü yazı rengi.  #</label><input name='is' maxlength='6' style=\"width:50px\" value=");
-            xilent.println(menutextcol);
+            xilent.println("<form method='get' action='/menutxtcol'><label>Ayar sayfası menü yazı rengi.  #</label><input name='is' maxlength='6' style=\"width:50px\" value=");
+            xilent.println(butonayrcol);
             xilent.println("><input type='submit'>");
-            xilent.println("000000</form><br>");
+            xilent.println("20d3c8</form><br>");
 
 
 

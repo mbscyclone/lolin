@@ -1065,7 +1065,7 @@ if(pinayar.length()>3){
     butonactcoloku();
     butonpascoloku();
     butonayrcoloku();
-    menutextcoloku();
+    menutxtcoloku();
     butonpbgcoloku();
     Serial.println("Web server Lunched.");
 
@@ -1269,7 +1269,7 @@ if(millis() - harcananzaman> 100)Serial.println("mqttclient.loop vaik uzadı: ms
       if (zamanfark >= 900 && zamanfark <= 1000) {
           zamanbasi = millis() - 1001;
           
-          //Serial.println("loop() fben: ");Serial.println(fben);
+          Serial.println(fben);
           if (fben!=0 && pinayar.length()>0)updatefbvirtual();
           if (fben!=0 && pinayar.length()>0)fbsayacoku();
       }
