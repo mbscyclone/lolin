@@ -1,6 +1,8 @@
 // ESP8266 LOLİN
 // Flash size 4M(FS:1MB OTA:~1019KB)
-// MMU 32KBCHACE, ^'KB IRAM(balanced)
+// MMU: "16KB cache + 48KB and 2nd Heap (shared)"
+
+
 
 #define ENABLE_USER_AUTH
 #define ENABLE_DATABASE

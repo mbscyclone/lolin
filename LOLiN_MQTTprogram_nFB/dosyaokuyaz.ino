@@ -459,8 +459,9 @@ void dosyayazfbuserpass()
 String butonactcol = "d1ca03";
 String butonpascol = "A3A3A3";
 String butonayrcol = "20d3c8";
-String butonpbgcol = "ffb12a";
 String menutextcol = "000000";
+String butonpbgcol = "ffb12a";
+
 
 void butonactcoloku() {
   dosya.close();

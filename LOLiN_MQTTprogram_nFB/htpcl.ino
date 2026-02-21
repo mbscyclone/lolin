@@ -109,6 +109,9 @@ void httpheader(WiFiClient xilent) {
 
 
 }
+
+
+
 int hsay = 0;
 void htpcl() {
   WiFiClient xilent = httpserver.available();
@@ -132,6 +135,7 @@ void htpcl() {
           //Serial.print(c);  // print it out the serial monitor
           header += c;
         }
+
         hsay += 1;
         Serial.println(hsay);
         String Hosttmp = header.substring(header.indexOf("Host:") + 5, header.length());
@@ -1084,7 +1088,7 @@ aut=1;
             // Clear the header variable
             xilent.println("coded by " + creator + ". ESP kontrol (v4");
             xilent.println("<label style='font-size:1px;'>" + WiFi.macAddress() + "</label>04.01.2026)<br><br>");
-            xilent.println("</td><table></td></tr></table>");
+            xilent.println("</td></table></td></tr></table>");
             xilent.println();
             xilent.println();
             /////xilent.abort();;
@@ -1406,7 +1410,12 @@ aut=1;
 
             //xilent.println(".button { background-color: #196B7A; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;}");
             //xilent.println(".butoff {background-color: #A3A3A3; border: none; color: white; padding: 10px 10px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;");
-            creator += "AŞ";
+
+            //xilent.println(".button { background-color: #" + butonactcol + "; border: 5px solid yellow; border-radius: 10px 10px 10px 10px; color: white; padding: 8px 8px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;}");
+            //xilent.println(".butoff {background-color: #" + butonpascol + "; border: 5px solid gray; border-radius: 10px 10px 10px 10px; color: white; padding: 8px 8px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;}");
+            //xilent.println(".butayr {background-color: #" + butonayrcol + "; border: 5px solid gray; border-radius: 6px 6px 10px 10px; color: black; padding: 10px 10px;text-decoration: none; font-size: 10px; margin: 1px; cursor: pointer;}");
+            //xilent.println("</style>");
+
             xilent.println(".button { background-color: #" + butonactcol + "; border: 2px solid yellow; border-radius: 10px 10px 10px 10px; color: white; padding: 2px 2px;text-decoration: none; font-size: 24px; margin: 1px; cursor: pointer;}");
             xilent.println(".butoff {background-color: #" + butonpascol + "; border: 2px solid gray; border-radius: 10px 10px 10px 10px; color: white; padding: 2px 2px;text-decoration: none; font-size: 24px; margin: 1px; cursor: pointer;}");
             xilent.println(".butayr {background-color: #" + butonayrcol + "; border: 2px solid gray; border-radius: 6px 6px 10px 10px; color: black; padding: 2px 2px;text-decoration: none; font-size: 28px; margin: 1px; cursor: pointer;}");
@@ -1500,6 +1509,58 @@ aut=1;
                   if (pinlabel[x].length() > 1) {
                     xilent.println("<hr style=\"height:6px;border-width:1;color:black;background-color:black\">");
                     //xilent.println(pinsignaltype[x] + "<br>");
+
+/*
+                if (pinmode[x] == "OUT" && pinsignaltype[x] == "DIG") {
+
+                  String pinstatesakla;
+                  if(acildeyim[x]==true)
+                    {
+                      pinstatesakla=PinState[x];
+                      PinState[x]=acildeger[x];
+                      xilent.println("Bu pin Acil durum etkisinde");
+                    }
+
+                  // Display current state, and ON/OFF buttons for GPIO x
+                  xilent.println("Dijital çıkış - " + pinlabel[x] + " [" + pinname[x] + "]= " + PinState[x] + " ");
+                  // If the Pin0State is off, it displays the ON button
+                  if (PinState[x] == "") PinState[x] = "0";  //                    v--- " + pinlabel[x] + " [" +  pinname[x] + "]= " + PinState[x] + "
+                  
+                  String pinstatesahte = PinState[x];
+                  bool yildizli; if(pinlabel[x].indexOf("*")+1==pinlabel[x].length())yildizli=true;else yildizli=false;
+                     if(yildizli==true){
+                       if(PinState[x]=="1") pinstatesahte = "0"; else pinstatesahte = "1";
+                       }
+
+                  if (pinstatesahte == "0") {  //                    v--- " + pinlabel[x] + " [" +  pinname[x] + "]= " + PinState[x] + "
+                    if (yildizli == false) 
+                    { xilent.println("<a href=\"/" + pinname[x] + ":1\"><button class=\"button butoff\">-0-</button></a>");
+                      xilent.println(" Çıkış [0]");
+                    }else
+                    { xilent.println("<a href=\"/" + pinname[x] + ":0\"><button class=\"button butoff\">-0-</button></a>");
+                      xilent.println(" invert");
+                    }                  }
+
+                  if (pinstatesahte == "1") {
+                    if (yildizli == false) 
+                    { xilent.println("<a href=\"/" + pinname[x] + ":0\"><button class=\"button buton\">-1-</button></a>");
+                      xilent.println(" Çıkış [1]");
+                    }else
+                    { xilent.println("<a href=\"/" + pinname[x] + ":1\"><button class=\"button buton\">-1-</button></a>");
+                      xilent.println(" invert");
+                    }
+                  }
+
+                  if(acildeyim[x]==true)
+                    {
+                      PinState[x]=pinstatesakla;
+                    }
+
+
+                }
+*/
+
+
                     if (pinmode[x] == "OUT" && pinsignaltype[x] == "DIG") {
 
                       String pinstatesakla;
