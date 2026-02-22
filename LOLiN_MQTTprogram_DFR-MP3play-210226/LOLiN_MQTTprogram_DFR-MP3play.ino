@@ -5,7 +5,7 @@
 // (LOLİN) D1 RX, D2 TX  >>>>> MP3 PLAYER RX TX
 //          |      |______________________|  |
 //          |________________________________|
-// serial monitor baud rate 115200
+//
 
 
 #define ENABLE_USER_AUTH
@@ -17,7 +17,7 @@
 //#include <DHT.h>
 #include <ESP8266WiFi.h>
 #include "LittleFS.h"
-#include "MQTT.h"
+#include <MQTT.h>
 WiFiClient mqttnet;
 MQTTClient mqttclient;
 String MQTTip = "";
@@ -86,7 +86,7 @@ String pwrd;
 String capt;
 unsigned long logintimeout;
 int aut;
-int logintimeoutmax = 240000;
+int logintimeoutmax=240000;
 
 
 
@@ -1095,16 +1095,6 @@ void setup() {
       Serial.println(F("DFPlayer Mini online."));
       myDFPlayer.volume(24);  //Set volume value. From 0 to 30
       myDFPlayer.play(1);     //Play the first mp3
-
-      for (int dfp = 0; dfp < 3; dfp++) {
-        myDFPlayer.play(dfp);  //Play the first mp3
-        if (myDFPlayer.available()) {
-          myDFPlayer.readFileCounts();
-          delay(50);
-          toplammp3sayisi = myDFPlayer.readFileCountsInFolder(0);
-          delay(50);
-        }
-      }
     }
   }
 
@@ -1200,29 +1190,19 @@ void loop() {
     rescanwifi = 0;
   }
 
-
-  if (mqttclient.connected()) {mqttclient.loop();}
-    else { mqtterror = true; }
-
-
-
-  if (habp == -2) dosyaokuhabp();
-  if (habp == 1 || habp == 3) {
-    if (mqtterror == true && MQTTip.length() > 1) {
-      if (WiFi.status() == WL_CONNECTED) {
-        if (!mqttclient.connected()) {
-          Serial.println("MQTT kopmuş");
-          if (mqttconnectsayac < 5001) MQTTConnect();
-          if (mqttconnectsayac >= 5000) mqttconnectsayac += 1;
-          if (mqttconnectsayac > 10000) {
-            mqttconnectsayac = 0;
-            mqtterror = true;
-          }  //20000 den büyükse baştan dene
-        }
+  if (mqtterror == true && MQTTip.length() > 1) {
+    if (WiFi.status() == WL_CONNECTED) {
+      if (habp == -2) dosyaokuhabp();
+      if (habp == 1 || habp == 3) {
+        MQTTConnect();
       }
     }
+
+
+
   }
 
+    if (mqttclient.connected()) mqttclient.loop();
 
   //if(htyolla != "")httpgonder();
 
@@ -1350,7 +1330,7 @@ void vrkontrol() {
       // buz son //////
 
       // MP3 baş //////////////////////////////////////
-      if (myDFPlayer.available()) {
+  if (myDFPlayer.available()) {
 
         int parcano = 0;
 
@@ -1360,17 +1340,16 @@ void vrkontrol() {
           String mp3data;
           bool kodtextise = false;
           mp3data = VRP[vr].substring(VRP[vr].indexOf(":") + 1, VRP[vr].length());
-          Serial.print("mp3data:");
-          Serial.println(mp3data);
+          Serial.print("mp3data:");Serial.println(mp3data);
           if (VRP[vr].indexOf("MP3>") == 0) {
             mp3data = mp3data.substring(mp3data.indexOf("MP3>") + 4, mp3data.length());
-            Serial.println("VR" + (String)vr + ": " + VRP[vr] + "  >" + mp3data + " sayi");
+            Serial.println("VR" + (String)vr + ": " + VRP[vr] + mp3data + " sayi");
           }
 
           if (VRP[vr].indexOf("MP3T>") == 0) {
             kodtextise = true;
             mp3data = mp3data.substring(mp3data.indexOf("MP3T>") + 5, mp3data.length());
-            Serial.println("VR" + (String)vr + ": " + VRP[vr] + "  >" + mp3data + " Text");
+            Serial.println("VR" + (String)vr + ": " + VRP[vr] + mp3data + " Text");
           }
 
 
@@ -1378,30 +1357,30 @@ void vrkontrol() {
 
           if (kodtextise == true)  // text kodu gelmiş
           {
-            myDFPlayer.readFileCounts();
-            toplammp3sayisi = myDFPlayer.readFileCountsInFolder(0);
+              myDFPlayer.readFileCounts();
+              toplammp3sayisi = myDFPlayer.readFileCountsInFolder(0);
 
             dosya.close();
             dosya = LittleFS.open("/mp3ler.txt", "r");
             String mp3satirlar;
             if (dosya) {
               // dosya başarı ile açıldı;
-              for (int no = 1; no < toplammp3sayisi + 1; no++) {  // kodu bul parça no tespiti
-                mp3satirlar = dosya.readStringUntil('\n') + '\n';
-                if (mp3satirlar.length() > 2) {
-                  if (mp3satirlar.indexOf(mp3data) == 0) {
-                    parcano = no;
-                    break;
-                  }
-                }
+          for(int no = 1; no < toplammp3sayisi + 1;no++)
+          {  // kodu bul parça no tespiti
+            mp3satirlar = dosya.readStringUntil('\n') + '\n';
+            if (mp3satirlar.length() > 2) {
+              if (mp3satirlar.indexOf(mp3data) == 0) {
+                parcano = no;
+                break;
               }
+            }
+          }
             }
           } else {  // direk parça no yazılı
             parcano = mp3data.toInt();
           }
 
-          if (parcano > 0 && parcano <= toplammp3sayisi) myDFPlayer.play(parcano);
-          else { myDFPlayer.play(1); }
+          if (parcano > 0) myDFPlayer.play(parcano);
           // ÇALMA SON ////////////////////////////
 
           VRP[vr] = "";

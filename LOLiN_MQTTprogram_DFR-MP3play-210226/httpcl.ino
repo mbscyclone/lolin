@@ -171,16 +171,20 @@ void htpcl() {
         String Hosttmp = header.substring(header.indexOf("Host:") + 5, header.length());
         Host = Hosttmp.substring(0, Hosttmp.indexOf("\n"));
 
-        
-        if (header.indexOf(" /favicon.ico")>-1){
-          header=sonheader;
+        /*
+        if (header.indexOf("favicon.ico")>-1){
+          header="";
           }
-
+*/
         if (header.indexOf(" HTTP/1.1") > -1) {
           header = header.substring(0, header.indexOf(" HTTP/1.1") + 9);
 
           if (header != headerold) {
             if (header.indexOf("favicon.ico") < 0) headerold = header;
+            else header = "";
+
+          } else {
+            header = "";
           }
 
           reConnectsayac = millis();
@@ -546,12 +550,9 @@ aut=1;
     xilent.println("<hr style=\"height:10px;border-width:3;color:black;background-color:black\">");
     String mp3ler="";
 
-if(myDFPlayer.available()){
-      myDFPlayer.readFileCounts();
-      toplammp3sayisi = myDFPlayer.readFileCountsInFolder(0);
-}
+          myDFPlayer.readFileCounts();
+          toplammp3sayisi = myDFPlayer.readFileCountsInFolder(0);
 
-      if(toplammp3sayisi>0){
       File dosyatest = LittleFS.open("/mp3ler.txt", "r");
       if(dosyatest){}
               else
@@ -563,7 +564,7 @@ if(myDFPlayer.available()){
               }dosyatest.close();
       }
       dosyatest.close();
-      }
+
 
     if(toplammp3sayisi>0){
 //////// pageindex + - ///
@@ -1985,8 +1986,6 @@ if (uri.indexOf("?") > 0) {
             xilent.println("</body></html>");
             xilent.println();
             xilent.println();
-            xilent.flush();
-            delay(200);
             //xilent.abort();
             //xilent.flush();
             //xilent.close();
@@ -1996,11 +1995,6 @@ if (uri.indexOf("?") > 0) {
         }
       }
     }
-
-
-
-
-    
   }
   header="";
 }
