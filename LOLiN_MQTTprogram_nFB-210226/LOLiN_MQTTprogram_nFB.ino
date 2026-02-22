@@ -1177,26 +1177,15 @@ void loop() {
   }
 
 harcananzaman=millis();
-
-  if (mqttclient.connected()) mqttclient.loop();
-  else { mqtterror = true; }
-
-  if (habp == -2) dosyaokuhabp();
-  if (habp == 1 || habp == 3) {
-    if (mqtterror == true && MQTTip.length() > 1) {
-      if (WiFi.status() == WL_CONNECTED) {
-        if (!mqttclient.connected()) {
-          if (mqttconnectsayac < 5001) MQTTConnect();
-          if (mqttconnectsayac >= 5000) mqttconnectsayac += 1;
-          if (mqttconnectsayac > 10000) {
-            mqttconnectsayac = 0;
-            mqtterror = true;
-          }  //20000 den büyükse baştan dene
-        }
+  if (WiFi.status() == WL_CONNECTED) {
+    if (habp == 1 || habp == 3) {
+      // <- fixes some issues with WiFi stability
+      if(MQTTip.length()>1){
+        if (mqttclient.connected()==false) {
+          MQTTConnect();
+        } else mqttclient.loop();
       }
     }
-  }
-
 if(millis() - harcananzaman> 100)Serial.println("mqttclient.loop vaik uzadı: ms>" + (String)(millis()-harcananzaman));
 
 
@@ -1209,7 +1198,7 @@ if(millis() - harcananzaman> 100)Serial.println("mqttclient.loop vaik uzadı: ms
         }
       }
     }
-  
+  }
 
 
 

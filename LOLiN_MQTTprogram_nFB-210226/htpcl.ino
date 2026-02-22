@@ -141,15 +141,20 @@ void htpcl() {
         String Hosttmp = header.substring(header.indexOf("Host:") + 5, header.length());
         Host = Hosttmp.substring(0, Hosttmp.indexOf("\n"));
 
-        if (header.indexOf(" /favicon.ico")>-1){
-          header=sonheader;
+        /*
+        if (header.indexOf("favicon.ico")>-1){
+          header="";
           }
-
+*/
         if (header.indexOf(" HTTP/1.1") > -1) {
           header = header.substring(0, header.indexOf(" HTTP/1.1") + 9);
 
           if (header != headerold) {
             if (header.indexOf("favicon.ico") < 0) headerold = header;
+            else header = "";
+
+          } else {
+            header = "";
           }
 
           reConnectsayac = millis();
