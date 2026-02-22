@@ -130,7 +130,6 @@ int hcsrE[10];
 int edistance[10];
 int bestursay = 0;
 bool hcsrloopvar;
-unsigned long hcsrlooptimer;
 String tempstr = "";
 String humstr = "";
 
@@ -187,10 +186,11 @@ String edegisenler;
 String degisenler;
 
 
-//#include <ESP8266WebServer.h>
-//#include <ESP8266mDNS.h>
-//ESP8266WebServer server(8080);
-/*
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
+ESP8266WebServer server(8080);
+
+
 void handleRoot() {
 
   dosyaokumyssidname();
@@ -199,6 +199,7 @@ void handleRoot() {
   String gd = YOL + "[" + esphostname + "]" + lipStr;
   server.send(200, "text/plain", gd);
 }
+
 
 void handleger() {
 
@@ -236,7 +237,7 @@ void handleNotFound() {
     htserverkaydet(serip);
   } else server.send(404, "text/plain", message);
 }
-*/
+
 
 bool LED_BUILTIN_devredisi=false;
 
@@ -1071,7 +1072,7 @@ if(pinayar.length()>3){
     Serial.println("Web server Lunched.");
 
 
-/*
+
   if (MDNS.begin("esp8266")) { Serial.println("MDNS responder started"); }
   server.on("/", handleRoot);
   server.on("/gerT", handleger);
@@ -1079,7 +1080,7 @@ if(pinayar.length()>3){
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("8080 server started");
-*/
+
 
 
 
@@ -1158,11 +1159,11 @@ void loop() {
     if (zamanfark % 240 == 0) {
 
       harcananzaman=millis();
-     // server.handleClient();
-     // MDNS.update();
+      server.handleClient();
+      MDNS.update();
       if(millis() - harcananzaman> 100)Serial.println("MSDNUPDATEde vaik uzadı: ms>" + (String)(millis()-harcananzaman));
       harcananzaman=millis();
-     // serin();
+      serin();
       if(millis() - harcananzaman> 100)Serial.println("serinde vaik uzadı: ms>" + (String)(millis()-harcananzaman));
     }
 
@@ -1199,7 +1200,6 @@ harcananzaman=millis();
 if(millis() - harcananzaman> 100)Serial.println("mqttclient.loop vaik uzadı: ms>" + (String)(millis()-harcananzaman));
 
 
-if(Menu == 0){
     if (fben == 1) {
       if(habp == 2 || habp == 3){
         fbresulsay += 1;
@@ -1209,7 +1209,7 @@ if(Menu == 0){
         }
       }
     }
-}
+  
 
 
 
@@ -1279,21 +1279,21 @@ if(Menu == 0){
 
     //Serial.println(zamanfark);
     if (habp > 1) {
-      if (zamanfark >= 1900 && zamanfark <= 2000) {
-          zamanbasi = millis() - 2001;
+      if (zamanfark >= 900 && zamanfark <= 1000) {
+          zamanbasi = millis() - 1001;
           
           //Serial.println("loop() fben: ");Serial.println(fben);
-          if(Menu == 0)if (fben!=0 && pinayar.length()>0)updatefbvirtual();
-          if(Menu == 0)if (fben!=0 && pinayar.length()>0)fbsayacoku();
+          if (fben!=0 && pinayar.length()>0)updatefbvirtual();
+          if (fben!=0 && pinayar.length()>0)fbsayacoku();
       }
     }
 
-    if (zamanfark > 2300) {zamanbasi = millis(); zamanfark=millis();}
+    if (zamanfark > 1300) {zamanbasi = millis(); zamanfark=millis();}
 
 
 
   if (WiFi.status() != WL_CONNECTED) {
-    if (millis() - reConnectsayac > 30000) {
+    if (millis() - reConnectsayac > 60000) {
       reConnectsayac = millis();
       connectWifi();
       if (WiFi.status() == WL_CONNECTED)

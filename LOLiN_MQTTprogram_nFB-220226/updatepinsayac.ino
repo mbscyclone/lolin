@@ -141,7 +141,6 @@ void updateinput()
                           psci=true;
                           ePinState[x] = PinState[x];
                               degisenler += pinname[x] + ":" + PinState[x] + "|" + pinlabel[x] + ",";
-                              Serial.println(degisenler);
                          } else
                               if(pinsignaltype[x]=="ANG")
                               {

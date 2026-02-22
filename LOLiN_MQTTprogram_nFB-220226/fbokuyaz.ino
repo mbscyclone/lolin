@@ -36,7 +36,7 @@ Serial.print("response code ");Serial.println(fetchResponseCode);
                             
                             if(resul.toInt()==10){resul="-1";fbpinstateleriyaz();}
                               else                         
-                                if(psco==true || psci==true){Serial.print("fbsayacoku>pscipsco>true>fbpinstateleriyaz");Serial.print("psci:");Serial.print(psci);Serial.print(" psco:");Serial.println(psco); fbpinstateleriyaz();}
+                                if(psco==true || psci==true) fbpinstateleriyaz();
                           }
                           
 }
@@ -337,8 +337,6 @@ void fbpinstateleriyaz()
                             fbsayacguncelle();
                             //String setpath="/" + YOL + "/pins/" + esphostname+ "pin";
                             String dats="";
-
-                            Serial.println(" v-- fbpinstateleriyaz  (pinname[h].toCharArray)> char < ascii code int value ");
                                 for(int h=0;h<pinsayisi;h++)
                                 {
                                   //if(pinname[h].indexOf("|")>-1)break;
