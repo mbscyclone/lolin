@@ -128,7 +128,6 @@ void updateinput()
           {
              if (pinsignaltype[x].indexOf("DH")>-1)
                       {
-                          psci=true;
                           
                           ePinState[x] = PinState[x];
                               degisenler += pinname[x] + ":" + PinState[x] + "|" + pinlabel[x] + ",";
@@ -138,10 +137,9 @@ void updateinput()
 
                          if(pinsignaltype[x]=="HCE" && PinState[x].toInt()>2)
                          {
-                          psci=true;
+
                           ePinState[x] = PinState[x];
                               degisenler += pinname[x] + ":" + PinState[x] + "|" + pinlabel[x] + ",";
-                              Serial.println(degisenler);
                          } else
                               if(pinsignaltype[x]=="ANG")
                               {
@@ -152,14 +150,13 @@ void updateinput()
 
                                 if(abs(epinstate-pinstate)>10){
                                   //Serial.println("Farklı olan e: " + pinname[x] + " " +ePinState[x] + " >> " + PinState[x]);
-                                  psci=true;
                                   ePinState[x] = PinState[x];
                                   degisenler += pinname[x] + ":" + PinState[x] + "|" + pinlabel[x] + ",";
                                 }
 
                               } else
                               {
-                              psci=true;
+
                               ePinState[x] = PinState[x];
                               degisenler += pinname[x] + ":" + PinState[x] + "|" + pinlabel[x] + ",";
                               }
@@ -174,22 +171,6 @@ void updateinput()
         }
 }
 
-
-void updatefbvirtual()
-{
-                for (int fbg=0;fbg<6;fbg++)
-                {
-                  if(fbc[fbg].length()>0)
-                  {
-                    //Serial.println("fbcyol: " + fbcyol[fbg]);
-                    //Serial.println("fbtd[fbg] " + fbtd[fbg] + "     efbtd[fbg]" +efbtd[fbg] );
-                    if(fbtd[fbg]!=efbtd[fbg])
-                    {
-                      fbbaskacihazagonder(fbcyol[fbg], fbtd[fbg], fbg);
-                    }
-                  }
-                }
-}
 
 
 void updateoutput()
@@ -212,11 +193,11 @@ void updateoutput()
                         }
                         if(pinsignaltype[x]=="DIG"){
                           bool yildizli; if(pinlabel[x].indexOf("*")+1==pinlabel[x].length())yildizli=true;else yildizli=false;
-                                    if(PinState[x]=="0" ||PinState[x]=="")  {
+                                    if(PinState[x]=="0.00" || PinState[x]=="0" || PinState[x] == "LOW" || PinState[x] =="OFF" || PinState[x]=="")  {
                                       if(yildizli==false)digitalWrite(Pin[x], LOW ); else  digitalWrite(Pin[x], HIGH);
                                     }
                                       else
-                                    if(PinState[x]=="1" || PinState[x] =="ON")  
+                                    if(PinState[x]=="1.00" || PinState[x]=="1" || PinState[x] == "HIGH" || PinState[x] =="ON")  
                                     {
                                       if(yildizli==false)digitalWrite(Pin[x], HIGH); else  digitalWrite(Pin[x], LOW);
                                     }
@@ -229,7 +210,6 @@ void updateoutput()
 
                        if(pinmode[x]=="OUT")
                        {
-                         psco=true;
                          //pindurumrecyap=true;
                          ePinState[x] = PinState[x];
                          degisenler += pinname[x] + ":" + PinState[x]+ "|" + pinlabel[x] + ",";
@@ -250,7 +230,7 @@ void updateoutput()
 */
         }
       if(degisenler!="" && degisenler!= edegisenler){
-        if(htServerip.length()>3)sendserver80(htServerip, "8080", degisenler);
+        if(htServerip.length()>3)sendserver80(htServerip, "8080" ,degisenler);
       }
         yield();
 

@@ -36,7 +36,7 @@ Serial.print("response code ");Serial.println(fetchResponseCode);
                             
                             if(resul.toInt()==10){resul="-1";fbpinstateleriyaz();}
                               else                         
-                                if(psco==true || psci==true){Serial.print("fbsayacoku>pscipsco>true>fbpinstateleriyaz");Serial.print("psci:");Serial.print(psci);Serial.print(" psco:");Serial.println(psco); fbpinstateleriyaz();}
+                                if(psco==true || psci==true)fbpinstateleriyaz();
                           }
                           
 }
@@ -46,7 +46,7 @@ void fbsayacyanioku(String rsltt)
 
 String rslttmp = rsltt;
 Serial.print("fbsayacyanı: "); Serial.println(rslttmp);
-                            for(int k=0;k<5;k++){
+                            for(int k=0;k<6;k++){
                               String pnm;
                               String pns;
                                   if(rslttmp.indexOf(":")>-1)pnm=rslttmp.substring(0,rslttmp.indexOf(":"));
@@ -342,9 +342,8 @@ void fbpinstateleriyaz()
                                 for(int h=0;h<pinsayisi;h++)
                                 {
                                   //if(pinname[h].indexOf("|")>-1)break;
-                                  //Serial.print(pinname[h] + " ");Serial.println(PinState[h]);
+                                  Serial.print(h + ">"); Serial.print(pinname[h] + "<"); Serial.println(PinState[h]);
                                   if(PinState[h]=="")PinState[h]="0";
-
                                   int b=pinname[h].length()+1;
                                   char cvc[b];
                                   pinname[h].toCharArray(cvc, b);

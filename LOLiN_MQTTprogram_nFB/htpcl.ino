@@ -108,9 +108,8 @@ void httpheader(WiFiClient xilent) {
 
 
 int hsay = 0;
-void htpcl() {
-  WiFiClient xilent = httpserver.available();
-  header.reserve(4096);
+void htpcl(WiFiClient xilent) {
+  header.reserve(2048);
   header = "";
   if (xilent) {
 
@@ -669,7 +668,7 @@ void htpcl() {
               xilent.println("</td><td style=\"border:1px solid black;width:250px\">");
               xilent.println("<form action=\"/ssidsetscanwifi\" method=\"POST\"><input type=\"submit\" value=\"Wifi tara\"></form>");
               if (header.indexOf("scanwifi HTTP") > -1) {
-                rescanwifi = 1;
+                rescanwifi = true;
               }
               xilent.println("<br>Wifi tara tıkladıktan sonra 10 sn bekle<br>");
               xilent.println("<br>Sonra tarama sonucu butonuna tıkla<br>");
@@ -950,7 +949,7 @@ void htpcl() {
               }
 
 
-              if (fben == 1 && DATABASE_URL != "" && API_KEY != "" && USER_EMAIL != "" && USER_PASSWORD != "") {
+              if (fben == true && DATABASE_URL != "" && API_KEY != "" && USER_EMAIL != "" && USER_PASSWORD != "") {
                 errstring = "Firebase Ayarları yapılmış.";
               }
 
@@ -1004,12 +1003,12 @@ void htpcl() {
                 xilent.println(">");
 
                 if (header.indexOf("fireb=Off") > -1) {
-                  fben = 0;
+                  fben = false;
                   dosyayazfben();
                   delay(10);
                   ESP.reset();
                 }
-                if (fben == 0) {
+                if (fben == false) {
                   xilent.println("<option value=\"Off\" selected");
                 } else {
                   xilent.println("<option value=\"Off\"");
@@ -1018,12 +1017,12 @@ void htpcl() {
                 xilent.println(">Kapali</option>");
 
                 if (header.indexOf("fireb=On") > -1) {
-                  fben = 1;
+                  fben = true;
                   dosyayazfben();
                   delay(10);
                   ESP.reset();
                 }
-                if (fben == 1) {
+                if (fben == true) {
                   xilent.println("<option value=\"On\" selected");
                 } else {
                   xilent.println("<option value=\"On\"");
@@ -1230,7 +1229,7 @@ void htpcl() {
             //LOLİN için
             if (pinayar.length() > 3) {
               if (Headerparcala.indexOf("GET /D") > -1) {
-
+                htpcldepindegisti=true;
                 if (header.indexOf("?pwm=") > -1) {
                   Headerparcala = Headerparcala.substring(Headerparcala.indexOf(" /D") + 2, Headerparcala.length());
                   pinismi = Headerparcala.substring(0, Headerparcala.indexOf("?"));
@@ -1296,7 +1295,7 @@ void htpcl() {
 
 
               if (header.indexOf("GET /A") > -1) {
-
+                htpcldepindegisti=true;
                 if (header.indexOf("?pwm=") > -1) {
                   Headerparcala = Headerparcala.substring(Headerparcala.indexOf(" /D") + 2, Headerparcala.length());
                   pinismi = Headerparcala.substring(0, Headerparcala.indexOf("?"));
@@ -1397,55 +1396,10 @@ void htpcl() {
                 }
               }
 
-              programrun();
+
 
               creator += "A";
 
-
-
-
-
-
-              for (int x = 0; x < sizeof(Pin) + 1; x++) {
-
-
-                if (pinmode[x] == "OUT") {
-                  String pinstatesakla;
-                  if (acildeyim[x] == true) {
-                    pinstatesakla = PinState[x];
-                    PinState[x] = acildeger[x];
-                  }
-
-                  if (pinmode[x] == "OUT" && pinsignaltype[x] == "DIG") {
-                    bool yildizli;
-                    if (pinlabel[x].indexOf("*") + 1 == pinlabel[x].length()) yildizli = true;
-                    else yildizli = false;
-                    if (PinState[x] == "0.00" || PinState[x] == "0" || PinState[x] == "LOW" || PinState[x] == "OFF") {
-                      if (yildizli == false) digitalWrite(Pin[x], LOW);
-                      else digitalWrite(Pin[x], HIGH);
-                    }
-
-                    if (PinState[x] == "1.00" || PinState[x] == "1" || PinState[x] == "HIGH" || PinState[x] == "ON") {
-                      if (yildizli == false) digitalWrite(Pin[x], HIGH);
-                      else digitalWrite(Pin[x], LOW);
-                    }
-                  }
-
-
-                  if (pinmode[x] == "OUT" && pinsignaltype[x] == "PWM") {
-                    int PWMdegerint = PinState[x].toInt();
-                    Outpwm(pinname[x], PWMdegerint);
-                  }
-
-                  if (pinmode[x] == "OUT" && pinsignaltype[x] == "SER") {
-                    int PWMdegerint = PinState[x].toInt();
-                    myservo[x].write(PWMdegerint);
-                  }
-                  if (acildeyim[x] == true) {
-                    PinState[x] = pinstatesakla;
-                  }
-                }
-              }
             }
 
             creator += "Ş";
@@ -1537,13 +1491,13 @@ void htpcl() {
             }
 
             if (header.indexOf("fireb=On") > -1) {
-              fben = 1;
+              fben = true;
               dosyayazfben();
               delay(10);
               ESP.reset();
             }
             if (header.indexOf("fireb=Off") > -1) {
-              fben = 0;
+              fben = false;
               dosyayazfben();
               delay(10);
               ESP.reset();
