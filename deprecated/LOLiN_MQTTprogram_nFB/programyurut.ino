@@ -13,7 +13,6 @@ int aktifpinno;
 String ptm;
 
 void programrun() {
-
   for (int i = 0; i < 11; i++)  // İLK 10 SAYI 10 PİN İSİM VE DEĞERLERİNİ AL degis degdeg e yaz
   {
     if (programdata.substring(0, 1) == "\n") programdata = programdata.substring(1, programdata.length());  //arada programdata için temizlik yap
@@ -72,8 +71,6 @@ void programrun() {
     }
     }
     eACL = ACL;
-
-
   }
 ////////////////////////////////////////////////////////
 
@@ -464,24 +461,6 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
 
   // boşlukları sil
   if (yapilacaklar.indexOf(";") > -1) {
-
-
-           /* if(millis()-mqyolsil10sec>1000);
-              { 
-                for (int y = 1; y < 6; y++) {
-
-                  if(mqyolsil10secY[y]>0){
-                    mqyolsil10secY[y] += 1; //saniye  10dan büyükse sil digesenmq yu yeniden yolla 10 saniyede bir.
-                    if (mqyolsil10secY[y] >= 10) {
-                      degisenmq[y] = "";
-                      mqyolsil10secY[y] = 0;
-                    }
-                  }
-                }
-                */
-              //}
-
-
     for (int i = 1; i < 11; i++) {
 
       if (yapilacaklar.indexOf(" ") == 0) {
@@ -526,18 +505,19 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
 
             String ACLtmp = "";
             if (degisenmqtmp.indexOf("ACL:") > -1) {
-              //Serial.println("program yurut MQTT:"); Serial.println(degisenmqtmp);
+              Serial.println("program yurut MQTT:"); Serial.println(degisenmqtmp);
               ACLtmp = degisenmqtmp.substring(degisenmqtmp.indexOf("ACL:") + 4, degisenmqtmp.length());
               if (ACLtmp.indexOf(",") > 0) ACLtmp = ACLtmp.substring(0, ACLtmp.indexOf(","));
               if (ACLtmp.indexOf(";") > 0) ACLtmp = ACLtmp.substring(0, ACLtmp.indexOf(";"));
               if (ACLtmp.toInt() != ACL.toInt()) { ACL = ACLtmp; }
-              ACLilanciyim=true;
             }
 
 
-
             for (int y = 1; y < 6; y++) {
-
+              if (mqyol[y] == "") {
+                hane = y;
+                break;
+              }
               if (mqyoltmp == mqyol[y]) {
                 if (degisenmq[y] != "" && degisenmqtmp == degisenmq[y]) {
                   //Serial.println(degisenmqtmp + "   EŞİT ÇIKTI  " + degisenmq[y]);
@@ -545,29 +525,18 @@ void ifparantezdisi(String satiruppercase, int satirsayisip) {
                   //hane=y;break;
                   return;
                 } else {
-                  //Serial.println(degisenmqtmp + "   -----------   " + degisenmq[y]);
-
-                  //Serial.println( mqyol[y] + "   -----------   " + degisenmq[y]);
-
-
-                  //Serial.println("program yürütteki mqyol sayac: "); Serial.println(y);
+                  Serial.println(degisenmqtmp + "   -----------   " + degisenmq[y]);
+                  Serial.println("program yürütteki mqyol sayac: "); Serial.println(y);
 
                   hane = y;
                   break;
                 }
               }
-
-              if (mqyol[y] == "") {
-                hane = y;
-                break;
-              }
-
             }
 
             if (habp == 1 || habp == 3) mqttsend(mqyoltmp, degisenmqtmp);
             mqyol[hane] = mqyoltmp;
             degisenmq[hane] = degisenmqtmp;
-            //mqyolsil10secY[hane]=1;
             delay(1);
           }
         }

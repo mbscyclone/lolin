@@ -94,7 +94,6 @@ Serial.print("pnm:");Serial.print(pnm);Serial.print(" pns:");Serial.print(pns);
 void fbbaskacihazagonder(String yol1,String fbdt,int fbg)
 {
 yield();
-
                       Serial.print("yol1: ");Serial.println(yol1);
                       Serial.print("fbdt: ");Serial.println(fbdt);
                       String yol2=yol1.substring(0,yol1.indexOf("/r/"));
@@ -105,7 +104,7 @@ yield();
 
                       //Serial.print("fbg: ");Serial.println(fbg);
                       
-                      //String resul=Firebase.RTDB.getString(&fbdo, getpath2) ? fbdo.to<const char *>() : fbdo.errorReason().c_str();
+//                    String resul=Firebase.RTDB.getString(&fbdo, getpath2) ? fbdo.to<const char *>() : fbdo.errorReason().c_str();
                       //String resul = Database.get<String>(aClient, getpath2);
 
                               DynamicJsonDocument fetchDoc(512);

@@ -1,32 +1,3 @@
-
-void dosyaokuacl()
-{
-                dosya.close();
-                dosya = LittleFS.open("/acl.txt", "r");
-                if (dosya) {
-                String en = dosya.readStringUntil('\n');
-                ACL = String(en.toInt());
-                Serial.print("ACL:");Serial.println(ACL);
-                }
-                dosya.close();
-}
-
-void dosyayazacl()
-{
-                dosya.close();
-                LittleFS.remove("/acl.txt");
-                dosya = LittleFS.open("/acl.txt", "w+");
-                String ACLt = String(ACL.toInt());
-                if (dosya) {
-                  dosya.println(ACLt);
-                  Serial.print("ACLt:");Serial.println(ACLt);
-                }
-                dosya.close();
-                delay(100);
-}
-
-
-
 void htserveroku(){
                  dosya.close();
                 dosya = LittleFS.open("/httpserverip.txt", "r");

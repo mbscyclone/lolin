@@ -118,8 +118,8 @@ String pinmaxvalue[10];
 String acilseviyesi[10];
 String acildeger[10];
 String pinlabel[10];
-String ACL="100";String eACL="100";
-bool ACLilanciyim=false;
+String ACL="0";String eACL="0";
+
 
 String Abonelik;
 //String pindurumrec;
@@ -922,18 +922,11 @@ void dosyaYazprogram(String programdatat) {
 }
 
 
-
-//unsigned long mqyolsil10sec;
-//unsigned uint8_t mqyolsil10secY[5];
-unsigned long aclsil10sec;
-
 String mqc[5];
 String mqcyol[5];
 String mqyol[5];
 String degisenmq[5];
 bool mqsendbayrak[5];
-
-
 int mqdolubayrak;
 int mqsay;
 String notalar;
@@ -965,7 +958,6 @@ void setup() {
               mqyol[y]="";
             }
 
-  dosyaokuacl();
 
   if (LittleFS.begin()) {
     Serial.println();

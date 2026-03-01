@@ -1881,7 +1881,7 @@ for(int v=1;v<10;v++)
             //String butonpbgcol = "#ffb12a";
 
             xilent.println("istemci: " + remoteip + "<br>");
-            xilent.println("Acil durum seviyesi: " + ACL + "<br>");
+
             xilent.println("<div align=\"left\">");
             xilent.println("<form method='get' action='/butonactcol'><label>Acik konumundaki buton rengi. #</label><input name='is' maxlength='6' style=\"width:50px\" value=");
             xilent.println(butonactcol);

@@ -1,32 +1,3 @@
-
-void dosyaokuacl()
-{
-                dosya.close();
-                dosya = LittleFS.open("/acl.txt", "r");
-                if (dosya) {
-                String en = dosya.readStringUntil('\n');
-                ACL = String(en.toInt());
-                Serial.print("ACL:");Serial.println(ACL);
-                }
-                dosya.close();
-}
-
-void dosyayazacl()
-{
-                dosya.close();
-                LittleFS.remove("/acl.txt");
-                dosya = LittleFS.open("/acl.txt", "w+");
-                String ACLt = String(ACL.toInt());
-                if (dosya) {
-                  dosya.println(ACLt);
-                  Serial.print("ACLt:");Serial.println(ACLt);
-                }
-                dosya.close();
-                delay(100);
-}
-
-
-
 void htserveroku(){
                  dosya.close();
                 dosya = LittleFS.open("/httpserverip.txt", "r");
@@ -51,54 +22,64 @@ void htserverkaydet(String hServerip)
                 htserveroku();
 }
 
-void mqttipoku(){
-                 dosya.close();
-                dosya = LittleFS.open("/mqttip.txt", "r");
-                if (dosya) {
-                String mip = dosya.readStringUntil('\n');
-                MQTTip = mip.substring(0,mip.length()-1);
-                //Serial.print("fben:");
-                //Serial.println(fben);
-                }
-                dosya.close();
+
+
+void dosyaOkuSERVERusers(){
+
+  dosya.close();
+  dosya = LittleFS.open("/SERVERusers.txt", "r");
+  if (dosya) {
+          String geciciSERVERusers = dosya.readString();
+          geciciSERVERusers = geciciSERVERusers.substring(0, geciciSERVERusers.length() - 1);
+          SERVERusers = geciciSERVERusers;
+          Serial.println("geciciSERVERusers v ");
+          Serial.println(geciciSERVERusers);
+          Serial.print("SERVERusers=================>");
+          Serial.print(SERVERusers);
+          Serial.println("<");
+          dosya.close();
+        SERVERkullanici=SERVERusers;
+
+
+          for (int j=0;j<SERVERkullanici.length();j++){
+              Kullaniciadi[j] = SERVERkullanici.substring(0,SERVERkullanici.indexOf("|"));
+              SERVERkullanici= SERVERkullanici.substring(SERVERkullanici.indexOf("|")+1,SERVERkullanici.length());
+
+              Kullanicisifresi[j] = SERVERkullanici.substring(0,SERVERkullanici.indexOf("\n"));
+              SERVERkullanici= SERVERkullanici.substring(SERVERkullanici.indexOf("\n")+1,SERVERkullanici.length());
+
+              if(SERVERkullanici.length()<1) break;
+
+              Serial.println(Kullaniciadi[j]+"|"+ Kullanicisifresi[j]);
+
+          }
+      }
 }
 
-void mqttipkaydet(String MQTTip)
-{
-                dosya.close();
-                LittleFS.remove("/mqttip.txt");
-                dosya = LittleFS.open("/mqttip.txt", "w+");
-                if (dosya) {
-                  dosya.println(String(MQTTip));
-                   if(MQTTip.length()>0)mqttconnectsayac=0;
-                }
-                dosya.close();
-                mqttipoku();
+
+void dosyaYazSERVERusers(){
+  dosya.close();
+  LittleFS.remove("/SERVERusers.txt");
+  Serial.println(SERVERusers);
+  if(SERVERusers.indexOf(SERVERusers.substring(SERVERusers.length()- 5, 5)),"%0"<0)SERVERusers;
+  dosya = LittleFS.open("/SERVERusers.txt", "w+");
+  SERVERusers=Karakterduzeltfunc(SERVERusers);
+  dosya.println(SERVERusers);
+  dosya.close();
+  dosyaOkuSERVERusers();
+
+  //ESP.reset();
 }
 
-
-
-
-void dosyayazssidpass()
-{
-                  reConnectsayac=millis();
-                dosya.close();
-                LittleFS.remove("/ssidpass.txt");
-                dosya = LittleFS.open("/ssidpass.txt", "w+");
-                if (dosya) {
-                  dosya.println(ssid);
-                  dosya.println(pass);
-                  dosya.close();
-                  Serial.println("Write bitti");
-                  delay(100);
-                  ESP.reset();
-                }
-                dosya.close();
-
-}
 
 void dosyaokussidpass() {
-  dosya.close();
+
+
+  //if (digitalRead(FactoryDefault) == HIGH) {
+    // cleareprom();
+  //}
+
+
   dosya = LittleFS.open("/ssidpass.txt", "r");
   if (dosya) {
     // dosya başarı ile açıldı;
@@ -115,6 +96,8 @@ void dosyaokussidpass() {
   }
 }
 
+
+
 String myssidyazilimi = "";
 void dosyayazmyssidname() {
                   reConnectsayac=0;
@@ -128,7 +111,7 @@ Serial.println(myssidyazilimi);
   WiFi.hostname(esphostname);
   WiFi.softAP(esphostname, "12345678");
 //  fbchzkaydial();
-    fbdataguncelle();
+    //fbdataguncelle();
 }
 
 void dosyaokumyssidname() {
@@ -149,6 +132,7 @@ void dosyaokumyssidname() {
          esphostname = "" + myssidyazilimi;
   }
 }
+
 
 
 
@@ -207,15 +191,15 @@ void dosyaOkuusers() {
 
 
 
+
 void dosyaokufben()
 {
                 dosya.close();
                 dosya = LittleFS.open("/fben.txt", "r");
                 if (dosya) {
                 String en = dosya.readStringUntil('\n');
-                en = en.substring(0,en.length()-1);
-                if(en.toInt()==1)fben = true;
-                if(en.toInt()==0)fben = false;
+                en= en.substring(0,en.length()-1);
+                fben = en.toInt();
                 //Serial.print("fben:");
                 //Serial.println(fben);
                 }
@@ -229,15 +213,13 @@ void dosyayazfben()
                 LittleFS.remove("/fben.txt");
                 dosya = LittleFS.open("/fben.txt", "w+");
                 if (dosya) {
-                  if(fben==true)dosya.println("1");
-                  if(fben==false)dosya.println("0");
+                  dosya.println(String(fben));
                 }
                 dosya.close();
                 dosyaokufben();
-                if(fben==1)connectfb();
-                delay(100);
-                
+       //         if(fben==1)connectfb();
 }
+
 
 void dosyaokuhabp()
 {
@@ -265,8 +247,6 @@ void dosyayazhabp()
                 dosya.close();
 }
 
-
-/*
 void dosyaokupindurum()
 {
                 pindurumrecyap=false;
@@ -350,12 +330,12 @@ if(fben==0){
 
 
 }
-*/
 
 
 
 
 
+/*
 
 void dosyaokufburl()
 {
@@ -488,142 +468,4 @@ void dosyayazfbuserpass()
                   dosyaokufburl();
                 }
 }
-
-
-String butonactcol = "d1ca03";
-String butonpascol = "A3A3A3";
-String butonayrcol = "20d3c8";
-String menutextcol = "000000";
-String butonpbgcol = "ffb12a";
-
-
-void butonactcoloku() {
-  dosya.close();
-  dosya = LittleFS.open("/butonactcol.txt", "r");
-  if (dosya) {
-    String butonactcol1 = dosya.readStringUntil('\n');
-    butonactcol = butonactcol1.substring(0, butonactcol1.length() - 1);
-    //Serial.println(butonactcol);
-    dosya.close();
-  } else {
-    butonactcol = "d1ca03";
-  }
-}
-
-void butonactcolyaz() {
-  dosya.close();
-  LittleFS.remove("/butonactcol.txt");
-  //Serial.println(butonactcol);
-  dosya = LittleFS.open("/butonactcol.txt", "w+");
-  dosya.println(butonactcol);
-  dosya.close();
-  butonactcoloku();
-}
-
-void butonpascoloku() {
-  dosya.close();
-  dosya = LittleFS.open("/butonpascol.txt", "r");
-  if (dosya) {
-    String butonpascol1 = dosya.readStringUntil('\n');
-    butonpascol = butonpascol1.substring(0, butonpascol1.length() - 1);
-    //Serial.println(butonpascol);
-    dosya.close();
-  } else {
-    butonpascol = "A3A3A3";
-  }
-}
-
-void butonpascolyaz() {
-  dosya.close();
-  LittleFS.remove("/butonpascol.txt");
-  //Serial.println(butonpascol);
-  dosya = LittleFS.open("/butonpascol.txt", "w+");
-  dosya.println(butonpascol);
-  dosya.close();
-  butonpascoloku();
-}
-
-void butonayrcoloku() {
-  dosya.close();
-  dosya = LittleFS.open("/butonayrcol.txt", "r");
-  if (dosya) {
-    String butonayrcol1 = dosya.readStringUntil('\n');
-    butonayrcol = butonayrcol1.substring(0, butonayrcol1.length() - 1);
-    //Serial.println(butonayrcol);
-    dosya.close();
-  } else {
-    butonayrcol = "20d3c8";
-  }
-}
-
-void butonayrcolyaz() {
-  dosya.close();
-  LittleFS.remove("/butonayrcol.txt");
-  //Serial.println(butonayrcol);
-  dosya = LittleFS.open("/butonayrcol.txt", "w+");
-  dosya.println(butonayrcol);
-  dosya.close();
-  butonayrcoloku();
-}
-
-
-
-
-void menutextcoloku() {
-  dosya.close();
-  dosya = LittleFS.open("/menutextcol.txt", "r");
-  if (dosya) {
-    String menutextcol1 = dosya.readStringUntil('\n');
-    menutextcol = menutextcol1.substring(0, menutextcol1.length() - 1);
-    dosya.close();
-  } else {
-    menutextcol = "000000";
-  }
-}
-
-void menutextcolyaz() {
-  dosya.close();
-  LittleFS.remove("/menutextcol.txt");
-  //Serial.println(butonpbgcol);
-  dosya = LittleFS.open("/menutextcol.txt", "w+");
-  dosya.println(menutextcol);
-  dosya.close();
-  menutextcoloku();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void butonpbgcoloku() {
-  dosya.close();
-  dosya = LittleFS.open("/butonpbgcol.txt", "r");
-  if (dosya) {
-    String butonpbgcol1 = dosya.readStringUntil('\n');
-    butonpbgcol = butonpbgcol1.substring(0, butonpbgcol1.length() - 1);
-    //Serial.print("butonpbgcol:"); Serial.println(butonpbgcol);
-    dosya.close();
-  } else {
-    butonpbgcol = "ffb12a";
-  }
-}
-
-void butonpbgcolyaz() {
-  dosya.close();
-  LittleFS.remove("/butonpbgcol.txt");
-  //Serial.println(butonpbgcol);
-  dosya = LittleFS.open("/butonpbgcol.txt", "w+");
-  dosya.println(butonpbgcol);
-  dosya.close();
-  butonpbgcoloku();
-}
-
+*/

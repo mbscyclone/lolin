@@ -35,9 +35,6 @@ void MQTTConnect() {
     mqttclient.subscribe("/"+YOL+"/#");
     // client.unsubscribe("/hello");
     mqttconnectsayac = 0;
-    String pat= YOL + "/" + esphostname ;
-    String msghello = "hello:" + esphostname; 
-    mqttsend(pat,msghello);
   }
 
 }
@@ -65,13 +62,6 @@ void messageReceived(String& topic, String& payload) {
   //if(Gelenmsg == degisenmq[v])return;
   //}
 
-  if(Gelenmsg.indexOf("hello:")>-1)
-  {
-  if(ACLilanciyim==true)
-  {
-    mqttsend(YOL + esphostname, "ALLDEV=ACL:"+ACL);
-  }
-  }
   for(int v=1;v<51;v++){
   if(Gelentopic == mqyol[v]  && Gelenmsg == degisenmq[v])return;
   }
@@ -110,8 +100,6 @@ void mqttsend(String mqyol , String mqdata)
     mqttclient.publish(mqpat, mqdata);
   //if(mqdata.indexOf("BUZ>")>-1)delay(100);
   //else{delay(4);}
-  Serial.print("mqttsend yol: ");Serial.print(mqpat);
-  Serial.print("mqttsend mqdata: ");Serial.print(mqdata);
 }
 
 void mqttisyap(String rsltt)
@@ -176,7 +164,6 @@ Serial.print("mqgonderen:");Serial.print(mqgonderen);Serial.print(" pnm:");Seria
                                 {
                                   ACL=pns;
                                   Serial.println("acil durum 1 ilan edildi..");
-                                  dosyayazacl();
                                 }
 
                                 
