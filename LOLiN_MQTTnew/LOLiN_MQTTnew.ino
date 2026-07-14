@@ -1,56 +1,58 @@
 // ESP8266 LOLİN
 // Flash size 4M(FS:1MB OTA:~1019KB)
-// MMU: "32KB cache + 32KB IRAM(balanced)"
-//***************************************
-// (LOLİN) D1 RX, D2 TX  >>>>> MP3 PLAYER RX TX
-//          |      |______________________|  |
-//          |________________________________|
-// serial monitor baud rate 115200
+// MMU: "16KB cache + 48KB and 2nd Heap (shared)"
+
 
 
 #define ENABLE_USER_AUTH
 #define ENABLE_DATABASE
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
-
+//#include <FirebaseRealtime.h>
+//#include <WiFiClient.h>
 //#include <EEPROM.h>
 //#include <DHT.h>
 #include <ESP8266WiFi.h>
 #include "LittleFS.h"
-#include "MQTT.h"
-WiFiClient mqttnet;
-MQTTClient mqttclient;
-String MQTTip = "";
-
-
+#include <MQTT.h>
 #include <Servo.h>
 #include <DHT.h>
 #include "Melody.h"
 //#include <WebSocketsServer.h>
 //#include <ESP8266WebServer.h>
 
+//#include "FirebaseRealtime.h"
+//FirebaseRealtime firebaseRealtime;
+
+
+WiFiClient mqttnet;
+MQTTClient mqttclient;
+String MQTTip = "";
+
+
+
+//String USER_EMAIL1 = "";  // "asd"     @ işareti sonradan eklenecek
+//String USER_EMAIL2 = "";  //"gmail.com"
+
+/* 2. Define the API Key */
+//String API_KEY = "";  // "AIzaSyDTMhGs_ISD4WKmJrCxw35rqv-bo34ZdYI";
+
+/* 3. Define the RTDB URL */
+//String DATABASE_URL = "";  // "https://esp-v4-default-rtdb.firebaseio.com"; //<databaseName>.firebaseio.com or <databaseName>.<region>.firebasedatabase.app
+
+/* 4. Define the user Email and password that alreadey registerd or added in your project */
+//String USER_EMAIL = "";     // "asadafag@gmail.com";
+//String USER_PASSWORD = "";  // "bebedede14";
+
+
+
+
+//int fbresulsay = 0;
 String YOL = "";
-
-
-
 String errorlog;
 int CHZz;
-
-
-
-#include "Arduino.h"
-#include "DFRobotDFPlayerMini.h"
-
-#if (defined(ARDUINO_AVR_UNO) || defined(ESP8266))  // Using a soft serial port
-#include <SoftwareSerial.h>
-SoftwareSerial softSerial(/*rx =*/D1, /*tx =*/D2);
-#define FPSerial softSerial
-#else
-#define FPSerial Serial1
-#endif
-
-DFRobotDFPlayerMini myDFPlayer;
-
+bool psco;
+bool psci;
 
 unsigned long reConnectsayac = millis();
 
@@ -61,32 +63,33 @@ String header;
 String headerold;
 String creator;
 String htyolla;
-String esphostname = "MP3_bos";
-int MP3;
-int eMP3;
-String MP3T;
-String eMP3T;
+String esphostnameOnek = "";
+String esphostname = "esp-bos";
+unsigned long harcananzaman;
 String progmsg;
 
 
-unsigned long zamanfark = millis();
-unsigned long zamanbasi = millis();
-bool firebaseyegirdim = false;
+unsigned long zamanfark=millis();
+unsigned long zamanbasi=millis();
+bool firebaseyegirdim=false;
 
 
 String ssid = "";
 String pass = "";
 
-int rescanwifi = 0;
+bool rescanwifi = false;
 
-bool htpcldis = false;
+bool htpcldis=false;
 
+
+
+//bool aut[5]=false;
 String unme;
 String pwrd;
 String capt;
 unsigned long logintimeout;
 int aut;
-int logintimeoutmax = 240000;
+int logintimeoutmax=240000;
 
 
 
@@ -99,8 +102,7 @@ String VRP[5];
 int pinsayisi = 10;
 // pin Adı|pinmode|pin baslangic degeri|pin değeri|pin degerleri|Pin label"
 
-String usrnam[3];
-String usrpass[3];
+
 
 
 //String pinsatir[10];
@@ -109,17 +111,15 @@ String pinmode[10];
 String pinsignaltype[10];
 String pinminvalue[10];
 String pinval[10];
-String PinState[10];
-String ePinState[10];
+String PinState[10];String ePinState[10];
 bool acildeyim[10];
 String fbPinState[10];
 String pinmaxvalue[10];
 String acilseviyesi[10];
 String acildeger[10];
 String pinlabel[10];
-String ACL = "0";
-String eACL = "0";
-
+String ACL="100";String eACL="100";
+bool ACLilanciyim=true;
 
 String Abonelik;
 //String pindurumrec;
@@ -130,21 +130,12 @@ int hcsrE[10];
 int edistance[10];
 int bestursay = 0;
 bool hcsrloopvar;
+unsigned long hcsrlooptimer;
 String tempstr = "";
 String humstr = "";
 
 Servo myservo[10];
 
-int mp3RX[10];
-int mp3TX[10];
-int mp3Vol;
-int mp3EQ;
-bool playfirst;
-bool mp3loopvar;
-int toplammp3sayisi;
-
-String emp3mesaj;
-int mp3pageilkindex = 1;
 
 String pinayar;
 String pinayartmp;
@@ -152,13 +143,14 @@ String Program;
 
 // PROGRAM İÇİN ////////////////////////
 String satirp;
-String degis[20];
-String degdeg[20];
-String fbc[10];
-String fbcyol[10];
-String fbtd[10];
-String efbtd[10];  //FBden gonderilecek bilgi eslikisi
+String degis[15];
+String degdeg[15];
+//String fbc[5];
+//String fbcyol[5];
+//String fbtd[5];
+//String efbtd[5];  //FBden gonderilecek bilgi eslikisi
 // 0-10  PİN     11-30 degisken    31-50 booldegisken  51-70 boolsonuc
+
 
 ////////////////////////////////////////
 
@@ -183,7 +175,7 @@ String programdata;
 
 int habp = -2;
 int ehabp;
-int fben;
+bool fben;
 
 String fberror = "";
 
@@ -195,12 +187,13 @@ String htServerip;
 String edegisenler;
 String degisenler;
 
-/*
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
-ESP8266WebServer server(8080);
 
+//#include <ESP8266WebServer.h>
+//#include <ESP8266mDNS.h>
+//ESP8266WebServer server(8080);
+/*
 void handleRoot() {
+
   dosyaokumyssidname();
   IPAddress lip = WiFi.localIP();
   String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
@@ -208,8 +201,8 @@ void handleRoot() {
   server.send(200, "text/plain", gd);
 }
 
-
 void handleger() {
+
   dosyaokumyssidname();
   IPAddress lip = WiFi.localIP();
   String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
@@ -246,16 +239,12 @@ void handleNotFound() {
 }
 */
 
-
-
-
-
-
+bool LED_BUILTIN_devredisi=false;
 
 //String macadr1="8"; // SALON
 String macadr1 = "5";  // BAHCE
 bool pinlerdagitildi = false;
-bool pinlerterslendi = false;
+//bool pinlerterslendi=false;
 String Pinler;
 String macadr;
 //String macadr2="c:ce:4e:ca:0e:56"; // SALON
@@ -272,24 +261,26 @@ void dosyaOkupinayar() {
     pinayartmp = gecicipinayar.substring(0, gecicipinayar.length());
 
 
-    int contpih = 0;
-    int n = 0;
+int contpih = 0;
+int n = 0;
 
-    while ((n = pinayartmp.indexOf('|', n)) != -1) {
-      n++;
-      contpih++;
-    }
-    if (contpih % 8 != 0) {
-      erlog = "pinayar hatalı";
-      pinayar = "";
+while ((n = pinayartmp.indexOf('|', n)) != -1)
+{
+   n++;
+   contpih++;
+}
+    if(contpih % 8 != 0 ){
+      erlog="pinayar hatalı";
+      pinayar="";
       return;
-    } else pinayar = pinayartmp;
+      }
+      else pinayar=pinayartmp;
 
 
 
     dosya.close();
     strtmp = pinayar;
-    Serial.println("dosyaokupinayar.");
+  Serial.println("dosyaokupinayar.");
     Serial.println(pinayar);
 
     if (strtmp.length() > 0) {
@@ -301,25 +292,29 @@ void dosyaOkupinayar() {
         pinval[x] = "";
         PinState[x] = "";
         ePinState[x] = "";
-        fbPinState[x] = "";
+        //fbPinState[x] = "";
         pinmaxvalue[x] = "";
         pinlabel[x] = "";
-        acilseviyesi[x] = "";
-        acildeger[x] = "";
+        acilseviyesi[x]="";
+        acildeger[x]="";
         hcsrT[x] = -1;
         hcsrE[x] = -1;
-        mp3RX[x] = -1;
-        mp3TX[x] = -1;
       }
 
       erlog = "";
       hcsrloopvar = false;
-      mp3loopvar = false;
       yield();
 
-      for (int x = 0; x < 1000; x++) {
+      for (int x = 0; x < 12; x++) {
         if (strtmp.length() < 3) break;
-        String pinnametm = strtmp.substring(0, strtmp.indexOf("|"));
+      String pinnametm = strtmp.substring(0, strtmp.indexOf("|"));
+
+        int b=pinnametm.length()+1;
+        char cvc[b];
+    pinnametm.toCharArray(cvc, b);  // pinname 0A ise atla
+        if((int)cvc[0]!=10)
+        {
+
         int pinismiint;
         if (pinnametm.length() > 1) {
           pinismiint = pinnametm.substring(1, 2).toInt();
@@ -334,7 +329,8 @@ void dosyaOkupinayar() {
         //pinsatir[x] = strtmp.substring(0,strtmp.indexOf("\n"));
 
         //Serial.println(j);
-        pinname[x] = strtmp.substring(0, strtmp.indexOf("|"));
+
+        pinname[x] = pinnametm.substring(0, pinnametm.indexOf("|"));
         strtmp = strtmp.substring(strtmp.indexOf("|") + 1, strtmp.length());
 
         pinmode[x] = strtmp.substring(0, strtmp.indexOf("|"));
@@ -380,25 +376,12 @@ void dosyaOkupinayar() {
               if (pinminvalue[x] == "A0") hcsrT[x] = Pin[9];
             }
 
-            if (pinsignaltype[x] == "MP3") {
-              mp3RX[x] = Pin[x];
-              mp3loopvar = true;
-              if (pinminvalue[x] == "D0") mp3TX[x] = Pin[0];
-              if (pinminvalue[x] == "D1") mp3TX[x] = Pin[1];
-              if (pinminvalue[x] == "D2") mp3TX[x] = Pin[2];
-              if (pinminvalue[x] == "D3") mp3TX[x] = Pin[3];
-              if (pinminvalue[x] == "D4") mp3TX[x] = Pin[4];
-              if (pinminvalue[x] == "D5") mp3TX[x] = Pin[5];
-              if (pinminvalue[x] == "D6") mp3TX[x] = Pin[6];
-              if (pinminvalue[x] == "D7") mp3TX[x] = Pin[7];
-              if (pinminvalue[x] == "D8") mp3TX[x] = Pin[8];
-              if (pinminvalue[x] == "A0") mp3TX[x] = Pin[9];
-            }
           }
         }
 
         pinval[x] = strtmp.substring(0, strtmp.indexOf("|"));
         strtmp = strtmp.substring(strtmp.indexOf("|") + 1, strtmp.length());
+        PinState[x]=pinval[x];
 
         pinmaxvalue[x] = strtmp.substring(0, strtmp.indexOf("|"));
         strtmp = strtmp.substring(strtmp.indexOf("|") + 1, strtmp.length());
@@ -409,6 +392,13 @@ void dosyaOkupinayar() {
 
         acildeger[x] = strtmp.substring(0, strtmp.indexOf("|"));
         strtmp = strtmp.substring(strtmp.indexOf("|") + 1, strtmp.length());
+
+      }
+
+
+
+
+
 
 
 
@@ -435,35 +425,38 @@ void dosyaYazpinayar() {
   reConnectsayac = millis();
   pinayartmp = Karakterduzeltfunc(pinayartmp);
 
-  int contpih = 0;
-  int n = 0;
+int contpih = 0;
+int n = 0;
 
-  while ((n = pinayartmp.indexOf('|', n)) != -1) {
-    n++;
-    contpih++;
-  }
+while ((n = pinayartmp.indexOf('|', n)) != -1)
+{
+   n++;
+   contpih++;
+}
 
-  if (contpih % 8 != 0) {
-    erlog = "pinayar hatalı";
-    pinayar = "";
-    return;
-  }
+    if(contpih % 8 != 0 ){
+      erlog="pinayar hatalı";
+      pinayar="";
+      return;
+      }
 
-  if (pinayartmp != pinayar) {
-    pinayar = pinayartmp;
+  if(pinayartmp != pinayar){
+    pinayar=pinayartmp;
     dosya.close();
-    LittleFS.remove("/pinayar.txt");
-    dosya = LittleFS.open("/pinayar.txt", "w+");
-    //pinayarYuzdeliifadesil();
+  LittleFS.remove("/pinayar.txt");
+  dosya = LittleFS.open("/pinayar.txt", "w+");
+  //pinayarYuzdeliifadesil();
 
-    dosya.print(pinayar);
-    dosya.close();
-    Serial.println(pinayar);
-
-    // int deleteResponseCode = firebaseRealtime.remove("/" + YOL + "/r/" , esphostname);
+  dosya.print(pinayar);
+  dosya.close();
+  Serial.println(pinayar);
+  
+  // int deleteResponseCode = firebaseRealtime.remove("/" + YOL + "/r/" , esphostname);
+    //fbdeletesayac();
     //fbpinayaryaz = true;
-    setup2();
+  setup2();
   }
+
 }
 
 
@@ -519,32 +512,36 @@ void espLolin() {
 }
 
 void setup2() {
-  dosyaOkuprogram();
+
   dosyaOkupinayar();
+
+if(pinayar.length()>3)
+{
+  dosyaOkuprogram();
   String strtmp = programdata;
   strtmp.toUpperCase();
 
-  if (pinlerterslendi == false) {
-    for (int x = 0; x < pinsayisi + 1; x++) {
-      if (pinmode[x] == "OUT" & pinsignaltype[x] == "DIG") {
-        bool yildizli;
-        if (pinlabel[x].indexOf("*") + 1 == pinlabel[x].length()) yildizli = true;
-        else yildizli = false;
-        if (yildizli == true) {
-          if (PinState[x] == "1") PinState[x] = "0";
-          else PinState[x] = "1";
-        }
+/*
+    if(pinlerterslendi==false)
+    {
+      for (int x = 0; x < pinsayisi + 1; x++) {
+        if (pinmode[x] == "OUT" & pinsignaltype[x] == "DIG") {
+          bool yildizli; if(pinlabel[x].indexOf("*")+1==pinlabel[x].length())yildizli=true;else yildizli=false;
+                     if(yildizli==true){
+                       if(PinState[x]=="1") PinState[x] = "0"; else PinState[x] = "1";
+                       }
 
-        if (PinState[x] == "0.00" || PinState[x] == "0" || PinState[x] == "LOW" || PinState[x] == "OFF" || PinState[x] == "") {
-          if (yildizli == false) digitalWrite(Pin[x], LOW);
-          else digitalWrite(Pin[x], HIGH);
-        } else if (PinState[x] == "1.00" || PinState[x] == "1" || PinState[x] == "HIGH" || PinState[x] == "ON") {
-          if (yildizli == false) digitalWrite(Pin[x], HIGH);
-          else digitalWrite(Pin[x], LOW);
+          if (PinState[x] == "0.00" || PinState[x] == "0" || PinState[x] == "LOW" || PinState[x] == "OFF" || PinState[x] == "") {
+            if (yildizli == false) digitalWrite(Pin[x], LOW);
+            else digitalWrite(Pin[x], HIGH);
+          } else if (PinState[x] == "1.00" || PinState[x] == "1" || PinState[x] == "HIGH" || PinState[x] == "ON") {
+            if (yildizli == false) digitalWrite(Pin[x], HIGH);
+            else digitalWrite(Pin[x], LOW);
+          }
         }
       }
-    }
-  } else pinlerterslendi = false;
+    }else pinlerterslendi=false;
+*/
 
   //Serial.println("sorunyok");
   //Serial.println("sorunyok2");
@@ -597,6 +594,8 @@ void setup2() {
       myservo[c].attach(Pin[c]);
       //
     }
+
+  }
   }
 }
 
@@ -630,9 +629,10 @@ bool testWifi(void) {
     }
     delay(1000);
     Serial.print("*");
+    if(LED_BUILTIN_devredisi==false){
     if (LED_BUILTIN == HIGH) digitalWrite(LED_BUILTIN, LOW);
     else digitalWrite(LED_BUILTIN, HIGH);
-
+    }
     c1++;
   }
   Serial.println("");
@@ -735,7 +735,8 @@ void connectWifi(void) {
     //                                wifiscan();
     //                                lookAP();// S etup HotSpot
 
-    WiFi.softAP(esphostname, "12345678");
+    String macdre=WiFi.macAddress();
+    WiFi.softAP("Esp-bos-"+macdre, "12345678");
     //delay(100);
     Serial.println(WiFi.localIP());
     Serial.println(WiFi.gatewayIP());
@@ -904,27 +905,6 @@ void dosyaOkuprogram() {
 void dosyaYazprogram(String programdatat) {
   programdata = Karakterduzeltfunc(programdatat);
   reConnectsayac = millis();
-  for (int x = 0; x < floatdegiskenismisayisi + 1; x++) {
-    floatdegiskenismi[x] = "";
-    floatdegiskenvalue[x] = 0;
-  }
-
-  for (int x = 0; x < pinsayisi; x++) {
-    pinname[x] = "";
-    pinmode[x] = "";
-    pinsignaltype[x] = "";
-    pinminvalue[x] = "";
-    PinState[x] = "";
-    ePinState[x] = "";
-    pinmaxvalue[x] = "";
-    acilseviyesi[x] = "";
-    acildeger[x] = "";
-    pinlabel[x] = "";
-  }
-
-
-
-
 
   //Serial.print("Yazilacakprogramdata:");
   erlog = "";
@@ -937,15 +917,23 @@ void dosyaYazprogram(String programdatat) {
   dosya.print(programdata);
   dosya.close();
   setup2();
-  if (pinayar.length() > 0 && programdata.length() > 0) programrun();
+  if(pinayar.length()>0 && programdata.length()>0)programrun();
   //ESP.reset();
 }
 
 
 
-String mqyol[12];
-String degisenmq[12];
-bool mqsendbayrak[12];
+//unsigned long mqyolsil10sec;
+//unsigned uint8_t mqyolsil10secY[5];
+unsigned long aclsil10sec;
+
+String mqc[5];
+String mqcyol[5];
+String mqyol[5];
+String degisenmq[5];
+bool mqsendbayrak[5];
+
+
 int mqdolubayrak;
 int mqsay;
 String notalar;
@@ -964,17 +952,20 @@ bool mqtterror;
 
 int sil = 0;
 
-//void printDetail(uint8_t type, int value);
 
 void setup() {
   // initialize LED_BUILTIN as an output pin.
+  pinMode(LED_BUILTIN,OUTPUT);
   // starttime=millis();
   Serial.begin(115200);
   // dosya setup kısmı ////////////////
 
-  for (int y = 1; y < 13; y++) {
-    mqyol[y] = "";
-  }
+            for (int y=1;y<13;y++)
+            {
+              mqyol[y]="";
+            }
+
+  dosyaokuacl();
 
   if (LittleFS.begin()) {
     Serial.println();
@@ -989,7 +980,7 @@ void setup() {
       delay(10);
       LittleFS.remove("/httpserverip.txt");
       delay(10);
-      LittleFS.remove("/usrpass.txt");
+      LittleFS.remove("/usrnamepass.txt");
       delay(10);
       LittleFS.remove("/mqttip.txt");
       delay(10);
@@ -1022,36 +1013,31 @@ void setup() {
 
   Serial.println(ESP.getResetReason());
   Serial.println(ESP.getResetInfo());
-  pinMode(LED_BUILTIN, OUTPUT);
 
 
   espLolin();
 
   dosyaOkupinayar();
-
-
   //dosyaokupindurum();
-  dosyaOkuprogram();
 
-  for (int x = 0; x < pinsayisi + 1; x++) {
-    if (pinmode[x] == "OUT" & pinsignaltype[x] == "DIG") {
-      bool yildizli;
-      if (pinlabel[x].indexOf("*") + 1 == pinlabel[x].length()) yildizli = true;
-      else yildizli = false;
-      if (PinState[x] == "0.00" || PinState[x] == "0" || PinState[x] == "LOW" || PinState[x] == "OFF" || PinState[x] == "") {
-        if (yildizli == false) digitalWrite(Pin[x], LOW);
-        else digitalWrite(Pin[x], HIGH);
-      } else if (PinState[x] == "1.00" || PinState[x] == "1" || PinState[x] == "HIGH" || PinState[x] == "ON") {
-        if (yildizli == false) digitalWrite(Pin[x], HIGH);
-        else digitalWrite(Pin[x], LOW);
+
+if(pinayar.length()>3){
+    dosyaOkuprogram();
+      for (int x = 0; x < pinsayisi + 1; x++) {
+        if (pinmode[x] == "OUT" & pinsignaltype[x] == "DIG") {
+          bool yildizli; if(pinlabel[x].indexOf("*")+1==pinlabel[x].length())yildizli=true;else yildizli=false;
+          if (PinState[x] == "0" || PinState[x] == "") {
+            if (yildizli == false) digitalWrite(Pin[x], LOW);
+            else digitalWrite(Pin[x], HIGH);
+          } else if (PinState[x] == "1") {
+            if (yildizli == false) digitalWrite(Pin[x], HIGH);
+            else digitalWrite(Pin[x], LOW);
+          }
+        }
       }
-    }
-  }
-  pinlerterslendi = true;
-  //dosyaokuhabp();
+  //pinlerterslendi=true;
 
-
-
+}
 
 
 
@@ -1071,88 +1057,28 @@ void setup() {
   if (WiFi.status() != WL_CONNECTED) connectWifi();
 
 
-
-
-
-
-  if (pinayar.indexOf("|OUT|MP3|") > -1) {
-    if (pinayar.indexOf("D1|OUT|MP3|D2") < 0) errorlog = "MP3-player RX=D1, TX=D2 olmalıdır.";
-    else {
-      
-
-
-      FPSerial.begin(9600);
-      Serial.println();
-      Serial.println(F("DFRobot DFPlayer Mini Demo"));
-      Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
-
-      if (!myDFPlayer.begin(FPSerial, /*isACK = */ true, /*doReset = */ true)) {  //Use serial to communicate with mp3.
-        Serial.println(F("Unable to begin:"));
-        Serial.println(F("1.Please recheck the connection!"));
-        Serial.println(F("2.Please insert the SD card!"));
-        while (true) {
-          delay(0);  // Code to compatible with ESP8266 watch dog.
-        }
-      }
-      Serial.println(F("DFPlayer Mini online."));
-/*
-      myDFPlayer.volume(24);  //Set volume value. From 0 to 30
-      myDFPlayer.play(1);     //Play the first mp3
-
-      for (int dfp = 0; dfp < 3; dfp++) {
-        myDFPlayer.play(dfp);  //Play the first mp3
-        if (myDFPlayer.available()) {
-          myDFPlayer.readFileCounts();
-          delay(50);
-          toplammp3sayisi = myDFPlayer.readFileCountsInFolder(0);
-          delay(50);
-        }
-      }
-*/
-
-
-
-
-      myDFPlayer.volume(22);  //Set volume value. From 0 to 30
-      //myDFPlayer.play(1);     //Play the first mp3
-      for (int dfp = 0; dfp < 2; dfp++) {
-        myDFPlayer.play(dfp);  //Play the first mp3
-        delay(20);
-      }
-        if (myDFPlayer.available()) {
-          myDFPlayer.readFileCounts();
-          delay(50);
-          toplammp3sayisi = myDFPlayer.readFileCountsInFolder(0);
-          delay(30);
-        }
-        myDFPlayer.play(1);     //Play the first mp3
-
-
-
-
-
-    }
-  }
-
-
-
-
   //delay(10);
 
   //Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
 
   dosyaokuhabp();
 
-  yoloku();
+  dosyaokufbyol();
+  
+  //dosyaokufben();
+  //dosyaokufburl();
+  //dosyaokufbapi();
+  //dosyaokufbusername();
+  //dosyaokufbuserpass();
 
 
-  httpserver.begin();
-  butonactcoloku();
-  butonpascoloku();
-  butonayrcoloku();
-  menutextcoloku();
-  butonpbgcoloku();
-  Serial.println("Web server Lunched.");
+    httpserver.begin();
+    butonactcoloku();
+    butonpascoloku();
+    butonayrcoloku();
+    menutextcoloku();
+    butonpbgcoloku();
+    Serial.println("Web server Lunched.");
 
 
 /*
@@ -1167,31 +1093,64 @@ void setup() {
 
 
 
-
-
   setup2();
   otasetup();
 
   if (WiFi.status() == WL_CONNECTED) {
-    if (habp == -2) dosyaokuhabp();
-    if (habp == 1 || habp == 3) {
+    if(habp==-2)dosyaokuhabp();
+    if(habp == 1 || habp == 3){
       mqttipoku();
-      yoloku();
-      if (MQTTip.length() > 2) MQTTConnect();
+      MQTTConnect();
+      if(MQTTip.length()>2) MQTTConnect();
     }
   }
 
   if (WiFi.status() == WL_CONNECTED) htserveroku();
 
 
+  if (WiFi.status() == WL_CONNECTED && fben != 0)
+  { if(habp==-2)dosyaokuhabp();
+  //      if(habp == 2 || habp == 3) {if(fben!=0)connectfb();}
+  }
 
+
+
+/*
   dosyaOkuusers();
+Serial.println("usrname okudurm:" + usrname);
+Serial.println("usrpaz okudurm:" + usrpaz);
+if(usrname.length()<2 || usrpaz.length()<2)
+{
+  usrname="admin";
+  usrpaz="1111";
+}
+*/
+dosyaOkuusers();
 }
 
 
 
 
+void connectfb() {
+  //dosyaokufben();
+  if (fben == 1) {
+
+    //dosyaokufburl();dosyaokufbapi();dosyaokufbyol();dosyaokufbusername();dosyaokufbuserpass();
+
+    IPAddress lip = WiFi.localIP();
+    if (WiFi.status() == WL_CONNECTED) {
+//      firebaseRealtime.begin(DATABASE_URL, API_KEY);
+    }
+  }
+}
+
+
+
 void Programtakip(String progdata);
+
+WiFiClient xilent;
+bool htpcldepindegisti=false;
+int test=1;
 
 
 void loop() {
@@ -1202,40 +1161,54 @@ void loop() {
 
   // put your main code here, to run repeatedly:
   otaloop();
-
-  htpcl();
-
-
+  harcananzaman=millis();
   
-/*
-  if (zamanfark % 240 == 0) {
-    server.handleClient();
-    MDNS.update();
+  xilent = httpserver.available();
+  if (xilent){
+    htpcl(xilent);
+    if(htpcldepindegisti){pinuygula();}
   }
+  
+  
+if(millis() - harcananzaman> (test*200)){
+  Serial.println("htpclde vakit uzadı: ms>" + (String)(millis()-harcananzaman)); test+=1;
+  if(test>10)test=1;
+}
+
+/* zamanfark % 240 içine aldık
+  server.handleClient();
+  MDNS.update();
+    if (zamanfark % 240 == 0) {
+
+      harcananzaman=millis();
+     // server.handleClient();
+     // MDNS.update();
+      if(millis() - harcananzaman> 100)Serial.println("MSDNUPDATEde vaik uzadı: ms>" + (String)(millis()-harcananzaman));
+      harcananzaman=millis();
+     // serin();
+      if(millis() - harcananzaman> 100)Serial.println("serinde vaik uzadı: ms>" + (String)(millis()-harcananzaman));
+    }
 */
-  if (zamanfark % 1000 == 0) serin();
 
   //geciktirmee //yavaşlatma
   //if(macadr!=WiFi.macAddress()){delay(1000);}
 
 
-  if (rescanwifi == 1) {
+  if (rescanwifi == true) {
     wifiscan();
     rescanwifi = 0;
   }
 
+harcananzaman=millis();
 
-  if (mqttclient.connected()) {mqttclient.loop();}
-    else { mqtterror = true; }
-
-
+  if (mqttclient.connected()) mqttclient.loop();
+  else { mqtterror = true; }
 
   if (habp == -2) dosyaokuhabp();
   if (habp == 1 || habp == 3) {
     if (mqtterror == true && MQTTip.length() > 1) {
       if (WiFi.status() == WL_CONNECTED) {
         if (!mqttclient.connected()) {
-          Serial.println("MQTT kopmuş");
           if (mqttconnectsayac < 5001) MQTTConnect();
           if (mqttconnectsayac >= 5000) mqttconnectsayac += 1;
           if (mqttconnectsayac > 10000) {
@@ -1247,43 +1220,66 @@ void loop() {
     }
   }
 
+if(millis() - harcananzaman> 100)Serial.println("mqttclient.loop vaik uzadı: ms>" + (String)(millis()-harcananzaman));
+
+/*
+if(Menu == 0){
+    if (fben == 1) {
+      if(habp == 2 || habp == 3){
+        fbresulsay += 1;
+        if (fbresulsay > 4000) {
+          fbresulsay = 0;
+          connectfb();
+        }
+      }
+    }
+}
+*/
+
 
   //if(htyolla != "")httpgonder();
 
 
-  zamanfark = millis() - zamanbasi;
+  zamanfark=millis()-zamanbasi;
 
 
 
 
-  int upd;
-  if (habp > 2) {
-    if (habp <= 0) upd = 4;
-    if (habp == 1) upd = 4;
-  }
+    int upd;
+    if(habp > 2){
+    if (habp <= 0) upd = 1;
+    if (habp == 1) upd = 1;
+    if (habp == 2) upd = 4;
+    if (habp == 3) upd = 1;
+    }
 
-  if (habp < 3) {
-    if (habp <= 0) upd = 5;
+    if(habp < 3){
+    if (habp <=  0) upd = 5;
     if (habp == 1) upd = 5;
-  }
+    if (habp == 2) upd = 300;
+    if (habp == 3) upd = 200;
+    }
 
-  if (zamanfark % upd == 0) {
-    headerold = "";
-    if (pinayar.length() > 0) updateinput();
-    if (pinayar.length() > 0 && programdata.length() > 0) programrun();
-    if (pinayar.length() > 0) updateoutput();
-    if (pinayar.length() > 0) vrkontrol();
-    //        mqsay+=1;
-    //        if(mqsay>50)
-    //        {
-    //          mqsay=1;
-    //        }
+    
+      if (zamanfark % upd == 0) {
+        headerold="";
+        harcananzaman=millis();
+        if (pinayar.length() > 0) updateinput();
+        if (pinayar.length()>0 && programdata.length()>0) programrun();
+        if (pinayar.length() > 0) updateoutput();
+        if (pinayar.length() > 0) vrkontrol();
+        if(millis() - harcananzaman> 100)Serial.println("update vr prog vaik uzadı: ms>" + (String)(millis()-harcananzaman));
+//        mqsay+=1;
+//        if(mqsay>50)
+//        {
+//          mqsay=1;
+//        }
 
-    //if (mqsendbayrak[mqsay] == true) {
-    //  if(habp == 1 || habp == 3) mqttsend(mqyol[mqsay], degisenmq[mqsay]);
-    //}
+        //if (mqsendbayrak[mqsay] == true) {
+        //  if(habp == 1 || habp == 3) mqttsend(mqyol[mqsay], degisenmq[mqsay]);
+        //}
 
-    /*
+        /*
         if(mqdolubayrak>0 && (psci==true || psco==true)){
           bool bosaltma=false;
           for(int j=1;j<mqdolubayrak+1;j++)
@@ -1301,49 +1297,42 @@ void loop() {
           }
         }
         */
-  }
+      }
+    
 
 
+    //Serial.println(zamanfark);
+    if (habp > 1) {
+      if (zamanfark >= 1900 && zamanfark <= 2000) {
+          zamanbasi = millis() - 2001;
+          
+          //if(Menu == 0)if (fben!=0 && pinayar.length()>0)updatefbvirtual();
+          //if(Menu == 0)if (fben!=0 && pinayar.length()>0)fbsayacoku();
+      }
+    }
 
-
-  if (zamanfark > 1300) {
-    zamanbasi = millis();
-    zamanfark = millis();
-  }
-
-
+    if (zamanfark > 2300) {zamanbasi = millis(); zamanfark=millis();}
 
 
 
   if (WiFi.status() != WL_CONNECTED) {
-    if (millis() - reConnectsayac > 60000) {
+    if (millis() - reConnectsayac > 30000) {
       reConnectsayac = millis();
       connectWifi();
-      if (WiFi.status() == WL_CONNECTED) {
-        if (habp == 1) {
-          if (MQTTip.length() > 2) MQTTConnect();
-        }
+      if (WiFi.status() == WL_CONNECTED)
+      { 
+        if(habp == 1 || habp == 3) {if(MQTTip.length()>2) MQTTConnect();}
+        //if(habp == 2 || habp == 3) {if(fben!=0)connectfb();}
       }
     }
   }
 
-  /*
-  if(aut==1 & logintimeout>0){
-    // delay 4 ve 60 saniye için 60000 / a;
-    logintimeout-= 4;
-  }
-  if(logintimeout<=0)aut=0;
 
-aut=1; // silinecek
-*/
+
 
   if (millis() - ledsay > 880) {
     if (millis() - ledsay == 881) {
       digitalWrite(LED_BUILTIN, LOW);
-
-      //if (myDFPlayer.available()) {
-      //printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-      //}
     }
     if (millis() - ledsay > 1000) {
       ledsay = millis();
@@ -1356,85 +1345,76 @@ aut=1; // silinecek
       // pin işlemleri rutini bitiş ////////////////////////////
     }
   }
+
+  if(aut==1)
+  {
+    if(millis()-logintimeout>logintimeoutmax)
+    {
+      aut=0;
+    }
+  }
+  
 }
 
 
+void pinuygula()
+{
+        if(programdata.length()>4)programrun();
+
+              for (int x = 0; x < sizeof(Pin) + 1; x++) {
+
+
+                if (pinmode[x] == "OUT") {
+                  String pinstatesakla;
+                  if (acildeyim[x] == true) {
+                    pinstatesakla = PinState[x];
+                    PinState[x] = acildeger[x];
+                  }
+
+                  if (pinmode[x] == "OUT" && pinsignaltype[x] == "DIG") {
+                    bool yildizli;
+                    if (pinlabel[x].indexOf("*") + 1 == pinlabel[x].length()) yildizli = true;
+                    else yildizli = false;
+                    if (PinState[x] == "0.00" || PinState[x] == "0" || PinState[x] == "LOW" || PinState[x] == "OFF") {
+                      if (yildizli == false) digitalWrite(Pin[x], LOW);
+                      else digitalWrite(Pin[x], HIGH);
+                    }
+
+                    if (PinState[x] == "1.00" || PinState[x] == "1" || PinState[x] == "HIGH" || PinState[x] == "ON") {
+                      if (yildizli == false) digitalWrite(Pin[x], HIGH);
+                      else digitalWrite(Pin[x], LOW);
+                    }
+                  }
+
+
+                  if (pinmode[x] == "OUT" && pinsignaltype[x] == "PWM") {
+                    int PWMdegerint = PinState[x].toInt();
+                    Outpwm(pinname[x], PWMdegerint);
+                  }
+
+                  if (pinmode[x] == "OUT" && pinsignaltype[x] == "SER") {
+                    int PWMdegerint = PinState[x].toInt();
+                    myservo[x].write(PWMdegerint);
+                  }
+                  if (acildeyim[x] == true) {
+                    PinState[x] = pinstatesakla;
+                  }
+                }
+              }
+              htpcldepindegisti=false;
+}
+
 void vrkontrol() {
 
-  // buz başı //////////////////////////////////////
   for (int vr = 0; vr < 6; vr++) {
     if (VRP[vr].length() > 0) {
-      Serial.println("vrkontroldekiVR" + (String)vr + ": " + VRP[vr]);
+      Serial.println("VR" + (String)vr + ": " + VRP[vr]);
       if (VRP[vr].indexOf("BUZ>") == 0) {
         notalar = VRP[vr].substring(VRP[vr].indexOf(":") + 1, VRP[vr].length());
         notalar = notalar.substring(notalar.indexOf("BUZ>") + 4, notalar.length());
         play(notalar);
         if (bestursay == 0) VRP[vr] = "";
       }
-      // buz son //////
-
-      // MP3 baş //////////////////////////////////////
-      if (myDFPlayer.available()) {
-
-        int parcano = 0;
-
-
-
-        if (VRP[vr].indexOf("MP3>") == 0 || VRP[vr].indexOf("MP3T>") == 0) {
-          String mp3data;
-          bool kodtextise = false;
-          mp3data = VRP[vr].substring(VRP[vr].indexOf(":") + 1, VRP[vr].length());
-          Serial.print("mp3data:");
-          Serial.println(mp3data);
-          if (VRP[vr].indexOf("MP3>") == 0) {
-            mp3data = mp3data.substring(mp3data.indexOf("MP3>") + 4, mp3data.length());
-            Serial.println("VR" + (String)vr + ": " + VRP[vr] + "  >" + mp3data + " sayi");
-          }
-
-          if (VRP[vr].indexOf("MP3T>") == 0) {
-            kodtextise = true;
-            mp3data = mp3data.substring(mp3data.indexOf("MP3T>") + 5, mp3data.length());
-            Serial.println("VR" + (String)vr + ": " + VRP[vr] + "  >" + mp3data + " Text");
-          }
-
-
-          // ÇALMA İŞİ ////////////////////////////
-
-          if (kodtextise == true)  // text kodu gelmiş
-          {
-            myDFPlayer.readFileCounts();
-            toplammp3sayisi = myDFPlayer.readFileCountsInFolder(0);
-
-            dosya.close();
-            dosya = LittleFS.open("/mp3ler.txt", "r");
-            String mp3satirlar;
-            if (dosya) {
-              // dosya başarı ile açıldı;
-              for (int no = 1; no < toplammp3sayisi + 1; no++) {  // kodu bul parça no tespiti
-                mp3satirlar = dosya.readStringUntil('\n') + '\n';
-                if (mp3satirlar.length() > 2) {
-                  if (mp3satirlar.indexOf(mp3data) == 0) {
-                    PinState[1]=mp3data;
-                    parcano = no;
-                    break;
-                  }
-                }
-              }
-            }
-          } else {  // direk parça no yazılı
-            parcano = mp3data.toInt();
-            PinState[1]=String(mp3data.toInt());
-          }
-
-          if (parcano > 0 && parcano <= toplammp3sayisi) myDFPlayer.play(parcano);
-          else { myDFPlayer.play(parcano); }
-          // ÇALMA SON ////////////////////////////
-
-          VRP[vr] = "";
-        }
-      }
-      // MP3 son /////////////////
-
 
       /*      if (VRP[vr].indexOf("SEND%3E") == 0) {
         String htpServerip = VRP[vr].substring(VRP[vr].indexOf("%3E") + 3, VRP[vr].length());
@@ -1504,91 +1484,6 @@ if(userstmp.length()<1) break;
 */
 
 
-/*
-void printDetail(uint8_t type, int value){
-  switch (type) {
-    case TimeOut:
-      Serial.println(F("Time Out!"));
-      break;
-    case WrongStack:
-      Serial.println(F("Stack Wrong!"));
-      break;
-    case DFPlayerCardInserted:
-      {Serial.println(F("Card Inserted!"));
-      delay(1000);
-
-            //!myDFPlayer.begin(FPSerial, isACK =  true, doReset =  true)
-            if (!myDFPlayer.begin(FPSerial, true, true)) {  //Use serial to communicate with mp3.
-              Serial.println(F("Unable to begin:"));
-              Serial.println(F("1.Please recheck the connection!"));
-              Serial.println(F("2.Please insert the SD card!"));
-              while (true) {
-                delay(0);  // Code to compatible with ESP8266 watch dog.
-              }
-            }
-            Serial.println(F("DFPlayer Mini online."));
-                                int fileCounts=0;
-          myDFPlayer.readFileCounts();
-          fileCounts = myDFPlayer.readFileCountsInFolder(0);
-
-          Serial.println(fileCounts);
-                                toplammp3sayisi=fileCounts;
-                                Serial.println(toplammp3sayisi);
-      break;}
-    case DFPlayerCardRemoved:
-      {Serial.println(F("Card Removed!"));
-      toplammp3sayisi=0;
-      break;}
-    case DFPlayerCardOnline:
-      Serial.println(F("Card Online!"));
-      break;
-    case DFPlayerUSBInserted:
-      Serial.println("USB Inserted!");
-      break;
-    case DFPlayerUSBRemoved:
-      Serial.println("USB Removed!");
-      break;
-    case DFPlayerPlayFinished:
-      Serial.print(F("Number:"));
-      Serial.print(value);
-      Serial.println(F(" Play Finished!"));
-      break;
-    case DFPlayerError:
-      Serial.print(F("DFPlayerError:"));
-      switch (value) {
-        case Busy:
-          Serial.println(F("Card not found"));
-          break;
-        case Sleeping:
-          Serial.println(F("Sleeping"));
-          break;
-        case SerialWrongStack:
-          Serial.println(F("Get Wrong Stack"));
-          break;
-        case CheckSumNotMatch:
-          Serial.println(F("Check Sum Not Match"));
-          break;
-        case FileIndexOut:
-          Serial.println(F("File Index Out of Bound"));
-          break;
-        case FileMismatch:
-          Serial.println(F("Cannot Find File"));
-          break;
-        case Advertise:
-          Serial.println(F("In Advertise"));
-          break;
-        default:
-          break;
-      }
-      break;
-    default:
-      break;
-  }
-  
-}
-*/
-
-
 
 String Karakterduzeltfunc(String gelent) {
   Serial.println("Karakterduzelte girdim");
@@ -1638,8 +1533,6 @@ String Karakterduzeltfunc(String gelent) {
   Serial.println(gelent);
   return gelent;
 }
-
-
 
 /*
 String Karakterduzeltfunc(String gelent){
