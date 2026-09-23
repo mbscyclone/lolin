@@ -67,9 +67,11 @@ void messageReceived(String& topic, String& payload) {
 
   if(ACLilanciyim==true)
   {
-    if(Gelenmsg.indexOf("hello:")>-1)
+    if(Gelenmsg.indexOf("hello:")>-1 || Gelenmsg.indexOf("ACIL:")>-1)
       {
-        String goesphostname=Gelenmsg.substring(Gelenmsg.indexOf("hello:")+6,Gelenmsg.length());
+        String goesphostname="";
+        if(Gelenmsg.indexOf("ACIL:")>-1) goesphostname=Gelenmsg.substring(Gelenmsg.indexOf("ACIL:")+5,Gelenmsg.length());
+        if(Gelenmsg.indexOf("hello:")>-1) goesphostname=Gelenmsg.substring(Gelenmsg.indexOf("hello:")+6,Gelenmsg.length());
         String myol = "/"+YOL + "/"  + goesphostname;
         mqttsend(myol, "/" + YOL+"/ALLDEV=ACL:"+ACL);
         return;

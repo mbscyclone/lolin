@@ -121,8 +121,9 @@ String acilseviyesi[10];
 String acildeger[10];
 String pinlabel[10];
 String ACL="100";String eACL="100";
-bool ACLilanciyim=true;
-unsigned long aclrepeat;
+bool ACLilanciyim=false;
+unsigned long acltekrar=millis();
+unsigned long aclsor=millis();
 
 String Abonelik;
 //String pindurumrec;
@@ -1095,10 +1096,9 @@ if(pinayar.length()>3){
 */
 
 
-
-  setup2();
   otasetup();
-
+  setup2();
+  acltekrar = millis(); // ilk start için
   if (WiFi.status() == WL_CONNECTED) {
     if(habp==-2)dosyaokuhabp();
     if(habp == 1 || habp == 3){
@@ -1154,8 +1154,6 @@ void Programtakip(String progdata);
 WiFiClient xilent;
 bool htpcldepindegisti=false;
 int test=1;
-
-unsigned long acltekrar;
 
 
 bool udpbegin=false;
@@ -1250,14 +1248,24 @@ harcananzaman=millis();
   {
     mqttclient.loop();
 
-    if (acltekrar == 0) acltekrar= millis()+5000; // ilk start için
-
     if(ACLilanciyim==true && acltekrar < millis())
       {
-          acltekrar= millis()+5000;
+          acltekrar=millis()+10000;
           String myol = "/"+YOL + "/" + esphostname;
           mqttsend(myol, "/" + YOL+"/ALLDEV=ACL:"+ACL);
       }
+
+    ///////////////// ACL sormak için
+    if(ACL=="100")
+    {
+      if(aclsor<millis())
+      {
+        aclsor=millis()+5000;
+        String myol = "/"+YOL + "/" + esphostname;
+        mqttsend(myol, "/" + YOL + "/ALLDEV=ACIL:"+esphostname);
+      }
+    }
+    ////////////////
   }
   else
   { mqtterror = true; }
