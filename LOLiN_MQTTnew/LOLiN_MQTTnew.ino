@@ -18,6 +18,8 @@
 #include <Servo.h>
 #include <DHT.h>
 #include "Melody.h"
+
+#include <WiFiUDP.h>
 //#include <WebSocketsServer.h>
 //#include <ESP8266WebServer.h>
 
@@ -120,6 +122,7 @@ String acildeger[10];
 String pinlabel[10];
 String ACL="100";String eACL="100";
 bool ACLilanciyim=true;
+unsigned long aclrepeat;
 
 String Abonelik;
 //String pindurumrec;
@@ -1152,6 +1155,12 @@ WiFiClient xilent;
 bool htpcldepindegisti=false;
 int test=1;
 
+unsigned long acltekrar;
+
+
+bool udpbegin=false;
+
+WiFiUDP udp;
 
 void loop() {
   //Serial.print("Free heap: "); Serial.println(ESP.getFreeHeap());
@@ -1161,6 +1170,41 @@ void loop() {
 
   // put your main code here, to run repeatedly:
   otaloop();
+
+
+
+/* ///////////////////
+  if(WiFi.status()==WL_CONNECTED)
+  {
+    if(udpbegin==false){
+      udp.begin(4210);
+      udpbegin=true;
+    }
+    int packetSize = udp.parsePacket();
+    if (packetSize) {
+    char buf[255];
+    udp.read(buf, 255);
+    //if (String(buf) == "DECLERE_ET") {
+
+            IPAddress lip = WiFi.localIP();
+            String lipStr = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
+            String gd = YOL + "[" + esphostname + "]" + lipStr;
+
+        int bufSize = gd.length() + 1; 
+        char gdchr[bufSize]; 
+        gd.toCharArray(gdchr, bufSize); 
+
+        udp.beginPacket(udp.remoteIP(), udp.remotePort());
+        udp.write(gdchr);
+        udp.endPacket();
+    //}
+  }
+
+  }
+  */////////////////
+
+
+
   harcananzaman=millis();
   
   xilent = httpserver.available();
@@ -1201,8 +1245,24 @@ if(millis() - harcananzaman> (test*200)){
 
 harcananzaman=millis();
 
-  if (mqttclient.connected()) mqttclient.loop();
-  else { mqtterror = true; }
+/////////////////// 5 saniyede bir acl ilanı yap
+  if (mqttclient.connected())
+  {
+    mqttclient.loop();
+
+    if (acltekrar == 0) acltekrar= millis()+5000; // ilk start için
+
+    if(ACLilanciyim==true && acltekrar < millis())
+      {
+          acltekrar= millis()+5000;
+          String myol = "/"+YOL + "/" + esphostname;
+          mqttsend(myol, "/" + YOL+"/ALLDEV=ACL:"+ACL);
+      }
+  }
+  else
+  { mqtterror = true; }
+////////////////
+
 
   if (habp == -2) dosyaokuhabp();
   if (habp == 1 || habp == 3) {
@@ -1321,6 +1381,7 @@ if(Menu == 0){
       connectWifi();
       if (WiFi.status() == WL_CONNECTED)
       { 
+        udpbegin=false;
         if(habp == 1 || habp == 3) {if(MQTTip.length()>2) MQTTConnect();}
         //if(habp == 2 || habp == 3) {if(fben!=0)connectfb();}
       }
