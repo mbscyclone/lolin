@@ -1,3 +1,5 @@
+//card info: AI Thinker ESP32-CAM... 3mb huge ram no ota
+
 #include "esp_camera.h"
 #include <WiFi.h>
 
@@ -25,15 +27,33 @@ int rescanwifi = 0;
 unsigned int zamanfark;
 unsigned long reConnectsayac = millis();
 
+int hassasiyet=10;
 
 //telegram bot link="t.me/kev1_bot";
 bool telegram_hazir = false;
 
 
+/*
 // PIR sensor
 //#define PIR_PIN 3
 unsigned long lastMotionTime = 0;
 const unsigned long motionCooldown = 15000;  // 15 seconds
+*/
+
+
+// --- Yazılımsal Hareket Algılama Ayarları ---
+unsigned long lastMotionTime = 0;
+unsigned long motionCooldown = 15000; // İstediğiniz gibi 15 saniye cooldown
+
+// Karşılaştırma için bir önceki karenin piksellerini tutacağımız değişkenler
+size_t prev_len = 0;
+uint8_t *prev_buf = NULL;
+
+// Hassasiyet Ayarları (Kendinize göre değiştirebilirsiniz)
+#define MOTION_THRESHOLD 15   // Piksel değerindeki değişim eşiği (0-255 arası)
+#define MOTION_PERCENTAGE 10  // Görüntünün yüzde kaçı değişirse hareket sayılsın? (%10)
+
+
 
 bool WiFiAP = true;  // Do yo want the ESP as AP?
 
@@ -56,7 +76,8 @@ void setupLedFlash();
 String telegram_botToken;  //= "8327870196:AAEjrwZMHcTuOXehzge7m5uk5VU2jmyTUg8"; // [BotFather] /start >>> /addnewbot >>> name kev1_bot >> //HTTP_API
 String telegram_chatID;    //= "8411559509"; // [Chat I'd Info Bot] /start >>> name: Murat BEKTAŞ username: @Muratbk_141 chatid:8411559509
 
-void sendPhotoTelegram(camera_fb_t *fb) {
+// Fonksiyonun başına durumMesaji parametresini ekledik
+void sendPhotoTelegram(camera_fb_t *fb, String durumMesaji) {
   if (WiFi.status() != WL_CONNECTED) return;
 
   clientTCP.stop();
@@ -70,7 +91,10 @@ void sendPhotoTelegram(camera_fb_t *fb) {
   startRequest += "Content-Disposition: form-data; name=\"chat_id\"\r\n\r\n";
   startRequest += telegram_chatID + "\r\n--" + boundary + "\r\n";
   startRequest += "Content-Disposition: form-data; name=\"caption\"\r\n\r\n";
-  startRequest += esphostname + "-> ⚠️ Motion Detected!\r\n--" + boundary + "\r\n";
+  
+  // SABİT METİN YERİNE BURAYA dinamik gelen durumMesaji değişkenini bağlıyoruz:
+  startRequest += esphostname + " -> " + durumMesaji + "\r\n--" + boundary + "\r\n";
+
   startRequest += "Content-Disposition: form-data; name=\"photo\"; filename=\"image.jpg\"\r\n";
   startRequest += "Content-Type: image/jpeg\r\n\r\n";
   String endRequest = "\r\n--" + boundary + "--\r\n";
@@ -240,7 +264,176 @@ void setup() {
 }
 
 int pirpin = 0;
-String pirdevrede;
+int pirdevrede;
+
+
+void loop() {
+  serin();
+  htpcl();
+
+  if (rescanwifi == 1) {
+    wifiscan();
+    rescanwifi = 0;
+  }
+
+  // Telegram hazırsa ve pir aktifse
+  if (telegram_hazir == true && pirdevrede != 0) {
+    
+    // Kameradan anlık bir kare (frame) al
+    camera_fb_t *fb = esp_camera_fb_get();
+    if (!fb) {
+      Serial.println("Kamera görüntüsü alınamadı!");
+      return;
+    }
+
+    bool motionDetected = false;
+    String telegramMesaji = ""; // Derleme hatası almamak için buraya ekledik
+
+    // Eğer elimizde karşılaştıracak bir önceki karenin boyutu varsa
+    if (prev_len > 0) {
+      // İki fotoğrafın boyutu arasındaki farkı bul (Değişim miktarı)
+      int size_diff = abs((int)fb->len - (int)prev_len);
+      
+      // ÖNEMLİ: Her döngü başında süreyi önce 15 saniyeye sıfırlıyoruz ki hafızada kilitli kalmasın!
+      motionCooldown = 15000; 
+
+      // ÖNEMLİ: String olan değişkeni formülde kullanabilmek için int'e çeviriyoruz
+      int pirKatSayi = pirdevrede; 
+      if(pirKatSayi < 1) pirKatSayi = 1;
+
+      // Küçük hareket için daha düşük bir baraj (Örn: pir 2 ise %0.4)
+      float kucuk_esik = (float)(2 * pirKatSayi) / 1000.0;
+      
+      // Büyük hareket için daha yüksek bir baraj (Örn: pir 2 ise %1.0)
+      float buyuk_esik = (float)(5 * pirKatSayi) / 1000.0;
+
+      // 1. Adım: Önce küçük eşikten büyük bir hareket var mı diye bakıyoruz
+      if (size_diff > (prev_len * kucuk_esik)) {
+
+        // 2. Adım: Eğer bu değişiklik büyük eşikten de büyükse süreyi 5 saniyeye düşür
+        if (size_diff > (prev_len * buyuk_esik)) {
+          motionCooldown = 5000;  
+          telegramMesaji = "🔥 KRİTİK: Büyük Hareket Algılandı!";
+          Serial.print("🔥 Büyük Hareket! ");
+        } else {
+          telegramMesaji = "🚨 UYARI: Küçük Hareket Algılandı.";
+          Serial.print("🚨 Küçük Hareket! ");
+        }
+
+        // Zamanlama kontrolü ve Telegram'a gönderme bayrağı
+        if (millis() - lastMotionTime > motionCooldown) {
+          motionDetected = true;
+          Serial.printf("Dosya Boyutu Farkı: %d bayt\n", size_diff);
+        }
+      }
+    } // if (prev_len > 0) bloğunun kapanışı
+
+    // Mevcut karenin boyutunu bir sonraki döngü için kaydet
+    prev_len = fb->len;
+
+    // Eğer hareket varsa VE 15 saniyelik süre dolmuşsa Telegram'a gönder
+    if (motionDetected) {
+      lastMotionTime = millis(); // 15 saniyelik bekleme sayacını TAM BU ANDA başlat
+
+      // Flaş LED'ini yak
+      pinMode(LED_GPIO_NUM, OUTPUT);
+      int led_intensity1 = digitalRead(LED_GPIO_NUM);
+      digitalWrite(LED_GPIO_NUM, 255); 
+      delay(600);
+
+      digitalWrite(LED_GPIO_NUM, led_intensity1); // Flaş kapat
+      
+      // Fotoğrafı Telegram'a gönder
+      sendPhotoTelegram(fb,telegramMesaji);
+    }
+
+    // Bellek sızıntısını ve donmayı önlemek için buffer'ı mutlaka hemen iade et
+    esp_camera_fb_return(fb);
+  }
+}
+
+
+
+
+
+/*
+void loop() {
+  serin();
+  htpcl();
+
+  if (rescanwifi == 1) {
+    wifiscan();
+    rescanwifi = 0;
+  }
+
+  // Telegram hazırsa ve 15 saniyelik bekleme süresi (cooldown) dolduysa kontrol et
+  if (telegram_hazir == true && pirdevrede == "1" && (millis() - lastMotionTime > motionCooldown)) {
+    
+    // Kameradan anlık bir kare (frame) al
+    camera_fb_t *fb = esp_camera_fb_get();
+    if (!fb) {
+      Serial.println("Kamera görüntüsü alınamadı!");
+      return;
+    }
+
+    bool motionDetected = false;
+
+    // Eğer elimizde karşılaştıracak bir önceki kare varsa işleme başla
+    if (prev_buf != NULL && prev_len == fb->len) {
+      int changed_pixels = 0;
+      int total_pixels = fb->len;
+
+      // Pikselleri belirli aralıklarla (hız için her 20 pikselde bir) kontrol et
+      for (size_t i = 0; i < fb->len; i += 20) {
+        if (abs(fb->buf[i] - prev_buf[i]) > MOTION_THRESHOLD) {
+          changed_pixels++;
+        }
+      }
+
+      // Değişen piksellerin oranını hesapla
+      float change_ratio = ((float)changed_pixels / (total_pixels / 20)) * 100;
+
+      if (change_ratio > MOTION_PERCENTAGE) {
+        motionDetected = true;
+        Serial.printf("🚨 Hareket Algılandı! Değişim Oranı: %%.2f\n", change_ratio);
+      }
+    }
+
+    // Mevcut kareyi, bir sonraki döngüde karşılaştırmak üzere hafızaya yedekle
+    if (prev_buf == NULL) {
+      prev_buf = (uint8_t *)malloc(fb->len);
+    } else if (prev_len != fb->len) {
+      prev_buf = (uint8_t *)realloc(prev_buf, fb->len);
+    }
+    
+    if (prev_buf != NULL) {
+      memcpy(prev_buf, fb->buf, fb->len);
+      prev_len = fb->len;
+    }
+
+    // Eğer hareket algılandıysa Telegram'a gönder
+    if (motionDetected) {
+      // Flaş LED'ini yak (İsteğe bağlı)
+      pinMode(LED_GPIO_NUM, OUTPUT);
+      int led_intensity1 = digitalRead(LED_GPIO_NUM);
+      digitalWrite(LED_GPIO_NUM, 255); 
+      delay(600);
+
+      lastMotionTime = millis(); // 15 saniyelik sayacı sıfırla
+
+      digitalWrite(LED_GPIO_NUM, led_intensity1); // Flaş kapat
+      
+      // Fotoğrafı Telegram'a gönder
+      sendPhotoTelegram(fb);
+    }
+
+    // Kamera buffer'ını sisteme geri iade et (Hafıza dolmaması için şart)
+    esp_camera_fb_return(fb);
+  }
+}
+*/
+
+/*
 void loop() {
 
   serin();
@@ -278,7 +471,7 @@ void loop() {
     }
   }
 }
-
+*/
 
 IPAddress AP_LOCAL_IP(192, 168, 4, 1);
 IPAddress AP_GATEWAY_IP(192, 168, 4, 1);
@@ -287,67 +480,67 @@ IPAddress AP_NETWORK_MASK(255, 255, 255, 0);
 
 
 void connectWifi(void) {
-  WiFi.mode(WIFI_AP_STA);  //1  //ESP8266 works in both AP mode and station mode
-  //WiFi.mode(WIFI_STA); 2  // ESP8266 works in station mode
-  // WiFi.begin(ssid, password); // given the network
-
-  //    Serial.print(ssid);
-  //    Serial.print("connecting to ");
-  //    while (WiFi.status() != WL_CONNECTED) {
-  //      // not connected to the network
-  //    delay(500);
-  //    Serial.print(".");
-  //  }
+  WiFi.mode(WIFI_AP_STA); // Hem modeme bağlanabilme hem de AP modu açık
+  
   dosyaokussidpass();
   if (esphostname != "") WiFi.hostname(esphostname);
+  
   WiFi.begin(ssid, pass);
-  //Serial.println(ssid);
-  //Serial.println(pass);
-  //delay(1000);
   WiFi.setSleep(false);
 
-
   if (testWifi()) {
-    Serial.println("Connected!!!");
+    // BAŞARILI DURUM: Modeme bağlandı ama arka planda AP de açılıyor
+    // Önce ismi başlatıyoruz:
+    Serial.println("Connected to Router!!!");
+    Serial.print("Station IP (Modemden Alınan): ");
     Serial.println(WiFi.localIP());
-    Serial.println(WiFi.gatewayIP());
-    WiFi.softAP(esphostname, "12345678");  // bağlanınca ap kalksın için // koyabiliriz.
-
-    IPAddress lip = WiFi.localIP();
-    String mylocalip = String(lip[0]) + '.' + String(lip[1]) + '.' + String(lip[2]) + '.' + String(lip[3]);
-
-    //buzzercal(2000, 3); delay(100);
-    //buzzercal(3000, 2); delay(10);
-  } else {
-
-    WiFi.hostname(esphostname);
-    Serial.println("HotSpot On");
-    //                                wifiscan();
-    //                                lookAP();// S etup HotSpot
+        Serial.println(WiFi.gatewayIP());
+    // ==========================================
+    // MODEME BAĞLIYKEN AP MODUNU DA DOĞRU BAŞLATMA
+    // ==========================================
+    
+    // 1. Önce AP ağını ismiyle oluşturun
+    if (esphostname != "") {
+      WiFi.softAP(esphostname, pass);
+    } else {
+      WiFi.softAP("ESP32-CAM_AI-Thinker", "12345678");
+    }
+    
+    // 2. Wi-Fi donanımının kendine gelmesi için çok kısa bir es verin (Çok Kritik!)
+    delay(100); 
+    
+    // 3. AP için DHCP ve Statik IP havuzunu zorunlu kılın
     WiFi.softAPConfig(AP_LOCAL_IP, AP_GATEWAY_IP, AP_NETWORK_MASK);
+    
+    Serial.print("Arka Plan AP IP (Telefona Dağıtılan): ");
+    Serial.println(WiFi.softAPIP()); // Seri portta 192.168.4.1 görmelisiniz
 
-    int str_len = esphostname.length() + 1;
-    char ch[str_len];
-    esphostname.toCharArray(ch, str_len);
-
-
-    WiFi.softAPsetHostname(ch);
-    WiFi.mode(WIFI_AP);
-    WiFi.softAP("ESP32-CAM_AI-Thinker", "12345678");
-    //delay(100);
+  } else {
+    // BAŞARISIZ DURUM: Modeme bağlanamadı, sadece Access Point (HotSpot) olacak
+    Serial.println("ConWifi timeout, open AP");
+    
+    // 1. Önce sadece AP moduna alıyoruz
+    WiFi.mode(WIFI_AP); 
+    
+    // 2. Önce ağı (SSID ve Şifre) başlatıyoruz
+    WiFi.softAP("ESP32-CAM_AI-Thinker", "12345678"); 
+    
+    // 3. EN ÖNEMLİSİ: Ağ başladıktan SONRA IP havuzunu ve DHCP'yi kilitliyoruz
+    delay(100); // Kısa bir süre donanımın kendine gelmesini bekle
+    WiFi.softAPConfig(AP_LOCAL_IP, AP_GATEWAY_IP, AP_NETWORK_MASK);
+    
+    // Hostname ayarı
+    if (esphostname != "") {
+      int str_len = esphostname.length() + 1;
+      char ch[str_len];
+      esphostname.toCharArray(ch, str_len);
+      WiFi.softAPsetHostname(ch);
+    }
 
     IPAddress IP = WiFi.softAPIP();
-
     Serial.print("softAPIP: ");
-    Serial.println(IP);
-    Serial.println(WiFi.localIP());
-    Serial.println(WiFi.gatewayIP());
-    //buzzercal(3000, 50); delay(100);
-    //buzzercal(2500, 70); delay(100);
-    //buzzercal(1500, 100); delay(10);
+    Serial.println(IP); // Artık burada güvenle 192.168.4.1 göreceksiniz.
   }
-
-  //firebaseRealtime.begin(FIREBASE_REALTIME_URL, FIREBASE_REALTIME_SECRET);
 }
 
 int sayfayenile = 0;

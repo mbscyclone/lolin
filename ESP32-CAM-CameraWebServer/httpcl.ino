@@ -316,7 +316,7 @@ void htpcl() {
               if(header.indexOf("/pirdevrede?")>-1)
               {
                 if (header.indexOf("pir=") > -1) {
-                  pirdevrede = header.substring((header.indexOf("pir=") + 4), header.indexOf(" HTTP/1.1"));
+                  pirdevrede = (header.substring((header.indexOf("pir=") + 4), header.indexOf(" HTTP/1.1"))).toInt();
                   Serial.println(pirdevrede);
                   dosyayazpirdevrede();
                 }
@@ -327,10 +327,10 @@ void htpcl() {
 
               xilent.println("Hareket sensörü");
 //              xilent.println("            Kaydettikten sonra cihaza ⚠️ reset çekilecektir.");
-              xilent.println("<br><form action=\"/pirdevrede\" method=\"get\"><label>Pir durum:");
-              if(pirdevrede=="1")xilent.println(" devrede ");
-              else xilent.println(" devre dışı ");
-              xilent.println("</label><br><br><label >Pir devrede ? </label><input type='submit' name='pir' value='1'>Evet     <input type='submit' name='pir' value='0'>Hayır</form>");
+              xilent.println("<br><form action=\"/pirdevrede\" method=\"get\"><label>Algılayıcı durumu:");
+              if(pirdevrede!=0)xilent.println(" Algılama devrede ve Hassasiyet : " + String(pirdevrede));
+              else xilent.println(" Algılama devre dışı ");
+              xilent.println("</label><br><br><label >Algılama devre dışı için Hassasiyeti 0,<br> Devrede ise Hassasiyet 1-10 arasında değer gir<br> 1- çok hassastır. Sayı büyüdükçe hassasiyet düşer. </label><input name='pir' length='2' value='"+String(pirdevrede)+"'><input type='submit'></form>");
 
 
               xilent.println("<br>");

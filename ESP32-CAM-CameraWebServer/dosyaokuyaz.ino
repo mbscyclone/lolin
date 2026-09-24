@@ -181,7 +181,7 @@ void dosyayazpirdevrede() {
   LittleFS.remove("/pirdevrede.txt");
   dosya = LittleFS.open("/pirdevrede.txt", "w+");
   if(dosya){
-  dosya.println(pirdevrede);
+  dosya.println(String(pirdevrede));
   Serial.println(pirdevrede);
   dosya.close();
   }
@@ -192,7 +192,7 @@ void dosyayazpirdevrede() {
 void dosyaokupirdevrede() {
   //   я
   int yazili = 0;
-  pirdevrede = "";
+  pirdevrede = 0;
   dosya.close();
   dosya = LittleFS.open("/pirdevrede.txt", "r");
 
@@ -200,7 +200,7 @@ void dosyaokupirdevrede() {
     String pirdevredemi = dosya.readStringUntil('\n');
     pirdevredemi = pirdevredemi.substring(0, pirdevredemi.length() - 1);
     Serial.println(pirdevredemi);
-    pirdevrede = pirdevredemi;
+    pirdevrede = pirdevredemi.toInt();
     dosya.close();
   }
 }
