@@ -19,7 +19,7 @@
 //#include <WebSocketsServer.h>
 //#include <ESP8266WebServer.h>
 
-#include"sMQTTBroker.h"
+#include <sMQTTBroker.h>
 
 
 
@@ -36,7 +36,8 @@ unsigned long reConnectsayac=millis();
 
 
 
-sMQTTBroker broker;
+//sMQTTBroker broker;
+sMQTTBrokerWithoutEvent broker;
 
 // YAZ-GÖNDER için
 // chg=0 değişiklik yok bende

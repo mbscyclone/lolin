@@ -1,6 +1,6 @@
 // ESP8266 LOLİN
 // Flash size 4M(FS:1MB OTA:~1019KB)
-// MMU 16KBCHACE, 48^'KB IRAM(balanced)
+// MMU 16KBCHACE, 48^'KB IRAM 2 heap shared
 
 
 //1 SD çıkart olayı ekle
@@ -14,12 +14,14 @@
 #include <Arduino.h>
 
 #include <ESP8266HTTPClient.h>
+#include <ESP8266mDNS.h> // mDNS kütüphanesini dahil ediyoruz
+#include <ESP8266WiFi.h>
+#include "LittleFS.h"
 //#include <FirebaseRealtime.h>
 //#include <WiFiClient.h>
 //#include <EEPROM.h>
 //#include <DHT.h>
-#include <ESP8266WiFi.h>
-#include "LittleFS.h"
+
 //#include <MQTT.h>
 #include <Servo.h>
 #include <DHT.h>
@@ -76,9 +78,9 @@ unsigned long fbreConnetsayac=millis();
 unsigned long reConnectsayac=millis();
 
 
-#include"sMQTTBroker.h"
+//#include"sMQTTBroker.h"
 
-sMQTTBroker broker;
+//sMQTTBroker broker;
 
 // YAZ-GÖNDER için
 // chg=0 değişiklik yok bende
@@ -1536,8 +1538,15 @@ if(WiFi.status()==WL_CONNECTED)
 
 
 
-    const unsigned short mqttPort=1883;
-    broker.init(mqttPort);
+    //const unsigned short mqttPort=1883;
+    //broker.init(mqttPort);
+
+
+  // mDNS sunucusunu esphostname ismiyle baslatiyoruz
+  if (MDNS.begin(esphostname)) {
+    Serial.println("mDNS sunucusu baslatildi. Adres: http://" + esphostname + ".local");
+  }
+
 
     esplerioku();
 
@@ -1573,7 +1582,7 @@ uint8_t serstat;
 int dhtokusayac=0;
 void loop() {
 
-broker.update();
+//broker.update();
 
 if(WiFi.status()==WL_CONNECTED)
 {
@@ -1608,6 +1617,8 @@ if(webstart>2){
   yield();
   //if(millis()-tarazamani < http2setTimeout+200) {} // bekle
   //else 
+  MDNS.update(); // mDNS sorgularini guncellemek icindir
+
   htpcl();
   //app.loop();
 
